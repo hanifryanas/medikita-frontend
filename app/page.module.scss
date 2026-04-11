@@ -1,163 +1,303 @@
-.wrapper {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #fafafa;
-  font-family: var(--font-geist-sans), Arial, sans-serif;
+@use "./styles/color" as *;
 
-  @media (prefers-color-scheme: dark) {
-    background-color: #000;
-  }
+// ─── Hero (page wrapper) ──────────────────────────────────
+.hero {
+  position: relative;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: $white;
+  overflow: hidden;
+
+  // Replace "/hero.jpg" with your actual hero photo
+  background:
+    linear-gradient(
+      110deg,
+      rgba(11, 26, 46, 0.98) 0%,
+      rgba(11, 26, 46, 0.9) 35%,
+      rgba(11, 26, 46, 0.5) 62%,
+      rgba(11, 26, 46, 0.15) 100%
+    ),
+    url("/hero.jpg") 70% center / cover no-repeat;
+  background-color: $navy-900;
 }
 
-.main {
+// ─── Navigation ───────────────────────────────────────────
+.nav {
+  position: relative;
+  z-index: 10;
+  padding: 1.75rem 0;
+}
+
+.navContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2.5rem;
   display: flex;
-  flex: 1;
-  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 48rem;
-  padding: 8rem 4rem;
-  background-color: #fff;
-
-  @media (prefers-color-scheme: dark) {
-    background-color: #000;
-  }
-
-  @media (min-width: 640px) {
-    align-items: flex-start;
-  }
+  gap: 2.5rem;
 }
 
 .logo {
-  @media (prefers-color-scheme: dark) {
-    filter: invert(1);
-  }
-}
-
-.content {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  text-align: center;
-
-  @media (min-width: 640px) {
-    align-items: flex-start;
-    text-align: left;
-  }
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  color: $white;
+  white-space: nowrap;
 }
 
-.title {
-  max-width: 20rem;
-  font-size: 1.875rem;
-  font-weight: 600;
-  line-height: 2.5rem;
-  letter-spacing: -0.025em;
-  color: #000;
-
-  @media (prefers-color-scheme: dark) {
-    color: #fafafa;
-  }
+.logoMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: $blue-500;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
-.description {
-  max-width: 28rem;
-  font-size: 1.125rem;
-  line-height: 2rem;
-  color: #52525b;
-
-  @media (prefers-color-scheme: dark) {
-    color: #a1a1aa;
-  }
+.navLinks {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  flex: 1;
 
   a {
-    font-weight: 500;
-    color: #09090b;
+    font-size: 0.875rem;
+    color: $muted;
+    transition: color 0.2s;
 
-    @media (prefers-color-scheme: dark) {
-      color: #fafafa;
+    &:hover {
+      color: $white;
     }
+  }
+
+  @media (max-width: 768px) {
+    display: none;
   }
 }
 
-.actions {
+.navActive {
+  color: $white !important;
+  font-weight: 500;
+}
+
+.navIcons {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: $white;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.14);
+  }
+}
+
+// ─── Hero body ────────────────────────────────────────────
+.heroBody {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 3rem 2.5rem 7rem;
+}
+
+.heroContent {
+  max-width: 540px;
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $muted;
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 4.5vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.heroDesc {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: $muted;
+  max-width: 400px;
+}
+
+.ctaBtn {
+  display: inline-flex;
+  align-items: center;
   gap: 1rem;
-  font-size: 1rem;
+  background: none;
+  border: none;
+  color: $white;
+  cursor: pointer;
+  font-size: 0.9rem;
   font-weight: 500;
+  padding: 0;
+  margin-top: 0.25rem;
 
-  @media (min-width: 640px) {
-    flex-direction: row;
+  &:hover .ctaIcon {
+    background: rgba(255, 255, 255, 0.22);
   }
 }
 
-.btnPrimary {
-  display: flex;
+.ctaIcon {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  height: 3rem;
-  width: 100%;
-  border-radius: 9999px;
-  background-color: #171717;
-  color: #fff;
-  padding: 0 1.25rem;
-  transition: background-color 0.2s;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(6px);
+  transition: background 0.2s;
+}
 
-  @media (min-width: 768px) {
-    width: 9.875rem;
-  }
+// ─── Floating patient card ────────────────────────────────
+.patientCard {
+  position: absolute;
+  top: 7rem;
+  right: 5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border-radius: 14px;
+  padding: 0.9rem 1.25rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  z-index: 5;
 
-  &:hover {
-    background-color: #383838;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    background-color: #ededed;
-    color: #000;
-
-    &:hover {
-      background-color: #ccc;
-    }
-
-    img {
-      filter: invert(1);
-    }
+  @media (max-width: 900px) {
+    display: none;
   }
 }
 
-.btnSecondary {
+.avatarGroup {
   display: flex;
+  margin-right: 0.25rem;
+}
+
+.avatar {
+  display: block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid $white;
+  margin-right: -10px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.avatarA {
+  background: linear-gradient(135deg, #e8c5a0, #c8965a);
+}
+.avatarB {
+  background: linear-gradient(135deg, #b07850, #8a5a30);
+}
+.avatarC {
+  background: linear-gradient(135deg, #f0d8b8, #d4a87a);
+}
+
+.cardInfo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.cardNum {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $navy-900;
+}
+
+.cardLabel {
+  font-size: 0.68rem;
+  color: #888;
+  white-space: nowrap;
+}
+
+.checkBadge {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 3rem;
-  width: 100%;
-  border-radius: 9999px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 0 1.25rem;
-  transition:
-    background-color 0.2s,
-    border-color 0.2s;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: $blue-500;
+  color: $white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
 
-  @media (min-width: 768px) {
-    width: 9.875rem;
+// ─── Stats bar ────────────────────────────────────────────
+.statsBar {
+  display: flex;
+  background: rgba(8, 18, 35, 0.75);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.statItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.75rem 2rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+
+  &:last-child {
+    border-right: none;
   }
 
-  &:hover {
-    border-color: transparent;
-    background-color: rgba(0, 0, 0, 0.04);
+  @media (max-width: 640px) {
+    padding: 1.25rem;
   }
+}
 
-  @media (prefers-color-scheme: dark) {
-    border-color: rgba(255, 255, 255, 0.145);
+.statNum {
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
 
-    &:hover {
-      background-color: #1a1a1a;
-    }
-  }
+.statLabel {
+  font-size: 0.72rem;
+  color: $muted;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
