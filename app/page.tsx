@@ -40,6 +40,12 @@ export default function Home() {
             <button className={styles.iconBtn} aria-label="Menu">
               <MenuIcon />
             </button>
+            <Link href="/login" className={styles.navBtnGhost}>
+              Log in
+            </Link>
+            <Link href="/signup" className={styles.navBtnPrimary}>
+              Sign up
+            </Link>
           </div>
         </div>
       </nav>
