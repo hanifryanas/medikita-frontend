@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Link from "next/dist/client/link";
-import React, { useState } from "react";
-import styles from "../auth.module.scss";
+import Link from 'next/link';
+import React, { useState } from 'react';
+import styles from '../auth.module.scss';
 
 interface FormFields {
   email: string;
@@ -17,8 +17,8 @@ interface FormErrors {
 
 export default function LoginPage() {
   const [fields, setFields] = useState<FormFields>({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
     remember: false,
   });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -29,10 +29,10 @@ export default function LoginPage() {
 
   function validate(): FormErrors {
     const e: FormErrors = {};
-    if (!fields.email) e.email = "Email is required.";
+    if (!fields.email) e.email = 'Email is required.';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email))
-      e.email = "Enter a valid email address.";
-    if (!fields.password) e.password = "Password is required.";
+      e.email = 'Enter a valid email address.';
+    if (!fields.password) e.password = 'Password is required.';
     return e;
   }
 
@@ -52,7 +52,7 @@ export default function LoginPage() {
     <div className={styles.page}>
       {/* ── Left branding panel ── */}
       <aside className={styles.panel}>
-        <Link href="/" className={styles.panelLogo}>
+        <Link href='/' className={styles.panelLogo}>
           <span className={styles.logoMark}>✚</span>
           MediKita
         </Link>
@@ -77,7 +77,7 @@ export default function LoginPage() {
       {/* ── Right form side ── */}
       <section className={styles.formSide}>
         {/* Mobile logo */}
-        <Link href="/" className={styles.mobileLogo}>
+        <Link href='/' className={styles.mobileLogo}>
           <span className={styles.logoMark}>✚</span>
           MediKita
         </Link>
@@ -93,17 +93,17 @@ export default function LoginPage() {
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
             {/* Email */}
             <div className={styles.field}>
-              <label htmlFor="email" className={styles.label}>
+              <label htmlFor='email' className={styles.label}>
                 Email address
               </label>
               <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
+                id='email'
+                type='email'
+                autoComplete='email'
+                placeholder='you@example.com'
                 value={fields.email}
-                onChange={(e) => set("email", e.target.value)}
-                className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
+                onChange={(e) => set('email', e.target.value)}
+                className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
               />
               {errors.email && (
                 <span className={styles.errorMsg}>{errors.email}</span>
@@ -112,17 +112,17 @@ export default function LoginPage() {
 
             {/* Password */}
             <div className={styles.field}>
-              <label htmlFor="password" className={styles.label}>
+              <label htmlFor='password' className={styles.label}>
                 Password
               </label>
               <input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="••••••••"
+                id='password'
+                type='password'
+                autoComplete='current-password'
+                placeholder='••••••••'
                 value={fields.password}
-                onChange={(e) => set("password", e.target.value)}
-                className={`${styles.input} ${errors.password ? styles.inputError : ""}`}
+                onChange={(e) => set('password', e.target.value)}
+                className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
               />
               {errors.password && (
                 <span className={styles.errorMsg}>{errors.password}</span>
@@ -133,32 +133,32 @@ export default function LoginPage() {
             <div className={styles.row}>
               <label className={styles.checkLabel}>
                 <input
-                  type="checkbox"
+                  type='checkbox'
                   checked={fields.remember}
-                  onChange={(e) => set("remember", e.target.checked)}
+                  onChange={(e) => set('remember', e.target.checked)}
                 />
                 Remember me
               </label>
-              <Link href="/forgot-password" className={styles.forgotLink}>
+              <Link href='/forgot-password' className={styles.forgotLink}>
                 Forgot password?
               </Link>
             </div>
 
-            <button type="submit" className={styles.submitBtn}>
+            <button type='submit' className={styles.submitBtn}>
               Sign in
             </button>
           </form>
 
           <div className={styles.divider}>or continue with</div>
 
-          <button type="button" className={styles.oauthBtn}>
+          <button type='button' className={styles.oauthBtn}>
             <GoogleIcon />
             Continue with Google
           </button>
 
           <p className={styles.footerText}>
-            Don&apos;t have an account?{" "}
-            <Link href="/signup">Create one free</Link>
+            Don&apos;t have an account?{' '}
+            <Link href='/signup'>Create one free</Link>
           </p>
         </div>
       </section>
@@ -168,22 +168,22 @@ export default function LoginPage() {
 
 function GoogleIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <svg width='18' height='18' viewBox='0 0 18 18' fill='none'>
       <path
-        d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"
-        fill="#4285F4"
+        d='M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z'
+        fill='#4285F4'
       />
       <path
-        d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"
-        fill="#34A853"
+        d='M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z'
+        fill='#34A853'
       />
       <path
-        d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z"
-        fill="#FBBC05"
+        d='M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z'
+        fill='#FBBC05'
       />
       <path
-        d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z"
-        fill="#EA4335"
+        d='M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z'
+        fill='#EA4335'
       />
     </svg>
   );
