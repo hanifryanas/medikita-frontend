@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { authService } from '@/lib/services/auth.service';
 import styles from '../auth.module.scss';
 
 interface FormFields {
@@ -44,8 +45,19 @@ export default function LoginPage() {
       return;
     }
     setErrors({});
-    // TODO: wire up authentication API
-    console.log(fields);
+    authService
+      .login({
+        email: fields.email,
+        password: fields.password,
+        isRemember: fields.remember,
+      })
+      .then((res) => {
+        // TODO: store token and redirect
+        console.log(res);
+      })
+      .catch((err: Error) => {
+        setErrors({ email: err.message });
+      });
   }
 
   return (

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { authService } from '@/lib/services/auth.service';
 import styles from '../auth.module.scss';
 
 interface FormFields {
@@ -63,8 +64,20 @@ export default function SignupPage() {
       return;
     }
     setErrors({});
-    // TODO: wire up registration API
-    console.log(fields);
+    authService
+      .signup({
+        firstName: fields.firstName,
+        lastName: fields.lastName,
+        email: fields.email,
+        password: fields.password,
+      })
+      .then((res) => {
+        // TODO: store token and redirect
+        console.log(res);
+      })
+      .catch((err: Error) => {
+        setErrors({ email: err.message });
+      });
   }
 
   return (
