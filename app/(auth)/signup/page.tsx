@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { authService } from '@/lib/services/auth.service';
+import { validateSignup } from '@/lib/validations';
 import styles from '../auth.module.scss';
 
 interface FormFields {
@@ -14,14 +15,17 @@ interface FormFields {
   terms: boolean;
 }
 
-interface FormErrors {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  password?: string;
-  confirmPassword?: string;
-  terms?: string;
-}
+type SignupErrors = Partial<
+  Record<
+    | 'firstName'
+    | 'lastName'
+    | 'email'
+    | 'password'
+    | 'confirmPassword'
+    | 'terms',
+    string
+  >
+>;
 
 export default function SignupPage() {
   const [fields, setFields] = useState<FormFields>({
@@ -32,33 +36,25 @@ export default function SignupPage() {
     confirmPassword: '',
     terms: false,
   });
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<SignupErrors>({});
 
   function set(key: keyof FormFields, value: string | boolean) {
     setFields((prev) => ({ ...prev, [key]: value }));
   }
 
-  function validate(): FormErrors {
-    const e: FormErrors = {};
-    if (!fields.firstName.trim()) e.firstName = 'First name is required.';
-    if (!fields.lastName.trim()) e.lastName = 'Last name is required.';
-    if (!fields.email) e.email = 'Email is required.';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email))
-      e.email = 'Enter a valid email address.';
-    if (!fields.password) e.password = 'Password is required.';
-    else if (fields.password.length < 8)
-      e.password = 'Password must be at least 8 characters.';
-    if (!fields.confirmPassword)
-      e.confirmPassword = 'Please confirm your password.';
-    else if (fields.password !== fields.confirmPassword)
-      e.confirmPassword = 'Passwords do not match.';
-    if (!fields.terms) e.terms = 'You must accept the terms to continue.';
-    return e;
-  }
-
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const errs = validate();
+    const result = validateSignup({
+      firstName: fields.firstName,
+      lastName: fields.lastName,
+      email: fields.email,
+      password: fields.password,
+      confirmPassword: fields.confirmPassword,
+    });
+    const errs: SignupErrors = { ...result.errors };
+    if (!fields.terms) {
+      errs.terms = 'You must accept the terms to continue.';
+    }
     if (Object.keys(errs).length) {
       setErrors(errs);
       return;
@@ -70,6 +66,7 @@ export default function SignupPage() {
         lastName: fields.lastName,
         email: fields.email,
         password: fields.password,
+        confirmPassword: fields.confirmPassword,
       })
       .then((res) => {
         // TODO: store token and redirect

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { authService } from '@/lib/services/auth.service';
+import { validateLogin } from '@/lib/validations';
 import styles from '../auth.module.scss';
 
 interface FormFields {
@@ -11,10 +12,7 @@ interface FormFields {
   remember: boolean;
 }
 
-interface FormErrors {
-  email?: string;
-  password?: string;
-}
+type LoginErrors = Partial<Record<'email' | 'password', string>>;
 
 export default function LoginPage() {
   const [fields, setFields] = useState<FormFields>({
@@ -22,26 +20,21 @@ export default function LoginPage() {
     password: '',
     remember: false,
   });
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<LoginErrors>({});
 
   function set(key: keyof FormFields, value: string | boolean) {
     setFields((prev) => ({ ...prev, [key]: value }));
   }
 
-  function validate(): FormErrors {
-    const e: FormErrors = {};
-    if (!fields.email) e.email = 'Email is required.';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email))
-      e.email = 'Enter a valid email address.';
-    if (!fields.password) e.password = 'Password is required.';
-    return e;
-  }
-
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const errs = validate();
-    if (Object.keys(errs).length) {
-      setErrors(errs);
+    const result = validateLogin({
+      email: fields.email,
+      password: fields.password,
+      isRemember: fields.remember,
+    });
+    if (Object.keys(result.errors).length) {
+      setErrors(result.errors);
       return;
     }
     setErrors({});
