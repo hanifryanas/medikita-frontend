@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { authService } from '@/lib/services/auth.service';
+import { useAuthStore } from '@/lib/stores';
 import { validateLogin } from '@/lib/validations';
 import styles from '../auth.module.scss';
 
@@ -15,6 +17,8 @@ interface FormFields {
 type LoginErrors = Partial<Record<'email' | 'password', string>>;
 
 export default function LoginPage() {
+  const router = useRouter();
+  const login = useAuthStore((state) => state.login);
   const [fields, setFields] = useState<FormFields>({
     email: '',
     password: '',
@@ -22,11 +26,11 @@ export default function LoginPage() {
   });
   const [errors, setErrors] = useState<LoginErrors>({});
 
-  function set(key: keyof FormFields, value: string | boolean) {
+  const set = (key: keyof FormFields, value: string | boolean) => {
     setFields((prev) => ({ ...prev, [key]: value }));
-  }
+  };
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = validateLogin({
       email: fields.email,
@@ -37,21 +41,23 @@ export default function LoginPage() {
       setErrors(result.errors);
       return;
     }
+
     setErrors({});
-    authService
-      .login({
+    try {
+      const res = await authService.login({
         email: fields.email,
         password: fields.password,
         isRemember: fields.remember,
-      })
-      .then((res) => {
-        // TODO: store token and redirect
-        console.log(res);
-      })
-      .catch((err: Error) => {
-        setErrors({ email: err.message });
       });
-  }
+
+      login(res);
+      router.push('/');
+    } catch (err) {
+      setErrors({
+        email: err instanceof Error ? err.message : 'Login failed.',
+      });
+    }
+  };
 
   return (
     <div className={styles.page}>
@@ -171,7 +177,7 @@ export default function LoginPage() {
   );
 }
 
-function GoogleIcon() {
+const GoogleIcon = () => {
   return (
     <svg width='18' height='18' viewBox='0 0 18 18' fill='none'>
       <path
@@ -192,4 +198,4 @@ function GoogleIcon() {
       />
     </svg>
   );
-}
+};

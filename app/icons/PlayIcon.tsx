@@ -1,4 +1,4 @@
-export function PlayIcon() {
+export const PlayIcon = () => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -10,4 +10,4 @@ export function PlayIcon() {
       <polygon points='5 3 19 12 5 21 5 3' />
     </svg>
   );
-}
+};

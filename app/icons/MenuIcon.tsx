@@ -1,4 +1,4 @@
-export function MenuIcon() {
+export const MenuIcon = () => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -16,4 +16,4 @@ export function MenuIcon() {
       <line x1='3' y1='18' x2='21' y2='18' />
     </svg>
   );
-}
+};

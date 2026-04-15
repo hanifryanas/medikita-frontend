@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import styles from './page.module.scss';
-import { SearchIcon } from './icons/SearchIcon';
-import { MenuIcon } from './icons/MenuIcon';
-import { PlayIcon } from './icons/PlayIcon';
+import { MenuIcon, PlayIcon, SearchIcon } from './icons';
 
 export default function Home() {
   return (
