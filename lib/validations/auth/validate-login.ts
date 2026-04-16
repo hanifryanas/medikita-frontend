@@ -15,17 +15,14 @@ export const validateLogin = (
     validationResult.errors.password = 'Password is required.';
   }
 
-  if (
-    !loginPayload.email &&
-    !loginPayload.username &&
-    !loginPayload.phoneNumber
-  ) {
-    validationResult.errors.email =
+  if (!loginPayload.identifier.trim()) {
+    validationResult.errors.identifier =
       'Email, username, or phone number is required.';
-  }
-
-  if (loginPayload.email && !EMAIL_REGEX.test(loginPayload.email)) {
-    validationResult.errors.email = 'Enter a valid email address.';
+  } else if (
+    loginPayload.identifier.includes('@') &&
+    !EMAIL_REGEX.test(loginPayload.identifier)
+  ) {
+    validationResult.errors.identifier = 'Enter a valid email address.';
   }
 
   return Object.keys(validationResult.errors).length > 0

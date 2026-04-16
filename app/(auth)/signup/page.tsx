@@ -5,38 +5,30 @@ import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { authService } from '@/lib/services/auth.service';
 import { useAuthStore } from '@/lib/stores';
+import type { SignupPayload } from '@/lib/types/auth';
 import { validateSignup } from '@/lib/validations';
 import styles from '../auth.module.scss';
 import { GoogleIcon } from '@/app/icons';
 
-interface FormFields {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
+interface FormFields extends SignupPayload {
   terms: boolean;
 }
 
-type SignupErrors = Partial<
-  Record<
-    | 'firstName'
-    | 'lastName'
-    | 'email'
-    | 'password'
-    | 'confirmPassword'
-    | 'terms',
-    string
-  >
->;
+type SignupErrors = Partial<Record<keyof FormFields, string>>;
 
 export default function SignupPage() {
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
   const [fields, setFields] = useState<FormFields>({
+    identityNumber: '',
     firstName: '',
     lastName: '',
     email: '',
+    userName: '',
+    gender: 'female',
+    dateOfBirth: '',
+    phoneNumber: '',
+    address: '',
     password: '',
     confirmPassword: '',
     terms: false,
@@ -50,9 +42,15 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = validateSignup({
+      identityNumber: fields.identityNumber,
       firstName: fields.firstName,
       lastName: fields.lastName,
       email: fields.email,
+      userName: fields.userName,
+      gender: fields.gender,
+      dateOfBirth: fields.dateOfBirth,
+      phoneNumber: fields.phoneNumber,
+      address: fields.address,
       password: fields.password,
       confirmPassword: fields.confirmPassword,
     });
@@ -68,9 +66,15 @@ export default function SignupPage() {
     setErrors({});
     try {
       const res = await authService.signup({
+        identityNumber: fields.identityNumber,
         firstName: fields.firstName,
         lastName: fields.lastName,
         email: fields.email,
+        userName: fields.userName,
+        gender: fields.gender,
+        dateOfBirth: fields.dateOfBirth,
+        phoneNumber: fields.phoneNumber,
+        address: fields.address,
         password: fields.password,
         confirmPassword: fields.confirmPassword,
       });
@@ -128,6 +132,47 @@ export default function SignupPage() {
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
+            {/* Identity + username */}
+            <div className={styles.fieldRow}>
+              <div className={styles.field}>
+                <label htmlFor='identityNumber' className={styles.label}>
+                  Identity number
+                </label>
+                <input
+                  id='identityNumber'
+                  type='text'
+                  inputMode='numeric'
+                  placeholder='5908370143133247'
+                  value={fields.identityNumber}
+                  onChange={(e) => set('identityNumber', e.target.value)}
+                  className={`${styles.input} ${errors.identityNumber ? styles.inputError : ''}`}
+                />
+                {errors.identityNumber && (
+                  <span className={styles.errorMsg}>
+                    {errors.identityNumber}
+                  </span>
+                )}
+              </div>
+
+              <div className={styles.field}>
+                <label htmlFor='userName' className={styles.label}>
+                  Username
+                </label>
+                <input
+                  id='userName'
+                  type='text'
+                  autoComplete='username'
+                  placeholder='aliciahartmann'
+                  value={fields.userName}
+                  onChange={(e) => set('userName', e.target.value)}
+                  className={`${styles.input} ${errors.userName ? styles.inputError : ''}`}
+                />
+                {errors.userName && (
+                  <span className={styles.errorMsg}>{errors.userName}</span>
+                )}
+              </div>
+            </div>
+
             {/* First + Last name */}
             <div className={styles.fieldRow}>
               <div className={styles.field}>
@@ -183,6 +228,83 @@ export default function SignupPage() {
               />
               {errors.email && (
                 <span className={styles.errorMsg}>{errors.email}</span>
+              )}
+            </div>
+
+            {/* Gender + birth date */}
+            <div className={styles.fieldRow}>
+              <div className={styles.field}>
+                <label htmlFor='gender' className={styles.label}>
+                  Gender
+                </label>
+                <select
+                  id='gender'
+                  value={fields.gender}
+                  onChange={(e) =>
+                    set('gender', e.target.value as FormFields['gender'])
+                  }
+                  className={`${styles.input} ${errors.gender ? styles.inputError : ''}`}
+                >
+                  <option value='female'>Female</option>
+                  <option value='male'>Male</option>
+                </select>
+                {errors.gender && (
+                  <span className={styles.errorMsg}>{errors.gender}</span>
+                )}
+              </div>
+
+              <div className={styles.field}>
+                <label htmlFor='dateOfBirth' className={styles.label}>
+                  Date of birth
+                </label>
+                <input
+                  id='dateOfBirth'
+                  type='date'
+                  value={fields.dateOfBirth}
+                  onChange={(e) => set('dateOfBirth', e.target.value)}
+                  className={`${styles.input} ${errors.dateOfBirth ? styles.inputError : ''}`}
+                />
+                {errors.dateOfBirth && (
+                  <span className={styles.errorMsg}>{errors.dateOfBirth}</span>
+                )}
+              </div>
+            </div>
+
+            {/* Phone */}
+            <div className={styles.field}>
+              <label htmlFor='phoneNumber' className={styles.label}>
+                Phone number
+              </label>
+              <input
+                id='phoneNumber'
+                type='tel'
+                inputMode='numeric'
+                autoComplete='tel'
+                placeholder='629575997989'
+                value={fields.phoneNumber}
+                onChange={(e) => set('phoneNumber', e.target.value)}
+                className={`${styles.input} ${errors.phoneNumber ? styles.inputError : ''}`}
+              />
+              {errors.phoneNumber && (
+                <span className={styles.errorMsg}>{errors.phoneNumber}</span>
+              )}
+            </div>
+
+            {/* Address */}
+            <div className={styles.field}>
+              <label htmlFor='address' className={styles.label}>
+                Address
+              </label>
+              <textarea
+                id='address'
+                placeholder='Jl Ki Ageng Pemanahan No. L-268, Kel. Kanigoro, Kec. Kartoharjo, Kota Madiun, Jawa Timur'
+                value={fields.address}
+                onChange={(e) => set('address', e.target.value)}
+                className={`${styles.textarea} ${errors.address ? styles.inputError : ''}`}
+                rows={3}
+              />
+              {errors.address && (
+                <span className={styles.errorMsg}>{errors.address}</span>
               )}
             </div>
 

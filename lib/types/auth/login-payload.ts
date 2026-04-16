@@ -1,7 +1,5 @@
 export interface LoginPayload {
-  email?: string;
-  username?: string;
-  phoneNumber?: string;
+  identifier: string;
   password: string;
   isRemember: boolean;
 }

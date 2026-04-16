@@ -9,18 +9,18 @@ import { validateLogin } from '@/lib/validations';
 import styles from '../auth.module.scss';
 
 interface FormFields {
-  email: string;
+  identifier: string;
   password: string;
   remember: boolean;
 }
 
-type LoginErrors = Partial<Record<'email' | 'password', string>>;
+type LoginErrors = Partial<Record<'identifier' | 'password', string>>;
 
 export default function LoginPage() {
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
   const [fields, setFields] = useState<FormFields>({
-    email: '',
+    identifier: '',
     password: '',
     remember: false,
   });
@@ -33,19 +33,22 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = validateLogin({
-      email: fields.email,
+      identifier: fields.identifier,
       password: fields.password,
       isRemember: fields.remember,
     });
     if (Object.keys(result.errors).length) {
-      setErrors(result.errors);
+      setErrors({
+        identifier: result.errors.identifier,
+        password: result.errors.password,
+      });
       return;
     }
 
     setErrors({});
     try {
       const res = await authService.login({
-        email: fields.email,
+        identifier: fields.identifier,
         password: fields.password,
         isRemember: fields.remember,
       });
@@ -54,7 +57,7 @@ export default function LoginPage() {
       router.push('/');
     } catch (err) {
       setErrors({
-        email: err instanceof Error ? err.message : 'Login failed.',
+        identifier: err instanceof Error ? err.message : 'Login failed.',
       });
     }
   };
@@ -102,22 +105,22 @@ export default function LoginPage() {
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
-            {/* Email */}
+            {/* Identifier */}
             <div className={styles.field}>
-              <label htmlFor='email' className={styles.label}>
-                Email address
+              <label htmlFor='identifier' className={styles.label}>
+                Email, username, or phone number
               </label>
               <input
-                id='email'
-                type='email'
-                autoComplete='email'
+                id='identifier'
+                type='text'
+                autoComplete='username'
                 placeholder='you@example.com'
-                value={fields.email}
-                onChange={(e) => set('email', e.target.value)}
-                className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
+                value={fields.identifier}
+                onChange={(e) => set('identifier', e.target.value)}
+                className={`${styles.input} ${errors.identifier ? styles.inputError : ''}`}
               />
-              {errors.email && (
-                <span className={styles.errorMsg}>{errors.email}</span>
+              {errors.identifier && (
+                <span className={styles.errorMsg}>{errors.identifier}</span>
               )}
             </div>
 
