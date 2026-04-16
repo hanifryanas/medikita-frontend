@@ -132,84 +132,23 @@ export default function SignupPage() {
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
-            {/* Identity + username */}
-            <div className={styles.fieldRow}>
-              <div className={styles.field}>
-                <label htmlFor='identityNumber' className={styles.label}>
-                  Identity number
-                </label>
-                <input
-                  id='identityNumber'
-                  type='text'
-                  inputMode='numeric'
-                  placeholder='5908370143133247'
-                  value={fields.identityNumber}
-                  onChange={(e) => set('identityNumber', e.target.value)}
-                  className={`${styles.input} ${errors.identityNumber ? styles.inputError : ''}`}
-                />
-                {errors.identityNumber && (
-                  <span className={styles.errorMsg}>
-                    {errors.identityNumber}
-                  </span>
-                )}
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor='userName' className={styles.label}>
-                  Username
-                </label>
-                <input
-                  id='userName'
-                  type='text'
-                  autoComplete='username'
-                  placeholder='aliciahartmann'
-                  value={fields.userName}
-                  onChange={(e) => set('userName', e.target.value)}
-                  className={`${styles.input} ${errors.userName ? styles.inputError : ''}`}
-                />
-                {errors.userName && (
-                  <span className={styles.errorMsg}>{errors.userName}</span>
-                )}
-              </div>
-            </div>
-
-            {/* First + Last name */}
-            <div className={styles.fieldRow}>
-              <div className={styles.field}>
-                <label htmlFor='firstName' className={styles.label}>
-                  First name
-                </label>
-                <input
-                  id='firstName'
-                  type='text'
-                  autoComplete='given-name'
-                  placeholder='Jane'
-                  value={fields.firstName}
-                  onChange={(e) => set('firstName', e.target.value)}
-                  className={`${styles.input} ${errors.firstName ? styles.inputError : ''}`}
-                />
-                {errors.firstName && (
-                  <span className={styles.errorMsg}>{errors.firstName}</span>
-                )}
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor='lastName' className={styles.label}>
-                  Last name
-                </label>
-                <input
-                  id='lastName'
-                  type='text'
-                  autoComplete='family-name'
-                  placeholder='Doe'
-                  value={fields.lastName}
-                  onChange={(e) => set('lastName', e.target.value)}
-                  className={`${styles.input} ${errors.lastName ? styles.inputError : ''}`}
-                />
-                {errors.lastName && (
-                  <span className={styles.errorMsg}>{errors.lastName}</span>
-                )}
-              </div>
+            {/* Identity number */}
+            <div className={styles.field}>
+              <label htmlFor='identityNumber' className={styles.label}>
+                Identity number
+              </label>
+              <input
+                id='identityNumber'
+                type='text'
+                inputMode='numeric'
+                placeholder='5908370143133247'
+                value={fields.identityNumber}
+                onChange={(e) => set('identityNumber', e.target.value)}
+                className={`${styles.input} ${errors.identityNumber ? styles.inputError : ''}`}
+              />
+              {errors.identityNumber && (
+                <span className={styles.errorMsg}>{errors.identityNumber}</span>
+              )}
             </div>
 
             {/* Email */}
@@ -228,6 +167,64 @@ export default function SignupPage() {
               />
               {errors.email && (
                 <span className={styles.errorMsg}>{errors.email}</span>
+              )}
+            </div>
+
+            {/* First + Last name */}
+            <div className={styles.fieldRow}>
+              <div className={styles.field}>
+                <label htmlFor='firstName' className={styles.label}>
+                  First name
+                </label>
+                <input
+                  id='firstName'
+                  type='text'
+                  autoComplete='given-name'
+                  placeholder='Rania'
+                  value={fields.firstName}
+                  onChange={(e) => set('firstName', e.target.value)}
+                  className={`${styles.input} ${errors.firstName ? styles.inputError : ''}`}
+                />
+                {errors.firstName && (
+                  <span className={styles.errorMsg}>{errors.firstName}</span>
+                )}
+              </div>
+
+              <div className={styles.field}>
+                <label htmlFor='lastName' className={styles.label}>
+                  Last name
+                </label>
+                <input
+                  id='lastName'
+                  type='text'
+                  autoComplete='family-name'
+                  placeholder='Isya'
+                  value={fields.lastName}
+                  onChange={(e) => set('lastName', e.target.value)}
+                  className={`${styles.input} ${errors.lastName ? styles.inputError : ''}`}
+                />
+                {errors.lastName && (
+                  <span className={styles.errorMsg}>{errors.lastName}</span>
+                )}
+              </div>
+            </div>
+
+            {/* Username */}
+            <div className={styles.field}>
+              <label htmlFor='userName' className={styles.label}>
+                Username
+              </label>
+              <input
+                id='userName'
+                type='text'
+                autoComplete='username'
+                placeholder='raniaisya'
+                value={fields.userName}
+                onChange={(e) => set('userName', e.target.value)}
+                className={`${styles.input} ${errors.userName ? styles.inputError : ''}`}
+              />
+              {errors.userName && (
+                <span className={styles.errorMsg}>{errors.userName}</span>
               )}
             </div>
 
