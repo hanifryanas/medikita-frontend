@@ -16,12 +16,8 @@ export const validateLogin = (
   }
 
   if (!loginPayload.identifier.trim()) {
-    validationResult.errors.identifier =
-      'Email, username, or phone number is required.';
-  } else if (
-    loginPayload.identifier.includes('@') &&
-    !EMAIL_REGEX.test(loginPayload.identifier)
-  ) {
+    validationResult.errors.identifier = 'Email, username, or phone number is required.';
+  } else if (loginPayload.identifier.includes('@') && !EMAIL_REGEX.test(loginPayload.identifier)) {
     validationResult.errors.identifier = 'Enter a valid email address.';
   }
 

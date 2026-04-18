@@ -110,8 +110,8 @@ export default function SignupPage() {
             exceptional results.
           </h2>
           <p className={styles.panelSub}>
-            Create your free account and get access to expert consultations, appointment scheduling, and your complete health history — all in one
-            secure place.
+            Create your free account and get access to expert consultations, appointment scheduling,
+            and your complete health history — all in one secure place.
           </p>
         </div>
       </aside>
@@ -145,7 +145,9 @@ export default function SignupPage() {
                 onChange={(e) => set('identityNumber', e.target.value)}
                 className={`${styles.input} ${errors.identityNumber ? styles.inputError : ''}`}
               />
-              {errors.identityNumber && <span className={styles.errorMsg}>{errors.identityNumber}</span>}
+              {errors.identityNumber && (
+                <span className={styles.errorMsg}>{errors.identityNumber}</span>
+              )}
             </div>
 
             {/* Email */}
@@ -246,7 +248,9 @@ export default function SignupPage() {
                   onChange={(e) => set('dateOfBirth', e.target.value)}
                   className={`${styles.input} ${errors.dateOfBirth ? styles.inputError : ''}`}
                 />
-                {errors.dateOfBirth && <span className={styles.errorMsg}>{errors.dateOfBirth}</span>}
+                {errors.dateOfBirth && (
+                  <span className={styles.errorMsg}>{errors.dateOfBirth}</span>
+                )}
               </div>
             </div>
 
@@ -331,19 +335,28 @@ export default function SignupPage() {
                   type='button'
                   className={styles.passwordToggle}
                   onClick={() => setIsConfirmPasswordVisible((value) => !value)}
-                  aria-label={isConfirmPasswordVisible ? 'Hide confirm password' : 'Show confirm password'}
+                  aria-label={
+                    isConfirmPasswordVisible ? 'Hide confirm password' : 'Show confirm password'
+                  }
                   aria-pressed={isConfirmPasswordVisible}
                 >
                   {isConfirmPasswordVisible ? 'Hide' : 'Show'}
                 </button>
               </div>
-              {errors.confirmPassword && <span className={styles.errorMsg}>{errors.confirmPassword}</span>}
+              {errors.confirmPassword && (
+                <span className={styles.errorMsg}>{errors.confirmPassword}</span>
+              )}
             </div>
 
             {/* Terms */}
             <div className={styles.field}>
               <label className={styles.checkLabel}>
-                <input type='checkbox' checked={fields.terms} onChange={(e) => set('terms', e.target.checked)} />I agree to the{' '}
+                <input
+                  type='checkbox'
+                  checked={fields.terms}
+                  onChange={(e) => set('terms', e.target.checked)}
+                />
+                I agree to the{' '}
                 <Link href='/terms' style={{ color: '#3a7bd5' }}>
                   Terms of Service
                 </Link>{' '}

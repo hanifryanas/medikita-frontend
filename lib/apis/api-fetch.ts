@@ -3,10 +3,7 @@ import { FetchOptions } from './fetch-options';
 
 const BASE_URL = appConfig.apiUrl;
 
-export const apiFetch = async <T>(
-  path: string,
-  options: FetchOptions = {}
-): Promise<T> => {
+export const apiFetch = async <T>(path: string, options: FetchOptions = {}): Promise<T> => {
   const { body, headers, token, ...rest } = options;
 
   const res = await fetch(`${BASE_URL}${path}`, {

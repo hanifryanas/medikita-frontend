@@ -15,8 +15,7 @@ export const validateSignup = (
   if (!signupPayload.identityNumber.trim()) {
     validationResult.errors.identityNumber = 'Identity number is required.';
   } else if (!DIGITS_REGEX.test(signupPayload.identityNumber)) {
-    validationResult.errors.identityNumber =
-      'Identity number must contain digits only.';
+    validationResult.errors.identityNumber = 'Identity number must contain digits only.';
   }
 
   if (!signupPayload.userName.trim()) {
@@ -50,8 +49,7 @@ export const validateSignup = (
   if (!signupPayload.phoneNumber.trim()) {
     validationResult.errors.phoneNumber = 'Phone number is required.';
   } else if (!DIGITS_REGEX.test(signupPayload.phoneNumber)) {
-    validationResult.errors.phoneNumber =
-      'Phone number must contain digits only.';
+    validationResult.errors.phoneNumber = 'Phone number must contain digits only.';
   }
 
   if (!signupPayload.address.trim()) {
@@ -61,8 +59,7 @@ export const validateSignup = (
   if (!signupPayload.password) {
     validationResult.errors.password = 'Password is required.';
   } else if (signupPayload.password.length < 8) {
-    validationResult.errors.password =
-      'Password must be at least 8 characters.';
+    validationResult.errors.password = 'Password must be at least 8 characters.';
   }
 
   if (!signupPayload.confirmPassword) {

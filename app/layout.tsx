@@ -13,8 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title:
-    'MediKita - Trusted Healthcare Partner for Personalized Care and Compassionate Service',
+  title: 'MediKita - Trusted Healthcare Partner for Personalized Care and Compassionate Service',
   description:
     'MediKita is here to provide you with the best healthcare experience. Our team of experienced doctors and healthcare professionals are committed to providing high-quality, personalized attention to our patients. Whether you need a routine check-up or specialized care, we are here to support you every step of the way.',
 };

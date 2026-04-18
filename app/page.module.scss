@@ -1,4 +1,4 @@
-@use "./styles/color" as *;
+@use './styles/color' as *;
 
 // ─── Hero (page wrapper) ──────────────────────────────────
 .hero {
@@ -19,7 +19,7 @@
       rgba(11, 26, 46, 0.5) 62%,
       rgba(11, 26, 46, 0.15) 100%
     ),
-    url("/hero.jpg") 70% center / cover no-repeat;
+    url('/hero.jpg') 70% center / cover no-repeat;
   background-color: $navy-900;
 }
 

@@ -83,8 +83,8 @@ export default function LoginPage() {
             our priority.
           </h2>
           <p className={styles.panelSub}>
-            Sign in to manage your appointments, access medical records, and
-            connect with our team of specialists — all in one place.
+            Sign in to manage your appointments, access medical records, and connect with our team
+            of specialists — all in one place.
           </p>
         </div>
       </aside>
@@ -100,9 +100,7 @@ export default function LoginPage() {
         <div className={styles.formCard}>
           <div className={styles.formHeader}>
             <h1 className={styles.formTitle}>Welcome back</h1>
-            <p className={styles.formSubtitle}>
-              Sign in to your MediKita account
-            </p>
+            <p className={styles.formSubtitle}>Sign in to your MediKita account</p>
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -120,9 +118,7 @@ export default function LoginPage() {
                 onChange={(e) => set('identifier', e.target.value)}
                 className={`${styles.input} ${errors.identifier ? styles.inputError : ''}`}
               />
-              {errors.identifier && (
-                <span className={styles.errorMsg}>{errors.identifier}</span>
-              )}
+              {errors.identifier && <span className={styles.errorMsg}>{errors.identifier}</span>}
             </div>
 
             {/* Password */}
@@ -144,17 +140,13 @@ export default function LoginPage() {
                   type='button'
                   className={styles.passwordToggle}
                   onClick={() => setIsPasswordVisible((value) => !value)}
-                  aria-label={
-                    isPasswordVisible ? 'Hide password' : 'Show password'
-                  }
+                  aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
                   aria-pressed={isPasswordVisible}
                 >
                   {isPasswordVisible ? 'Hide' : 'Show'}
                 </button>
               </div>
-              {errors.password && (
-                <span className={styles.errorMsg}>{errors.password}</span>
-              )}
+              {errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
             </div>
 
             {/* Remember me & forgot password */}
@@ -185,8 +177,7 @@ export default function LoginPage() {
           </button>
 
           <p className={styles.footerText}>
-            Don&apos;t have an account?{' '}
-            <Link href='/signup'>Create one free</Link>
+            Don&apos;t have an account? <Link href='/signup'>Create one free</Link>
           </p>
         </div>
       </section>

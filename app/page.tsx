@@ -58,9 +58,8 @@ export default function Home() {
             exceptional results.
           </h1>
           <p className={styles.heroDesc}>
-            Our team of experienced doctors and healthcare professionals are
-            committed to providing high-quality, personalized attention to our
-            patients.
+            Our team of experienced doctors and healthcare professionals are committed to providing
+            high-quality, personalized attention to our patients.
           </p>
           <button className={styles.ctaBtn}>
             <span className={styles.ctaIcon}>

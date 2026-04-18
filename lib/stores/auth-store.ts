@@ -23,9 +23,7 @@ const initialAuthState: AuthState = {
   token: null,
 };
 
-const createAuthActions = (
-  set: (partial: Partial<AuthState>) => void
-): AuthAction => ({
+const createAuthActions = (set: (partial: Partial<AuthState>) => void): AuthAction => ({
   login: (auth) =>
     set({
       currentLoginUser: auth.user,
@@ -34,9 +32,7 @@ const createAuthActions = (
   logout: () => set(initialAuthState),
 });
 
-const createAuthStore = (
-  set: (partial: Partial<AuthState>) => void
-): AuthStore => ({
+const createAuthStore = (set: (partial: Partial<AuthState>) => void): AuthStore => ({
   ...initialAuthState,
   ...createAuthActions(set),
 });
