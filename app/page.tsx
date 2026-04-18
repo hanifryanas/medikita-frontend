@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { NavAuthSection } from './components/navigation';
 import styles from './page.module.scss';
 import { MenuIcon, PlayIcon, SearchIcon } from './icons';
 
@@ -38,12 +39,7 @@ export default function Home() {
             <button className={styles.iconBtn} aria-label='Menu'>
               <MenuIcon />
             </button>
-            <Link href='/login' className={styles.navBtnGhost}>
-              Log in
-            </Link>
-            <Link href='/signup' className={styles.navBtnPrimary}>
-              Sign up
-            </Link>
+            <NavAuthSection />
           </div>
         </div>
       </nav>

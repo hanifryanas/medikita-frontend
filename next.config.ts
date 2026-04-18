@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
       {
         // Proxy /api/* → NestJS backend (avoids CORS in client components)
         source: '/api/:path*',
-        destination: `${process.env.API_URL}/:path*`,
+        destination: `${process.env.NEST_API_URL}/:path*`,
       },
     ];
   },

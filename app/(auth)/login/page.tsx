@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import { authService } from '@/lib/services/auth.service';
 import { useAuthStore } from '@/lib/stores';
 import { validateLogin } from '@/lib/validations';
 import styles from '../auth.module.scss';
@@ -48,13 +47,27 @@ export default function LoginPage() {
 
     setErrors({});
     try {
-      const res = await authService.login({
-        identifier: fields.identifier,
-        password: fields.password,
-        isRemember: fields.remember,
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identifier: fields.identifier,
+          password: fields.password,
+          isRemember: fields.remember,
+        }),
       });
 
-      login(res);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: 'Login failed.' }));
+        setErrors({ identifier: err?.message ?? 'Login failed.' });
+        return;
+      }
+
+      const data: {
+        accessToken: string;
+        user: { id: string; email: string; username: string; phoneNumber?: string };
+      } = await res.json();
+      login(data.user, data.accessToken);
       router.push('/');
     } catch (err) {
       setErrors({

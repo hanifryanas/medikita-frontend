@@ -95,49 +95,6 @@
   margin-left: auto;
 }
 
-.navBtnGhost {
-  display: inline-flex;
-  align-items: center;
-  height: 36px;
-  padding: 0 1rem;
-  border-radius: 8px;
-  font-size: 0.84rem;
-  font-weight: 500;
-  color: $white;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  transition:
-    background 0.2s,
-    border-color 0.2s;
-  white-space: nowrap;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.38);
-  }
-
-  @media (max-width: 480px) {
-    display: none;
-  }
-}
-
-.navBtnPrimary {
-  display: inline-flex;
-  align-items: center;
-  height: 36px;
-  padding: 0 1rem;
-  border-radius: 8px;
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: $white;
-  background: $blue-500;
-  transition: background 0.2s;
-  white-space: nowrap;
-
-  &:hover {
-    background: darken($blue-500, 8%);
-  }
-}
-
 .iconBtn {
   display: inline-flex;
   align-items: center;

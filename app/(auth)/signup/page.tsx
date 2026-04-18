@@ -3,8 +3,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import { authService } from '@/lib/services/auth.service';
-import { useAuthStore } from '@/lib/stores';
 import type { SignupPayload } from '@/lib/types/auth';
 import { validateSignup } from '@/lib/validations';
 import styles from '../auth.module.scss';
@@ -18,7 +16,6 @@ type SignupErrors = Partial<Record<keyof FormFields, string>>;
 
 export default function SignupPage() {
   const router = useRouter();
-  const login = useAuthStore((state) => state.login);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
   const [fields, setFields] = useState<FormFields>({
@@ -67,22 +64,31 @@ export default function SignupPage() {
 
     setErrors({});
     try {
-      const res = await authService.signup({
-        identityNumber: fields.identityNumber,
-        firstName: fields.firstName,
-        lastName: fields.lastName,
-        email: fields.email,
-        userName: fields.userName,
-        gender: fields.gender,
-        dateOfBirth: fields.dateOfBirth,
-        phoneNumber: fields.phoneNumber,
-        address: fields.address,
-        password: fields.password,
-        confirmPassword: fields.confirmPassword,
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identityNumber: fields.identityNumber,
+          firstName: fields.firstName,
+          lastName: fields.lastName,
+          email: fields.email,
+          userName: fields.userName,
+          gender: fields.gender,
+          dateOfBirth: fields.dateOfBirth,
+          phoneNumber: fields.phoneNumber,
+          address: fields.address,
+          password: fields.password,
+          confirmPassword: fields.confirmPassword,
+        }),
       });
 
-      login(res);
-      router.push('/');
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: 'Sign up failed.' }));
+        setErrors({ email: err?.message ?? 'Sign up failed.' });
+        return;
+      }
+
+      router.push('/login');
     } catch (err) {
       setErrors({
         email: err instanceof Error ? err.message : 'Sign up failed.',
