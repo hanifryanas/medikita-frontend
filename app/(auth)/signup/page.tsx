@@ -19,6 +19,8 @@ type SignupErrors = Partial<Record<keyof FormFields, string>>;
 export default function SignupPage() {
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
   const [fields, setFields] = useState<FormFields>({
     identityNumber: '',
     firstName: '',
@@ -108,9 +110,8 @@ export default function SignupPage() {
             exceptional results.
           </h2>
           <p className={styles.panelSub}>
-            Create your free account and get access to expert consultations,
-            appointment scheduling, and your complete health history — all in
-            one secure place.
+            Create your free account and get access to expert consultations, appointment scheduling, and your complete health history — all in one
+            secure place.
           </p>
         </div>
       </aside>
@@ -126,9 +127,7 @@ export default function SignupPage() {
         <div className={styles.formCard}>
           <div className={styles.formHeader}>
             <h1 className={styles.formTitle}>Create an account</h1>
-            <p className={styles.formSubtitle}>
-              Start your health journey with MediKita today
-            </p>
+            <p className={styles.formSubtitle}>Start your health journey with MediKita today</p>
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -146,9 +145,7 @@ export default function SignupPage() {
                 onChange={(e) => set('identityNumber', e.target.value)}
                 className={`${styles.input} ${errors.identityNumber ? styles.inputError : ''}`}
               />
-              {errors.identityNumber && (
-                <span className={styles.errorMsg}>{errors.identityNumber}</span>
-              )}
+              {errors.identityNumber && <span className={styles.errorMsg}>{errors.identityNumber}</span>}
             </div>
 
             {/* Email */}
@@ -165,9 +162,7 @@ export default function SignupPage() {
                 onChange={(e) => set('email', e.target.value)}
                 className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
               />
-              {errors.email && (
-                <span className={styles.errorMsg}>{errors.email}</span>
-              )}
+              {errors.email && <span className={styles.errorMsg}>{errors.email}</span>}
             </div>
 
             {/* First + Last name */}
@@ -185,9 +180,7 @@ export default function SignupPage() {
                   onChange={(e) => set('firstName', e.target.value)}
                   className={`${styles.input} ${errors.firstName ? styles.inputError : ''}`}
                 />
-                {errors.firstName && (
-                  <span className={styles.errorMsg}>{errors.firstName}</span>
-                )}
+                {errors.firstName && <span className={styles.errorMsg}>{errors.firstName}</span>}
               </div>
 
               <div className={styles.field}>
@@ -203,9 +196,7 @@ export default function SignupPage() {
                   onChange={(e) => set('lastName', e.target.value)}
                   className={`${styles.input} ${errors.lastName ? styles.inputError : ''}`}
                 />
-                {errors.lastName && (
-                  <span className={styles.errorMsg}>{errors.lastName}</span>
-                )}
+                {errors.lastName && <span className={styles.errorMsg}>{errors.lastName}</span>}
               </div>
             </div>
 
@@ -223,9 +214,7 @@ export default function SignupPage() {
                 onChange={(e) => set('userName', e.target.value)}
                 className={`${styles.input} ${errors.userName ? styles.inputError : ''}`}
               />
-              {errors.userName && (
-                <span className={styles.errorMsg}>{errors.userName}</span>
-              )}
+              {errors.userName && <span className={styles.errorMsg}>{errors.userName}</span>}
             </div>
 
             {/* Gender + birth date */}
@@ -237,17 +226,13 @@ export default function SignupPage() {
                 <select
                   id='gender'
                   value={fields.gender}
-                  onChange={(e) =>
-                    set('gender', e.target.value as FormFields['gender'])
-                  }
+                  onChange={(e) => set('gender', e.target.value as FormFields['gender'])}
                   className={`${styles.input} ${errors.gender ? styles.inputError : ''}`}
                 >
                   <option value='female'>Female</option>
                   <option value='male'>Male</option>
                 </select>
-                {errors.gender && (
-                  <span className={styles.errorMsg}>{errors.gender}</span>
-                )}
+                {errors.gender && <span className={styles.errorMsg}>{errors.gender}</span>}
               </div>
 
               <div className={styles.field}>
@@ -261,9 +246,7 @@ export default function SignupPage() {
                   onChange={(e) => set('dateOfBirth', e.target.value)}
                   className={`${styles.input} ${errors.dateOfBirth ? styles.inputError : ''}`}
                 />
-                {errors.dateOfBirth && (
-                  <span className={styles.errorMsg}>{errors.dateOfBirth}</span>
-                )}
+                {errors.dateOfBirth && <span className={styles.errorMsg}>{errors.dateOfBirth}</span>}
               </div>
             </div>
 
@@ -282,9 +265,7 @@ export default function SignupPage() {
                 onChange={(e) => set('phoneNumber', e.target.value)}
                 className={`${styles.input} ${errors.phoneNumber ? styles.inputError : ''}`}
               />
-              {errors.phoneNumber && (
-                <span className={styles.errorMsg}>{errors.phoneNumber}</span>
-              )}
+              {errors.phoneNumber && <span className={styles.errorMsg}>{errors.phoneNumber}</span>}
             </div>
 
             {/* Address */}
@@ -300,9 +281,7 @@ export default function SignupPage() {
                 className={`${styles.textarea} ${errors.address ? styles.inputError : ''}`}
                 rows={3}
               />
-              {errors.address && (
-                <span className={styles.errorMsg}>{errors.address}</span>
-              )}
+              {errors.address && <span className={styles.errorMsg}>{errors.address}</span>}
             </div>
 
             {/* Password */}
@@ -310,18 +289,27 @@ export default function SignupPage() {
               <label htmlFor='password' className={styles.label}>
                 Password
               </label>
-              <input
-                id='password'
-                type='password'
-                autoComplete='new-password'
-                placeholder='Min. 8 characters'
-                value={fields.password}
-                onChange={(e) => set('password', e.target.value)}
-                className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
-              />
-              {errors.password && (
-                <span className={styles.errorMsg}>{errors.password}</span>
-              )}
+              <div className={styles.passwordField}>
+                <input
+                  id='password'
+                  type={isPasswordVisible ? 'text' : 'password'}
+                  autoComplete='new-password'
+                  placeholder='Min. 8 characters'
+                  value={fields.password}
+                  onChange={(e) => set('password', e.target.value)}
+                  className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
+                />
+                <button
+                  type='button'
+                  className={styles.passwordToggle}
+                  onClick={() => setIsPasswordVisible((value) => !value)}
+                  aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
+                  aria-pressed={isPasswordVisible}
+                >
+                  {isPasswordVisible ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
             </div>
 
             {/* Confirm password */}
@@ -329,31 +317,33 @@ export default function SignupPage() {
               <label htmlFor='confirmPassword' className={styles.label}>
                 Confirm password
               </label>
-              <input
-                id='confirmPassword'
-                type='password'
-                autoComplete='new-password'
-                placeholder='Repeat your password'
-                value={fields.confirmPassword}
-                onChange={(e) => set('confirmPassword', e.target.value)}
-                className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ''}`}
-              />
-              {errors.confirmPassword && (
-                <span className={styles.errorMsg}>
-                  {errors.confirmPassword}
-                </span>
-              )}
+              <div className={styles.passwordField}>
+                <input
+                  id='confirmPassword'
+                  type={isConfirmPasswordVisible ? 'text' : 'password'}
+                  autoComplete='new-password'
+                  placeholder='Repeat your password'
+                  value={fields.confirmPassword}
+                  onChange={(e) => set('confirmPassword', e.target.value)}
+                  className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ''}`}
+                />
+                <button
+                  type='button'
+                  className={styles.passwordToggle}
+                  onClick={() => setIsConfirmPasswordVisible((value) => !value)}
+                  aria-label={isConfirmPasswordVisible ? 'Hide confirm password' : 'Show confirm password'}
+                  aria-pressed={isConfirmPasswordVisible}
+                >
+                  {isConfirmPasswordVisible ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {errors.confirmPassword && <span className={styles.errorMsg}>{errors.confirmPassword}</span>}
             </div>
 
             {/* Terms */}
             <div className={styles.field}>
               <label className={styles.checkLabel}>
-                <input
-                  type='checkbox'
-                  checked={fields.terms}
-                  onChange={(e) => set('terms', e.target.checked)}
-                />
-                I agree to the{' '}
+                <input type='checkbox' checked={fields.terms} onChange={(e) => set('terms', e.target.checked)} />I agree to the{' '}
                 <Link href='/terms' style={{ color: '#3a7bd5' }}>
                   Terms of Service
                 </Link>{' '}
@@ -362,9 +352,7 @@ export default function SignupPage() {
                   Privacy Policy
                 </Link>
               </label>
-              {errors.terms && (
-                <span className={styles.errorMsg}>{errors.terms}</span>
-              )}
+              {errors.terms && <span className={styles.errorMsg}>{errors.terms}</span>}
             </div>
 
             <button type='submit' className={styles.submitBtn}>

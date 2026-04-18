@@ -181,6 +181,10 @@
   gap: 0.4rem;
 }
 
+.passwordField {
+  position: relative;
+}
+
 .label {
   font-size: 0.8rem;
   font-weight: 600;
@@ -192,7 +196,7 @@
   height: 44px;
   border: 1.5px solid #e5e7eb;
   border-radius: 10px;
-  padding: 0 0.875rem;
+  padding: 0 3.9rem 0 0.875rem;
   font-size: 0.875rem;
   color: $navy-900;
   background: #fafafa;
@@ -211,6 +215,27 @@
     border-color: $blue-500;
     box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.12);
     background: #fff;
+  }
+}
+
+.passwordToggle {
+  position: absolute;
+  top: 50%;
+  right: 0.875rem;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: $blue-500;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+
+  &:focus-visible {
+    outline: 2px solid rgba(58, 123, 213, 0.35);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 }
 

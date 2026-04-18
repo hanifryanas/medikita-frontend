@@ -19,6 +19,7 @@ type LoginErrors = Partial<Record<'identifier' | 'password', string>>;
 export default function LoginPage() {
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [fields, setFields] = useState<FormFields>({
     identifier: '',
     password: '',
@@ -129,15 +130,28 @@ export default function LoginPage() {
               <label htmlFor='password' className={styles.label}>
                 Password
               </label>
-              <input
-                id='password'
-                type='password'
-                autoComplete='current-password'
-                placeholder='••••••••'
-                value={fields.password}
-                onChange={(e) => set('password', e.target.value)}
-                className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
-              />
+              <div className={styles.passwordField}>
+                <input
+                  id='password'
+                  type={isPasswordVisible ? 'text' : 'password'}
+                  autoComplete='current-password'
+                  placeholder='••••••••'
+                  value={fields.password}
+                  onChange={(e) => set('password', e.target.value)}
+                  className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
+                />
+                <button
+                  type='button'
+                  className={styles.passwordToggle}
+                  onClick={() => setIsPasswordVisible((value) => !value)}
+                  aria-label={
+                    isPasswordVisible ? 'Hide password' : 'Show password'
+                  }
+                  aria-pressed={isPasswordVisible}
+                >
+                  {isPasswordVisible ? 'Hide' : 'Show'}
+                </button>
+              </div>
               {errors.password && (
                 <span className={styles.errorMsg}>{errors.password}</span>
               )}
