@@ -1,116 +1,95 @@
 'use client';
 
 import { create } from 'zustand';
+import { User } from '../types/users';
+import { FormValidationResult } from '../types/validations';
+import { LoginPayload, SignupPayload } from '../types/auth';
+import { validateLogin, validateSignup } from '../validations';
 
-export interface AuthUser {
-  id: string;
-  email: string;
-  username: string;
-  phoneNumber?: string;
+export enum AuthStatus {
+  Idle = 'idle',
+  Authenticated = 'authenticated',
+  Unauthenticated = 'unauthenticated',
 }
-
-export type AuthStatus = 'idle' | 'authenticated' | 'unauthenticated';
 
 export interface AuthStore {
-  accessToken: string | null;
-  user: AuthUser | null;
-  userId: string | null;
-  status: AuthStatus;
-  login: (user: AuthUser, accessToken: string) => void;
+  accessToken?: string;
+  setAccessToken: (accessToken?: string) => void;
+  loginPayload: Partial<LoginPayload>;
+  loginValidationResult: FormValidationResult<Partial<LoginPayload>>;
+  setLoginPayload: (payload: Partial<LoginPayload>) => void;
+  validateLoginPayload: (
+    payload?: Partial<LoginPayload>
+  ) => FormValidationResult<Partial<LoginPayload>>;
+  login: (user: User, accessToken: string) => void;
   logout: () => void;
-  setAccessToken: (accessToken: string | null) => void;
-  setUser: (user: AuthUser | null) => void;
+  setSignUpPayload: (payload: Partial<SignupPayload>) => void;
+  signUpPayload: Partial<SignupPayload>;
+  signUpValidationResult: FormValidationResult<Partial<SignupPayload>>;
+  validateSignUpPayload: (
+    payload?: Partial<SignupPayload>
+  ) => FormValidationResult<Partial<SignupPayload>>;
   reset: () => void;
-  getAccessToken: () => Promise<string | null>;
-  hydrate: () => Promise<void>;
+  status: AuthStatus;
+  currentUser?: User;
+  setUser: (user?: User) => void;
 }
 
-const resolveStatus = (user: AuthUser | null, accessToken: string | null): AuthStatus => {
-  if (user || accessToken) {
-    return 'authenticated';
-  }
-
-  return 'unauthenticated';
+const resolveStatus = (user?: User, accessToken?: string): AuthStatus => {
+  if (user || accessToken) return AuthStatus.Authenticated;
+  return AuthStatus.Unauthenticated;
 };
 
 const initialState = {
-  accessToken: null,
-  user: null,
-  userId: null,
-  status: 'idle' as AuthStatus,
+  accessToken: undefined,
+  currentUser: undefined,
+  status: AuthStatus.Idle,
+  loginPayload: {} as Partial<LoginPayload>,
+  signUpPayload: {} as Partial<SignupPayload>,
+  loginValidationResult: { errors: {} } as FormValidationResult<Partial<LoginPayload>>,
+  signUpValidationResult: { errors: {} } as FormValidationResult<Partial<SignupPayload>>,
 };
 
 export const useAuthStore = create<AuthStore>()((set, get) => ({
   ...initialState,
 
-  login: (user, accessToken) => {
-    set({
-      user,
-      userId: user.id,
-      accessToken,
-      status: 'authenticated',
-    });
-  },
-
-  logout: () => {
-    set({
-      ...initialState,
-      status: 'unauthenticated',
-    });
-  },
-
   setAccessToken: (accessToken) => {
-    const user = get().user;
-
-    set({
-      accessToken,
-      status: resolveStatus(user, accessToken),
-    });
+    set({ accessToken, status: resolveStatus(get().currentUser, accessToken) });
   },
 
   setUser: (user) => {
-    const accessToken = get().accessToken;
+    set({ currentUser: user, status: resolveStatus(user, get().accessToken) });
+  },
 
-    set({
-      user,
-      userId: user?.id ?? null,
-      status: resolveStatus(user, accessToken),
-    });
+  setLoginPayload: (payload) => {
+    set((state) => ({ loginPayload: { ...state.loginPayload, ...payload } }));
+  },
+
+  setSignUpPayload: (payload) => {
+    set((state) => ({ signUpPayload: { ...state.signUpPayload, ...payload } }));
+  },
+
+  validateLoginPayload: (payload) => {
+    const result = validateLogin(payload ?? get().loginPayload);
+    set({ loginValidationResult: result });
+    return result;
+  },
+
+  validateSignUpPayload: (payload) => {
+    const result = validateSignup(payload ?? get().signUpPayload);
+    set({ signUpValidationResult: result });
+    return result;
+  },
+
+  login: (user, accessToken) => {
+    set({ currentUser: user, accessToken, status: AuthStatus.Authenticated });
+  },
+
+  logout: () => {
+    set({ currentUser: undefined, accessToken: undefined, status: AuthStatus.Unauthenticated });
   },
 
   reset: () => {
-    set({
-      ...initialState,
-      status: 'unauthenticated',
-    });
-  },
-
-  getAccessToken: async () => {
-    return get().accessToken;
-  },
-
-  hydrate: async () => {
-    if (get().status === 'authenticated') return;
-
-    try {
-      const res = await fetch('/api/auth/refresh', { method: 'POST' });
-
-      if (!res.ok) {
-        set({ ...initialState, status: 'unauthenticated' });
-
-        return;
-      }
-
-      const data = await res.json();
-
-      set({
-        accessToken: data.accessToken,
-        user: data.user,
-        userId: data.user?.id ?? null,
-        status: 'authenticated',
-      });
-    } catch {
-      set({ ...initialState, status: 'unauthenticated' });
-    }
+    set({ ...initialState, status: AuthStatus.Unauthenticated });
   },
 }));

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { AuthHydrator } from './components/auth/AuthHydrator';
+import { AuthHydrator } from './components/auth/auth-hydrator';
 import './globals.scss';
 
 const geistSans = Geist({

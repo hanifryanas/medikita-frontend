@@ -1,25 +1,21 @@
 'use client';
 
 import Link from 'next/link';
+import { nextApi } from '@/lib/api/next';
 import { useAuthStore } from '@/lib/stores';
 import styles from './NavAuthSection.module.scss';
 
-const getUserInitial = (username?: string, email?: string) => {
-  const source = username?.trim() || email?.trim() || 'M';
-
-  return source.charAt(0).toUpperCase();
+const getUserInitial = (firstName?: string, lastName?: string) => {
+  const firstInitial = firstName?.charAt(0).toUpperCase() || '';
+  const lastInitial = lastName?.charAt(0).toUpperCase() || '';
+  return `${firstInitial}${lastInitial}`;
 };
 
-export function NavAuthSection() {
-  const accessToken = useAuthStore((state) => state.accessToken);
-  const user = useAuthStore((state) => state.user);
+export const NavAuthSection = () => {
+  const user = useAuthStore((state) => state.currentUser);
   const status = useAuthStore((state) => state.status);
-  const logout = useAuthStore((state) => state.logout);
 
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' }).catch(() => null);
-    logout();
-  };
+  const handleLogout = () => nextApi.auth.logout();
 
   if (status !== 'authenticated' || !user) {
     return (
@@ -37,11 +33,13 @@ export function NavAuthSection() {
   return (
     <div className={styles.navAvatarGroup}>
       <Link href='/profile' className={styles.navAvatarBtn} aria-label='Open profile'>
-        <span className={styles.navAvatarInitial}>{getUserInitial(user.username, user.email)}</span>
+        <span className={styles.navAvatarInitial}>
+          {getUserInitial(user.firstName, user.lastName)}
+        </span>
       </Link>
       <button type='button' className={styles.navBtnGhost} onClick={handleLogout}>
         Log out
       </button>
     </div>
   );
-}
+};

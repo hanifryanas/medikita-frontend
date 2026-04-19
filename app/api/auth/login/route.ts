@@ -1,4 +1,4 @@
-import { nestApi } from '@/lib/api';
+import { nestApi } from '@/lib/api/nest';
 import { appConfig } from '@/lib/config/app-config';
 import { LoginData } from '@/lib/types/auth';
 import { User } from '@/lib/types/users';
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   const accessToken = loginData.accessToken ?? null;
   const refreshToken = loginData.refreshToken ?? null;
 
-  if (!accessToken) {
+  if (!accessToken || !refreshToken) {
     return NextResponse.json({ message: 'Invalid login response from server.' }, { status: 500 });
   }
 
@@ -27,15 +27,13 @@ export async function POST(req: NextRequest) {
 
   const res = NextResponse.json({ accessToken, user: currentUser });
 
-  if (refreshToken) {
-    res.cookies.set('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: IS_PROD,
-      sameSite: 'lax',
-      path: '/',
-      ...(isRemember ? { maxAge: 60 * 60 * 24 * 30 } : {}),
-    });
-  }
+  res.cookies.set('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: IS_PROD,
+    sameSite: 'lax',
+    path: '/',
+    ...(isRemember ? { maxAge: 60 * 60 * 24 * 30 } : {}),
+  });
 
   return res;
 }

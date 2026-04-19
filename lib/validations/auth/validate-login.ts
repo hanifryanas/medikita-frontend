@@ -5,7 +5,7 @@ import { validFormValidationResult } from '../valid-form-validation-result';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const validateLogin = (
-  loginPayload: LoginPayload
+  loginPayload: Partial<LoginPayload>
 ): FormValidationResult<Partial<LoginPayload>> => {
   const validationResult: FormValidationResult<Partial<LoginPayload>> = {
     errors: {},
@@ -15,7 +15,7 @@ export const validateLogin = (
     validationResult.errors.password = 'Password is required.';
   }
 
-  if (!loginPayload.identifier.trim()) {
+  if (!loginPayload.identifier?.trim()) {
     validationResult.errors.identifier = 'Email, username, or phone number is required.';
   } else if (loginPayload.identifier.includes('@') && !EMAIL_REGEX.test(loginPayload.identifier)) {
     validationResult.errors.identifier = 'Enter a valid email address.';

@@ -6,27 +6,27 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DIGITS_REGEX = /^\d+$/;
 
 export const validateSignup = (
-  signupPayload: SignupPayload
+  signupPayload: Partial<SignupPayload>
 ): FormValidationResult<Partial<SignupPayload>> => {
   const validationResult: FormValidationResult<Partial<SignupPayload>> = {
     errors: {},
   };
 
-  if (!signupPayload.identityNumber.trim()) {
+  if (!signupPayload.identityNumber?.trim()) {
     validationResult.errors.identityNumber = 'Identity number is required.';
   } else if (!DIGITS_REGEX.test(signupPayload.identityNumber)) {
     validationResult.errors.identityNumber = 'Identity number must contain digits only.';
   }
 
-  if (!signupPayload.userName.trim()) {
+  if (!signupPayload.userName?.trim()) {
     validationResult.errors.userName = 'Username is required.';
   }
 
-  if (!signupPayload.firstName.trim()) {
+  if (!signupPayload.firstName?.trim()) {
     validationResult.errors.firstName = 'First name is required.';
   }
 
-  if (!signupPayload.lastName.trim()) {
+  if (!signupPayload.lastName?.trim()) {
     validationResult.errors.lastName = 'Last name is required.';
   }
 
@@ -46,13 +46,13 @@ export const validateSignup = (
     validationResult.errors.dateOfBirth = 'Enter a valid date of birth.';
   }
 
-  if (!signupPayload.phoneNumber.trim()) {
+  if (!signupPayload.phoneNumber?.trim()) {
     validationResult.errors.phoneNumber = 'Phone number is required.';
   } else if (!DIGITS_REGEX.test(signupPayload.phoneNumber)) {
     validationResult.errors.phoneNumber = 'Phone number must contain digits only.';
   }
 
-  if (!signupPayload.address.trim()) {
+  if (!signupPayload.address?.trim()) {
     validationResult.errors.address = 'Address is required.';
   }
 

@@ -1,5 +1,5 @@
-import { FetchOptions } from './fetch-options';
-import { nestFetch } from './nest-fetch';
+import { FetchOptions } from '../fetch-options';
+import { nestFetch } from './fetch';
 
 export const nestApi = {
   get: <T>(path: string, options?: Omit<FetchOptions, 'method'>) =>

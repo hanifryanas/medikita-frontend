@@ -1,1 +1,1 @@
-export * from './NavAuthSection';
+export * from './nav-auth-section';
