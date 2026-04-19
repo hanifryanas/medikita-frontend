@@ -22,6 +22,7 @@ export interface AuthStore {
   setUser: (user: AuthUser | null) => void;
   reset: () => void;
   getAccessToken: () => Promise<string | null>;
+  hydrate: () => Promise<void>;
 }
 
 const resolveStatus = (user: AuthUser | null, accessToken: string | null): AuthStatus => {
@@ -86,5 +87,30 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
 
   getAccessToken: async () => {
     return get().accessToken;
+  },
+
+  hydrate: async () => {
+    if (get().status === 'authenticated') return;
+
+    try {
+      const res = await fetch('/api/auth/refresh', { method: 'POST' });
+
+      if (!res.ok) {
+        set({ ...initialState, status: 'unauthenticated' });
+
+        return;
+      }
+
+      const data = await res.json();
+
+      set({
+        accessToken: data.accessToken,
+        user: data.user,
+        userId: data.user?.id ?? null,
+        status: 'authenticated',
+      });
+    } catch {
+      set({ ...initialState, status: 'unauthenticated' });
+    }
   },
 }));

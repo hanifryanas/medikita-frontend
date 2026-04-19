@@ -11,9 +11,15 @@ const getUserInitial = (username?: string, email?: string) => {
 };
 
 export function NavAuthSection() {
+  const accessToken = useAuthStore((state) => state.accessToken);
   const user = useAuthStore((state) => state.user);
   const status = useAuthStore((state) => state.status);
   const logout = useAuthStore((state) => state.logout);
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' }).catch(() => null);
+    logout();
+  };
 
   if (status !== 'authenticated' || !user) {
     return (
@@ -33,7 +39,7 @@ export function NavAuthSection() {
       <Link href='/profile' className={styles.navAvatarBtn} aria-label='Open profile'>
         <span className={styles.navAvatarInitial}>{getUserInitial(user.username, user.email)}</span>
       </Link>
-      <button type='button' className={styles.navBtnGhost} onClick={logout}>
+      <button type='button' className={styles.navBtnGhost} onClick={handleLogout}>
         Log out
       </button>
     </div>
