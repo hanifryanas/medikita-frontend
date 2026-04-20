@@ -1,6 +1,6 @@
 import { nestApi } from '@/lib/api/nest';
 import { appConfig } from '@/lib/config/app-config';
-import { LoginData } from '@/lib/types/auth';
+import { SigninData } from '@/lib/types/auth';
 import { User } from '@/lib/types/users';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -10,17 +10,17 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const isRemember = Boolean(body.isRemember);
 
-  const loginData = await nestApi.post<LoginData>('auth/login', {
+  const signinData = await nestApi.post<SigninData>('auth/signin', {
     identifier: body.identifier,
     password: body.password,
     isRemember,
   });
 
-  const accessToken = loginData.accessToken ?? null;
-  const refreshToken = loginData.refreshToken ?? null;
+  const accessToken = signinData.accessToken ?? null;
+  const refreshToken = signinData.refreshToken ?? null;
 
   if (!accessToken || !refreshToken) {
-    return NextResponse.json({ message: 'Invalid login response from server.' }, { status: 500 });
+    return NextResponse.json({ message: 'Invalid sign in response from server.' }, { status: 500 });
   }
 
   const currentUser = await nestApi.get<User>('auth/me', { token: accessToken });

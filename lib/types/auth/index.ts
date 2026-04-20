@@ -1,4 +1,4 @@
 export * from './auth-response';
-export * from './login-data';
-export * from './login-payload';
+export * from './signin-data';
+export * from './signin-payload';
 export * from './signup-payload';

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const PROTECTED_PATHS = ['/dashboard', '/appointments', '/profile', '/settings'];
 
-const AUTH_PATHS = ['/login', '/signup'];
+const AUTH_PATHS = ['/signin', '/signup'];
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -12,10 +12,10 @@ export function proxy(req: NextRequest) {
   const isAuthRoute = AUTH_PATHS.some((p) => pathname.startsWith(p));
 
   if (isProtected && !hasSession) {
-    const loginUrl = req.nextUrl.clone();
-    loginUrl.pathname = '/login';
-    loginUrl.searchParams.set('next', pathname);
-    return NextResponse.redirect(loginUrl);
+    const signinUrl = req.nextUrl.clone();
+    signinUrl.pathname = '/signin';
+    signinUrl.searchParams.set('next', pathname);
+    return NextResponse.redirect(signinUrl);
   }
 
   if (isAuthRoute && hasSession) {

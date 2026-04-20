@@ -1,4 +1,4 @@
-export interface LoginData {
+export interface SigninData {
   userId: string;
   username: string;
   role: string;

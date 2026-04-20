@@ -15,13 +15,13 @@ export const NavAuthSection = () => {
   const user = useAuthStore((state) => state.currentUser);
   const status = useAuthStore((state) => state.status);
 
-  const handleLogout = () => nextApi.auth.logout();
+  const handleSignout = () => nextApi.auth.signout();
 
   if (status !== 'authenticated' || !user) {
     return (
       <div className={styles.navAuthGroup}>
-        <Link href='/login' className={styles.navBtnGhost}>
-          Log in
+        <Link href='/signin' className={styles.navBtnGhost}>
+          Sign in
         </Link>
         <Link href='/signup' className={styles.navBtnPrimary}>
           Sign up
@@ -37,8 +37,8 @@ export const NavAuthSection = () => {
           {getUserInitial(user.firstName, user.lastName)}
         </span>
       </Link>
-      <button type='button' className={styles.navBtnGhost} onClick={handleLogout}>
-        Log out
+      <button type='button' className={styles.navBtnGhost} onClick={handleSignout}>
+        Sign out
       </button>
     </div>
   );

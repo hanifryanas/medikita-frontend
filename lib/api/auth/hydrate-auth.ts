@@ -2,7 +2,7 @@ import { AuthStatus, useAuthStore } from '@/lib/stores';
 import { User } from '@/lib/types/users';
 
 export const hydrateAuth = async (): Promise<void> => {
-  const { status, login, reset } = useAuthStore.getState();
+  const { status, signin, reset } = useAuthStore.getState();
 
   if (status === AuthStatus.Authenticated) return;
 
@@ -15,7 +15,7 @@ export const hydrateAuth = async (): Promise<void> => {
     }
 
     const data: { accessToken: string; user: User } = await res.json();
-    login(data.user, data.accessToken);
+    signin(data.user, data.accessToken);
   } catch {
     reset();
   }

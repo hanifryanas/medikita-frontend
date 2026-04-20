@@ -88,7 +88,7 @@ export default function SignupPage() {
         return;
       }
 
-      router.push('/login');
+      router.push('/signin');
     } catch (err) {
       setErrors({
         email: err instanceof Error ? err.message : 'Sign up failed.',
@@ -387,7 +387,7 @@ export default function SignupPage() {
           </button>
 
           <p className={styles.footerText}>
-            Already have an account? <Link href='/login'>Sign in</Link>
+            Already have an account? <Link href='/signin'>Sign in</Link>
           </p>
         </div>
       </section>

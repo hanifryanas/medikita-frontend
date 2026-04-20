@@ -14,19 +14,19 @@ interface FormFields {
   remember: boolean;
 }
 
-type LoginErrors = Partial<Record<'identifier' | 'password', string>>;
+type SigninErrors = Partial<Record<'identifier' | 'password', string>>;
 
-export default function LoginPage() {
+export default function SigninPage() {
   const router = useRouter();
-  const validateLoginPayload = useAuthStore((s) => s.validateLoginPayload);
-  const login = useAuthStore((s) => s.login);
+  const validateSigninPayload = useAuthStore((s) => s.validateSigninPayload);
+  const signin = useAuthStore((s) => s.signin);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [fields, setFields] = useState<FormFields>({
     identifier: '',
     password: '',
     remember: false,
   });
-  const [errors, setErrors] = useState<LoginErrors>({});
+  const [errors, setErrors] = useState<SigninErrors>({});
 
   const set = (key: keyof FormFields, value: string | boolean) => {
     setFields((prev) => ({ ...prev, [key]: value }));
@@ -41,7 +41,7 @@ export default function LoginPage() {
       isRemember: fields.remember,
     };
 
-    const validation = validateLoginPayload(payload);
+    const validation = validateSigninPayload(payload);
 
     if (Object.keys(validation.errors).length) {
       setErrors(validation.errors);
@@ -51,11 +51,11 @@ export default function LoginPage() {
     setErrors({});
 
     try {
-      const data = await nextApi.auth.login(payload);
-      login(data.user, data.accessToken);
+      const data = await nextApi.auth.signin(payload);
+      signin(data.user, data.accessToken);
       router.push('/');
     } catch (err) {
-      setErrors({ identifier: err instanceof Error ? err.message : 'Login failed.' });
+      setErrors({ identifier: err instanceof Error ? err.message : 'Sign in failed.' });
     }
   };
 

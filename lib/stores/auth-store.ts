@@ -3,8 +3,8 @@
 import { create } from 'zustand';
 import { User } from '../types/users';
 import { FormValidationResult } from '../types/validations';
-import { LoginPayload, SignupPayload } from '../types/auth';
-import { validateLogin, validateSignup } from '../validations';
+import { SigninPayload, SignupPayload } from '../types/auth';
+import { validateSignin, validateSignup } from '../validations';
 
 export enum AuthStatus {
   Idle = 'idle',
@@ -15,14 +15,14 @@ export enum AuthStatus {
 export interface AuthStore {
   accessToken?: string;
   setAccessToken: (accessToken?: string) => void;
-  loginPayload: Partial<LoginPayload>;
-  loginValidationResult: FormValidationResult<Partial<LoginPayload>>;
-  setLoginPayload: (payload: Partial<LoginPayload>) => void;
-  validateLoginPayload: (
-    payload?: Partial<LoginPayload>
-  ) => FormValidationResult<Partial<LoginPayload>>;
-  login: (user: User, accessToken: string) => void;
-  logout: () => void;
+  signinPayload: Partial<SigninPayload>;
+  signinValidationResult: FormValidationResult<Partial<SigninPayload>>;
+  setSigninPayload: (payload: Partial<SigninPayload>) => void;
+  validateSigninPayload: (
+    payload?: Partial<SigninPayload>
+  ) => FormValidationResult<Partial<SigninPayload>>;
+  signin: (user: User, accessToken: string) => void;
+  signout: () => void;
   setSignUpPayload: (payload: Partial<SignupPayload>) => void;
   signUpPayload: Partial<SignupPayload>;
   signUpValidationResult: FormValidationResult<Partial<SignupPayload>>;
@@ -44,9 +44,9 @@ const initialState = {
   accessToken: undefined,
   currentUser: undefined,
   status: AuthStatus.Idle,
-  loginPayload: {} as Partial<LoginPayload>,
+  signinPayload: {} as Partial<SigninPayload>,
   signUpPayload: {} as Partial<SignupPayload>,
-  loginValidationResult: { errors: {} } as FormValidationResult<Partial<LoginPayload>>,
+  signinValidationResult: { errors: {} } as FormValidationResult<Partial<SigninPayload>>,
   signUpValidationResult: { errors: {} } as FormValidationResult<Partial<SignupPayload>>,
 };
 
@@ -61,17 +61,17 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
     set({ currentUser: user, status: resolveStatus(user, get().accessToken) });
   },
 
-  setLoginPayload: (payload) => {
-    set((state) => ({ loginPayload: { ...state.loginPayload, ...payload } }));
+  setSigninPayload: (payload) => {
+    set((state) => ({ signinPayload: { ...state.signinPayload, ...payload } }));
   },
 
   setSignUpPayload: (payload) => {
     set((state) => ({ signUpPayload: { ...state.signUpPayload, ...payload } }));
   },
 
-  validateLoginPayload: (payload) => {
-    const result = validateLogin(payload ?? get().loginPayload);
-    set({ loginValidationResult: result });
+  validateSigninPayload: (payload) => {
+    const result = validateSignin(payload ?? get().signinPayload);
+    set({ signinValidationResult: result });
     return result;
   },
 
@@ -81,11 +81,11 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
     return result;
   },
 
-  login: (user, accessToken) => {
+  signin: (user, accessToken) => {
     set({ currentUser: user, accessToken, status: AuthStatus.Authenticated });
   },
 
-  logout: () => {
+  signout: () => {
     set({ currentUser: undefined, accessToken: undefined, status: AuthStatus.Unauthenticated });
   },
 
