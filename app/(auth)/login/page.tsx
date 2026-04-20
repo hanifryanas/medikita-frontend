@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { nextApi } from '@/lib/api/next';
+import { useAuthStore } from '@/lib/stores';
 import styles from '../auth.module.scss';
 import { GoogleIcon } from '@/app/icons';
 
@@ -17,6 +18,8 @@ type LoginErrors = Partial<Record<'identifier' | 'password', string>>;
 
 export default function LoginPage() {
   const router = useRouter();
+  const validateLoginPayload = useAuthStore((s) => s.validateLoginPayload);
+  const login = useAuthStore((s) => s.login);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [fields, setFields] = useState<FormFields>({
     identifier: '',
@@ -31,20 +34,29 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrors({});
 
-    const result = await nextApi.auth.login({
+    const payload = {
       identifier: fields.identifier,
       password: fields.password,
       isRemember: fields.remember,
-    });
+    };
 
-    if (!result.success) {
-      setErrors(result.errors);
+    const validation = validateLoginPayload(payload);
+
+    if (Object.keys(validation.errors).length) {
+      setErrors(validation.errors);
       return;
     }
 
-    router.push('/');
+    setErrors({});
+
+    try {
+      const data = await nextApi.auth.login(payload);
+      login(data.user, data.accessToken);
+      router.push('/');
+    } catch (err) {
+      setErrors({ identifier: err instanceof Error ? err.message : 'Login failed.' });
+    }
   };
 
   return (

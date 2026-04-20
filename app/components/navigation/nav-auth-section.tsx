@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { nextApi } from '@/lib/api/next';
 import { useAuthStore } from '@/lib/stores';
-import styles from './NavAuthSection.module.scss';
+import styles from './nav-auth-section.module.scss';
 
 const getUserInitial = (firstName?: string, lastName?: string) => {
   const firstInitial = firstName?.charAt(0).toUpperCase() || '';
