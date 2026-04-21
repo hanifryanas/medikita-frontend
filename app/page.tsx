@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { NavAuthSection } from './components/navigation';
-import styles from './page.module.scss';
 import { MenuIcon, PlayIcon, SearchIcon } from './icons';
+import styles from './page.module.scss';
 
 export default function Home() {
   return (

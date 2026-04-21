@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import { nextApi } from '@/lib/api/next';
 import { useAuthStore } from '@/lib/stores';
+import Link from 'next/link';
 import styles from './nav-auth-section.module.scss';
 
 const getUserInitial = (firstName?: string, lastName?: string) => {

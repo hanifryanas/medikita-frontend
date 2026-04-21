@@ -1,3 +1,3 @@
-export * from './submit-signin';
 export * from './hydrate-auth';
+export * from './signin-auth';
 export * from './signout-auth';

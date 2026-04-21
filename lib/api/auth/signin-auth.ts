@@ -6,7 +6,7 @@ export interface SigninResult {
   user: User;
 }
 
-export const submitSignin = async (payload: SigninPayload): Promise<SigninResult> => {
+export const signinAuth = async (payload: SigninPayload): Promise<SigninResult> => {
   const res = await fetch('/api/auth/signin', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

@@ -1,12 +1,12 @@
 'use client';
 
+import { GoogleIcon } from '@/app/icons';
+import type { SignupPayload } from '@/lib/types/auth';
+import { validateSignup } from '@/lib/validations';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import type { SignupPayload } from '@/lib/types/auth';
-import { validateSignup } from '@/lib/validations';
 import styles from '../auth.module.scss';
-import { GoogleIcon } from '@/app/icons';
 
 interface FormFields extends SignupPayload {
   terms: boolean;

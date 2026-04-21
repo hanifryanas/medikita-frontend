@@ -1,9 +1,9 @@
 'use client';
 
 import { create } from 'zustand';
+import { SigninPayload, SignupPayload } from '../types/auth';
 import { User } from '../types/users';
 import { FormValidationResult } from '../types/validations';
-import { SigninPayload, SignupPayload } from '../types/auth';
 import { validateSignin, validateSignup } from '../validations';
 
 export enum AuthStatus {

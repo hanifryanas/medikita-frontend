@@ -1,12 +1,12 @@
 'use client';
 
+import { GoogleIcon } from '@/app/icons';
+import { nextApi } from '@/lib/api/next';
+import { useAuthStore } from '@/lib/stores';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import { nextApi } from '@/lib/api/next';
-import { useAuthStore } from '@/lib/stores';
 import styles from '../auth.module.scss';
-import { GoogleIcon } from '@/app/icons';
 
 interface FormFields {
   identifier: string;
