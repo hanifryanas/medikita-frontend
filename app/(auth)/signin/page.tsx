@@ -3,6 +3,7 @@
 import { GoogleIcon } from '@/app/icons';
 import { nextApi } from '@/lib/api/next';
 import { useAuthStore } from '@/lib/stores';
+import { validateSignin } from '@/lib/validations';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -18,7 +19,6 @@ type SigninErrors = Partial<Record<'identifier' | 'password', string>>;
 
 export default function SigninPage() {
   const router = useRouter();
-  const validateSigninPayload = useAuthStore((s) => s.validateSigninPayload);
   const signin = useAuthStore((s) => s.signin);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [fields, setFields] = useState<FormFields>({
@@ -41,7 +41,7 @@ export default function SigninPage() {
       isRemember: fields.remember,
     };
 
-    const validation = validateSigninPayload(payload);
+    const validation = validateSignin(payload);
 
     if (Object.keys(validation.errors).length) {
       setErrors(validation.errors);

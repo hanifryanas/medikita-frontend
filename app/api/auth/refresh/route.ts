@@ -1,7 +1,7 @@
+import { appConfig } from '@/lib/config/app-config';
 import { NextRequest, NextResponse } from 'next/server';
 
-const NEST_API = process.env.NEST_API_URL!;
-const IS_PROD = process.env.NODE_ENV === 'production';
+const IS_PROD = appConfig.nodeEnv === 'production';
 
 /** Decode JWT payload without verifying signature (safe — NestJS verifies on every protected call) */
 function decodeJwtPayload(token: string): Record<string, unknown> | null {
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
   // Try NestJS /auth/refresh first
   try {
-    const nestRes = await fetch(`${NEST_API}auth/refresh`, {
+    const nestRes = await fetch(`${appConfig.nestApiBaseUrl}auth/refresh`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refreshToken: cookieToken }),
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         let user: Record<string, unknown> | null = raw.user ?? null;
         if (!user) {
           try {
-            const meRes = await fetch(`${NEST_API}auth/me`, {
+            const meRes = await fetch(`${appConfig.nestApiBaseUrl}auth/me`, {
               headers: { Authorization: `Bearer ${accessToken}` },
             });
             if (meRes.ok) user = await meRes.json();
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
   // Try to get full user profile with the stored token
   let user: Record<string, unknown> | null = null;
   try {
-    const meRes = await fetch(`${NEST_API}auth/me`, {
+    const meRes = await fetch(`${appConfig.nestApiBaseUrl}auth/me`, {
       headers: { Authorization: `Bearer ${cookieToken}` },
     });
     if (meRes.ok) user = await meRes.json();

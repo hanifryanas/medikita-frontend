@@ -1,6 +1,7 @@
 'use client';
 
 import { GoogleIcon } from '@/app/icons';
+import { nextApi } from '@/lib/api/next';
 import type { SignupPayload } from '@/lib/types/auth';
 import { validateSignup } from '@/lib/validations';
 import Link from 'next/link';
@@ -64,30 +65,8 @@ export default function SignupPage() {
 
     setErrors({});
     try {
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          identityNumber: fields.identityNumber,
-          firstName: fields.firstName,
-          lastName: fields.lastName,
-          email: fields.email,
-          userName: fields.userName,
-          gender: fields.gender,
-          dateOfBirth: fields.dateOfBirth,
-          phoneNumber: fields.phoneNumber,
-          address: fields.address,
-          password: fields.password,
-          confirmPassword: fields.confirmPassword,
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ message: 'Sign up failed.' }));
-        setErrors({ email: err?.message ?? 'Sign up failed.' });
-        return;
-      }
-
+      const { terms: _, ...payload } = fields;
+      await nextApi.auth.signup(payload);
       router.push('/signin');
     } catch (err) {
       setErrors({
