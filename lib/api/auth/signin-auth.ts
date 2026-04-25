@@ -16,7 +16,6 @@ export const signinAuth = async (payload: SigninPayload): Promise<SigninResult> 
       body: JSON.stringify(payload),
     });
   } catch (err) {
-    // TODO: handle errors
     throw err;
   }
 

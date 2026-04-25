@@ -10,7 +10,6 @@ export const signupAuth = async (payload: SignupPayload): Promise<void> => {
       body: JSON.stringify(payload),
     });
   } catch (err) {
-    // TODO: handle errors
     throw err;
   }
 

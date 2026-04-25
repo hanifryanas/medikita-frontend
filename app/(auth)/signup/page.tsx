@@ -3,8 +3,8 @@
 import { GoogleIcon } from '@/app/icons';
 import { nextApi } from '@/lib/api/next';
 import type { SignupPayload } from '@/lib/types/auth';
-import { isValidationResultValid, validateSignup } from '@/lib/validations';
-import type { FormValidationResult } from '@/lib/types/validations';
+import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
+import { validateSignup } from '@/lib/validations/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -40,19 +40,8 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const result = validateSignup({
-      identityNumber: fields.identityNumber,
-      firstName: fields.firstName,
-      lastName: fields.lastName,
-      email: fields.email,
-      userName: fields.userName,
-      gender: fields.gender,
-      dateOfBirth: fields.dateOfBirth,
-      phoneNumber: fields.phoneNumber,
-      address: fields.address,
-      password: fields.password,
-      confirmPassword: fields.confirmPassword,
-    });
+    const result = validateSignup(fields);
+
     const errs: FormValidationResult<FormFields>['errors'] = { ...result.errors };
     if (!fields.terms) {
       errs.terms = 'You must accept the terms to continue.';

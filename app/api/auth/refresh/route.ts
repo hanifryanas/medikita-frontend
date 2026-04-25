@@ -41,8 +41,9 @@ export async function POST(req: NextRequest) {
               headers: { Authorization: `Bearer ${accessToken}` },
             });
             if (meRes.ok) user = await meRes.json();
-          } catch {
-            // TODO: handle errors
+          } catch (err) {
+            const message = err instanceof Error ? err.message : 'Failed to fetch current user.';
+            return NextResponse.json({ message }, { status: 400 });
           }
         }
         if (!user) {
@@ -66,8 +67,9 @@ export async function POST(req: NextRequest) {
         return res;
       }
     }
-  } catch {
-    // TODO: handle errors
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Refresh token failed.';
+    return NextResponse.json({ message }, { status: 400 });
   }
 
   const claims = decodeJwtPayload(cookieToken);
@@ -89,8 +91,9 @@ export async function POST(req: NextRequest) {
       headers: { Authorization: `Bearer ${cookieToken}` },
     });
     if (meRes.ok) user = await meRes.json();
-  } catch {
-    // TODO: handle errors
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to fetch current user.';
+    return NextResponse.json({ message }, { status: 400 });
   }
 
   if (!user) {

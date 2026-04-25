@@ -7,9 +7,8 @@ export const hydrateAuth = async (): Promise<HydrateResult | null> => {
 
   try {
     res = await fetch('/api/auth/refresh', { method: 'POST' });
-  } catch {
-    // TODO: handle errors
-    return null;
+  } catch (err) {
+    throw err;
   }
 
   if (!res.ok) return null;

@@ -41,7 +41,6 @@ export async function POST(req: NextRequest) {
 
     return res;
   } catch (err) {
-    // TODO: handle errors
     const message = err instanceof Error ? err.message : 'Sign in failed.';
     return NextResponse.json({ message }, { status: 400 });
   }
