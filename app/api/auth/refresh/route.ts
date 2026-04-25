@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const IS_PROD = appConfig.nodeEnv === 'production';
 
-/** Decode JWT payload without verifying signature (safe — NestJS verifies on every protected call) */
 function decodeJwtPayload(token: string): Record<string, unknown> | null {
   try {
     const payload = token.split('.')[1];
@@ -21,7 +20,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'No refresh token' }, { status: 401 });
   }
 
-  // Try NestJS /auth/refresh first
   try {
     const nestRes = await fetch(`${appConfig.nestApiBaseUrl}auth/refresh`, {
       method: 'POST',
@@ -34,9 +32,7 @@ export async function POST(req: NextRequest) {
       const accessToken: string = raw.accessToken ?? raw.token;
       const refreshToken: string = raw.refreshToken ?? raw.token;
 
-      // If NestJS returned 200 but no token, fall through to JWT decode
       if (!accessToken || !refreshToken) {
-        // fall through
       } else {
         let user: Record<string, unknown> | null = raw.user ?? null;
         if (!user) {
@@ -46,7 +42,7 @@ export async function POST(req: NextRequest) {
             });
             if (meRes.ok) user = await meRes.json();
           } catch {
-            /* fall through */
+            // TODO: handle errors
           }
         }
         if (!user) {
@@ -70,15 +66,10 @@ export async function POST(req: NextRequest) {
         return res;
       }
     }
-
-    // Any non-OK response from NestJS /auth/refresh falls through to JWT decode
-    // (NestJS may not have this endpoint, or we're sending an access token as refresh token)
   } catch {
-    // Network error — fall through to decode fallback
+    // TODO: handle errors
   }
 
-  // Fallback: NestJS has no /auth/refresh endpoint (or returned non-401 error).
-  // Decode the JWT we stored in the cookie to reconstruct the user.
   const claims = decodeJwtPayload(cookieToken);
   if (!claims) {
     const res = NextResponse.json({ message: 'Invalid token' }, { status: 401 });
@@ -86,14 +77,12 @@ export async function POST(req: NextRequest) {
     return res;
   }
 
-  // Check expiry
   if (typeof claims.exp === 'number' && claims.exp * 1000 < Date.now()) {
     const res = NextResponse.json({ message: 'Token expired' }, { status: 401 });
     res.cookies.delete('refreshToken');
     return res;
   }
 
-  // Try to get full user profile with the stored token
   let user: Record<string, unknown> | null = null;
   try {
     const meRes = await fetch(`${appConfig.nestApiBaseUrl}auth/me`, {
@@ -101,7 +90,7 @@ export async function POST(req: NextRequest) {
     });
     if (meRes.ok) user = await meRes.json();
   } catch {
-    /* fall through */
+    // TODO: handle errors
   }
 
   if (!user) {

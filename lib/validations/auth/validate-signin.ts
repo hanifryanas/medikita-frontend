@@ -1,8 +1,7 @@
 import { SigninPayload } from '@/lib/types/auth';
 import { FormValidationResult } from '@/lib/types/validations';
+import { isEmail } from '@/lib/utils/checkers';
 import { validFormValidationResult } from '../valid-form-validation-result';
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const validateSignin = (
   signinPayload: Partial<SigninPayload>
@@ -17,10 +16,7 @@ export const validateSignin = (
 
   if (!signinPayload.identifier?.trim()) {
     validationResult.errors.identifier = 'Email, username, or phone number is required.';
-  } else if (
-    signinPayload.identifier.includes('@') &&
-    !EMAIL_REGEX.test(signinPayload.identifier)
-  ) {
+  } else if (signinPayload.identifier.includes('@') && !isEmail(signinPayload.identifier)) {
     validationResult.errors.identifier = 'Enter a valid email address.';
   }
 

@@ -1,9 +1,7 @@
 import { SignupPayload } from '@/lib/types/auth';
 import { FormValidationResult } from '@/lib/types/validations';
+import { isDigit, isEmail } from '@/lib/utils/checkers';
 import { validFormValidationResult } from '../valid-form-validation-result';
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const DIGITS_REGEX = /^\d+$/;
 
 export const validateSignup = (
   signupPayload: Partial<SignupPayload>
@@ -14,7 +12,7 @@ export const validateSignup = (
 
   if (!signupPayload.identityNumber?.trim()) {
     validationResult.errors.identityNumber = 'Identity number is required.';
-  } else if (!DIGITS_REGEX.test(signupPayload.identityNumber)) {
+  } else if (!isDigit(signupPayload.identityNumber)) {
     validationResult.errors.identityNumber = 'Identity number must contain digits only.';
   }
 
@@ -32,7 +30,7 @@ export const validateSignup = (
 
   if (!signupPayload.email) {
     validationResult.errors.email = 'Email is required.';
-  } else if (!EMAIL_REGEX.test(signupPayload.email)) {
+  } else if (!isEmail(signupPayload.email)) {
     validationResult.errors.email = 'Enter a valid email address.';
   }
 
@@ -48,7 +46,7 @@ export const validateSignup = (
 
   if (!signupPayload.phoneNumber?.trim()) {
     validationResult.errors.phoneNumber = 'Phone number is required.';
-  } else if (!DIGITS_REGEX.test(signupPayload.phoneNumber)) {
+  } else if (!isDigit(signupPayload.phoneNumber)) {
     validationResult.errors.phoneNumber = 'Phone number must contain digits only.';
   }
 
