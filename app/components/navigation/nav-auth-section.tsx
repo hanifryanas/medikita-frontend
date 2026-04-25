@@ -2,22 +2,21 @@
 
 import { nextApi } from '@/lib/api/next';
 import { AuthStatus, useAuthStore } from '@/lib/stores';
+import { getUserInitial } from '@/lib/utils/formatters';
 import Link from 'next/link';
 import styles from './nav-auth-section.module.scss';
-
-const getUserInitial = (firstName?: string, lastName?: string) => {
-  const firstInitial = firstName?.charAt(0).toUpperCase() || '';
-  const lastInitial = lastName?.charAt(0).toUpperCase() || '';
-  return `${firstInitial}${lastInitial}`;
-};
-
 export const NavAuthSection = () => {
   const user = useAuthStore((state) => state.currentUser);
   const status = useAuthStore((state) => state.status);
   const signout = useAuthStore((state) => state.signout);
 
   const handleSignout = async () => {
-    await nextApi.auth.signout();
+    try {
+      await nextApi.auth.signout();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Sign out failed.';
+      alert(message);
+    }
     signout();
   };
 

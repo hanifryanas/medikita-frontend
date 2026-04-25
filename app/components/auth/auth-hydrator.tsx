@@ -10,9 +10,13 @@ export const AuthHydrator = () => {
       const { status, signin, reset } = useAuthStore.getState();
       if (status === AuthStatus.Authenticated) return;
 
-      const data = await nextApi.auth.hydrate();
-      if (data) signin(data.user, data.accessToken);
-      else reset();
+      try {
+        const data = await nextApi.auth.hydrate();
+        if (data) signin(data.user, data.accessToken);
+        else reset();
+      } catch {
+        reset();
+      }
     })();
   }, []);
 

@@ -7,17 +7,11 @@ export interface SigninResult {
 }
 
 export const signinAuth = async (payload: SigninPayload): Promise<SigninResult> => {
-  let res: Response;
-
-  try {
-    res = await fetch('/api/auth/signin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-  } catch (err) {
-    throw err;
-  }
+  const res = await fetch('/api/auth/signin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: 'Sign in failed.' }));

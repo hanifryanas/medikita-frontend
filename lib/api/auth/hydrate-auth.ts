@@ -3,13 +3,7 @@ import { SigninResult } from './signin-auth';
 export type HydrateResult = SigninResult;
 
 export const hydrateAuth = async (): Promise<HydrateResult | null> => {
-  let res: Response;
-
-  try {
-    res = await fetch('/api/auth/refresh', { method: 'POST' });
-  } catch (err) {
-    throw err;
-  }
+  const res = await fetch('/api/auth/refresh', { method: 'POST' });
 
   if (!res.ok) return null;
 
