@@ -3,7 +3,8 @@
 import { GoogleIcon } from '@/app/icons';
 import { nextApi } from '@/lib/api/next';
 import type { SignupPayload } from '@/lib/types/auth';
-import { validateSignup } from '@/lib/validations';
+import { isValidationResultValid, validateSignup } from '@/lib/validations';
+import type { FormValidationResult } from '@/lib/types/validations';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -12,8 +13,6 @@ import styles from '../auth.module.scss';
 interface FormFields extends SignupPayload {
   terms: boolean;
 }
-
-type SignupErrors = Partial<Record<keyof FormFields, string>>;
 
 export default function SignupPage() {
   const router = useRouter();
@@ -33,7 +32,7 @@ export default function SignupPage() {
     confirmPassword: '',
     terms: false,
   });
-  const [errors, setErrors] = useState<SignupErrors>({});
+  const [errors, setErrors] = useState<FormValidationResult<FormFields>['errors']>({});
 
   const set = (key: keyof FormFields, value: string | boolean) => {
     setFields((prev) => ({ ...prev, [key]: value }));
@@ -54,11 +53,11 @@ export default function SignupPage() {
       password: fields.password,
       confirmPassword: fields.confirmPassword,
     });
-    const errs: SignupErrors = { ...result.errors };
+    const errs: FormValidationResult<FormFields>['errors'] = { ...result.errors };
     if (!fields.terms) {
       errs.terms = 'You must accept the terms to continue.';
     }
-    if (Object.keys(errs).length) {
+    if (!isValidationResultValid({ errors: errs })) {
       setErrors(errs);
       return;
     }

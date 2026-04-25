@@ -1,11 +1,18 @@
 import { SignupPayload } from '@/lib/types/auth/signup-payload';
 
 export const signupAuth = async (payload: SignupPayload): Promise<void> => {
-  const res = await fetch('/api/auth/signup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+  let res: Response;
+
+  try {
+    res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch (err) {
+    // TODO: handle errors
+    throw err;
+  }
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: 'Sign up failed.' }));

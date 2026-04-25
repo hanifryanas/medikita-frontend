@@ -1,7 +1,7 @@
 'use client';
 
 import { nextApi } from '@/lib/api/next';
-import { useAuthStore } from '@/lib/stores';
+import { AuthStatus, useAuthStore } from '@/lib/stores';
 import Link from 'next/link';
 import styles from './nav-auth-section.module.scss';
 
@@ -14,10 +14,14 @@ const getUserInitial = (firstName?: string, lastName?: string) => {
 export const NavAuthSection = () => {
   const user = useAuthStore((state) => state.currentUser);
   const status = useAuthStore((state) => state.status);
+  const signout = useAuthStore((state) => state.signout);
 
-  const handleSignout = () => nextApi.auth.signout();
+  const handleSignout = async () => {
+    await nextApi.auth.signout();
+    signout();
+  };
 
-  if (status !== 'authenticated' || !user) {
+  if (status !== AuthStatus.Authenticated || !user) {
     return (
       <div className={styles.navAuthGroup}>
         <Link href='/signin' className={styles.navBtnGhost}>

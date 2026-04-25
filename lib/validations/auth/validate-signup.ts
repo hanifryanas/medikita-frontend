@@ -1,7 +1,6 @@
 import { SignupPayload } from '@/lib/types/auth';
 import { FormValidationResult } from '@/lib/types/validations';
 import { isDigit, isEmail } from '@/lib/utils/checkers';
-import { validFormValidationResult } from '../valid-form-validation-result';
 
 export const validateSignup = (
   signupPayload: Partial<SignupPayload>
@@ -66,7 +65,5 @@ export const validateSignup = (
     validationResult.errors.confirmPassword = 'Passwords do not match.';
   }
 
-  return Object.keys(validationResult.errors).length > 0
-    ? validationResult
-    : validFormValidationResult();
+  return validationResult;
 };

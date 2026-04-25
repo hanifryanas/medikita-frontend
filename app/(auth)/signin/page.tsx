@@ -3,47 +3,35 @@
 import { GoogleIcon } from '@/app/icons';
 import { nextApi } from '@/lib/api/next';
 import { useAuthStore } from '@/lib/stores';
-import { validateSignin } from '@/lib/validations';
+import type { SigninPayload } from '@/lib/types/auth';
+import type { FormValidationResult } from '@/lib/types/validations';
+import { isValidationResultValid, validateSignin } from '@/lib/validations';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import styles from '../auth.module.scss';
 
-interface FormFields {
-  identifier: string;
-  password: string;
-  remember: boolean;
-}
-
-type SigninErrors = Partial<Record<'identifier' | 'password', string>>;
-
 export default function SigninPage() {
   const router = useRouter();
   const signin = useAuthStore((s) => s.signin);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [fields, setFields] = useState<FormFields>({
+  const [fields, setFields] = useState<SigninPayload>({
     identifier: '',
     password: '',
-    remember: false,
+    isRemember: false,
   });
-  const [errors, setErrors] = useState<SigninErrors>({});
+  const [errors, setErrors] = useState<FormValidationResult<SigninPayload>['errors']>({});
 
-  const set = (key: keyof FormFields, value: string | boolean) => {
+  const set = (key: keyof SigninPayload, value: string | boolean) => {
     setFields((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const payload = {
-      identifier: fields.identifier,
-      password: fields.password,
-      isRemember: fields.remember,
-    };
+    const validation = validateSignin(fields);
 
-    const validation = validateSignin(payload);
-
-    if (Object.keys(validation.errors).length) {
+    if (!isValidationResultValid(validation)) {
       setErrors(validation.errors);
       return;
     }
@@ -51,7 +39,7 @@ export default function SigninPage() {
     setErrors({});
 
     try {
-      const data = await nextApi.auth.signin(payload);
+      const data = await nextApi.auth.signin(fields);
       signin(data.user, data.accessToken);
       router.push('/');
     } catch (err) {
@@ -150,8 +138,8 @@ export default function SigninPage() {
               <label className={styles.checkLabel}>
                 <input
                   type='checkbox'
-                  checked={fields.remember}
-                  onChange={(e) => set('remember', e.target.checked)}
+                  checked={fields.isRemember}
+                  onChange={(e) => set('isRemember', e.target.checked)}
                 />
                 Remember me
               </label>

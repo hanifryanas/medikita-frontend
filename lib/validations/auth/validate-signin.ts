@@ -1,7 +1,6 @@
 import { SigninPayload } from '@/lib/types/auth';
 import { FormValidationResult } from '@/lib/types/validations';
 import { isEmail } from '@/lib/utils/checkers';
-import { validFormValidationResult } from '../valid-form-validation-result';
 
 export const validateSignin = (
   signinPayload: Partial<SigninPayload>
@@ -20,7 +19,5 @@ export const validateSignin = (
     validationResult.errors.identifier = 'Enter a valid email address.';
   }
 
-  return Object.keys(validationResult.errors).length > 0
-    ? validationResult
-    : validFormValidationResult();
+  return validationResult;
 };

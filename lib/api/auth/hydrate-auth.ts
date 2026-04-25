@@ -1,22 +1,18 @@
-import { AuthStatus, useAuthStore } from '@/lib/stores';
-import { User } from '@/lib/types/users';
+import { SigninResult } from './signin-auth';
 
-export const hydrateAuth = async (): Promise<void> => {
-  const { status, signin, reset } = useAuthStore.getState();
+export type HydrateResult = SigninResult;
 
-  if (status === AuthStatus.Authenticated) return;
+export const hydrateAuth = async (): Promise<HydrateResult | null> => {
+  let res: Response;
 
   try {
-    const res = await fetch('/api/auth/refresh', { method: 'POST' });
-
-    if (!res.ok) {
-      reset();
-      return;
-    }
-
-    const data: { accessToken: string; user: User } = await res.json();
-    signin(data.user, data.accessToken);
+    res = await fetch('/api/auth/refresh', { method: 'POST' });
   } catch {
-    reset();
+    // TODO: handle errors
+    return null;
   }
+
+  if (!res.ok) return null;
+
+  return (await res.json()) as HydrateResult;
 };
