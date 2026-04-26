@@ -2,58 +2,66 @@
 
 import { GoogleIcon } from '@/app/icons';
 import { nextApi } from '@/lib/api/next';
-import type { SignupPayload } from '@/lib/types/auth';
+import type { SignupFormPayload, SignupPayload } from '@/lib/types/auth';
 import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
-import { validateSignup } from '@/lib/validations/auth';
+import { formatDate } from '@/lib/utils/formatters';
+import { validateSignupForm } from '@/lib/validations/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import styles from '../auth.module.scss';
 
-interface FormFields extends SignupPayload {
-  terms: boolean;
-}
-
 export default function SignupPage() {
   const router = useRouter();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
-  const [fields, setFields] = useState<FormFields>({
+  const [fields, setFields] = useState<SignupFormPayload>({
     identityNumber: '',
     firstName: '',
     lastName: '',
     email: '',
     userName: '',
     gender: 'female',
-    dateOfBirth: '',
+    dateOfBirth: new Date('2000-01-01'),
     phoneNumber: '',
     address: '',
     password: '',
     confirmPassword: '',
     terms: false,
   });
-  const [errors, setErrors] = useState<FormValidationResult<FormFields>['errors']>({});
+  const [errors, setErrors] = useState<FormValidationResult<SignupFormPayload>['errors']>({});
 
-  const set = (key: keyof FormFields, value: string | boolean) => {
+  const set = (key: keyof SignupFormPayload, value: string | boolean) => {
     setFields((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
     e.preventDefault();
-    const result = validateSignup(fields);
+    const result = validateSignupForm(fields);
 
-    const errs: FormValidationResult<FormFields>['errors'] = { ...result.errors };
+    const errors: FormValidationResult<SignupFormPayload>['errors'] = { ...result.errors };
     if (!fields.terms) {
-      errs.terms = 'You must accept the terms to continue.';
+      errors.terms = 'You must accept the terms to continue.';
     }
-    if (!isValidationResultValid({ errors: errs })) {
-      setErrors(errs);
+    if (!isValidationResultValid({ errors: errors })) {
+      setErrors(errors);
       return;
     }
 
     setErrors({});
     try {
-      const { terms: _, ...payload } = fields;
+      const payload: SignupPayload = {
+        identityNumber: fields.identityNumber,
+        firstName: fields.firstName,
+        lastName: fields.lastName,
+        email: fields.email,
+        userName: fields.userName,
+        gender: fields.gender,
+        dateOfBirth: new Date(fields.dateOfBirth),
+        phoneNumber: fields.phoneNumber,
+        address: fields.address,
+        password: fields.password,
+      };
       await nextApi.auth.signup(payload);
       router.push('/signin');
     } catch (err) {
@@ -186,7 +194,7 @@ export default function SignupPage() {
                 autoComplete='username'
                 placeholder='raniaisya'
                 value={fields.userName}
-                onChange={(e) => set('userName', e.target.value)}
+                onChange={(e) => set('userName', e.target.value.toLowerCase())}
                 className={`${styles.input} ${errors.userName ? styles.inputError : ''}`}
               />
               {errors.userName && <span className={styles.errorMsg}>{errors.userName}</span>}
@@ -201,7 +209,7 @@ export default function SignupPage() {
                 <select
                   id='gender'
                   value={fields.gender}
-                  onChange={(e) => set('gender', e.target.value as FormFields['gender'])}
+                  onChange={(e) => set('gender', e.target.value as SignupFormPayload['gender'])}
                   className={`${styles.input} ${errors.gender ? styles.inputError : ''}`}
                 >
                   <option value='female'>Female</option>
@@ -217,7 +225,7 @@ export default function SignupPage() {
                 <input
                   id='dateOfBirth'
                   type='date'
-                  value={fields.dateOfBirth}
+                  value={formatDate(fields.dateOfBirth)}
                   onChange={(e) => set('dateOfBirth', e.target.value)}
                   className={`${styles.input} ${errors.dateOfBirth ? styles.inputError : ''}`}
                 />

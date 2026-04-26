@@ -5,9 +5,13 @@ export interface SignupPayload {
   email: string;
   userName: string;
   gender: 'male' | 'female';
-  dateOfBirth: string;
+  dateOfBirth: Date;
   phoneNumber: string;
   address: string;
   password: string;
+}
+
+export interface SignupFormPayload extends SignupPayload {
   confirmPassword: string;
+  terms: boolean;
 }

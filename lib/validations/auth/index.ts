@@ -1,2 +1,2 @@
 export * from './validate-signin';
-export * from './validate-signup';
+export * from './validate-signup-form';

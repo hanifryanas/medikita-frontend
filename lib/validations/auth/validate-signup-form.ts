@@ -1,11 +1,12 @@
-import { SignupPayload } from '@/lib/types/auth';
+import { SignupFormPayload } from '@/lib/types/auth';
 import { FormValidationResult } from '@/lib/types/validations';
 import { isDigit, isEmail } from '@/lib/utils/checkers';
+import { isValid } from 'date-fns';
 
-export const validateSignup = (
-  signupPayload: Partial<SignupPayload>
-): FormValidationResult<Partial<SignupPayload>> => {
-  const validationResult: FormValidationResult<Partial<SignupPayload>> = {
+export const validateSignupForm = (
+  signupPayload: Partial<SignupFormPayload>
+): FormValidationResult<Partial<SignupFormPayload>> => {
+  const validationResult: FormValidationResult<Partial<SignupFormPayload>> = {
     errors: {},
   };
 
@@ -39,7 +40,7 @@ export const validateSignup = (
 
   if (!signupPayload.dateOfBirth) {
     validationResult.errors.dateOfBirth = 'Date of birth is required.';
-  } else if (Number.isNaN(Date.parse(signupPayload.dateOfBirth))) {
+  } else if (!isValid(new Date(signupPayload.dateOfBirth))) {
     validationResult.errors.dateOfBirth = 'Enter a valid date of birth.';
   }
 
