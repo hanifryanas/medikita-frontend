@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { NavAuthSection } from './components/navigation';
-import { MenuIcon, PlayIcon, SearchIcon } from './icons';
+import { PlayIcon } from './icons';
 import styles from './page.module.scss';
 
 export default function Home() {
@@ -33,12 +33,6 @@ export default function Home() {
             </li>
           </ul>
           <div className={styles.navIcons}>
-            <button className={styles.iconBtn} aria-label='Search'>
-              <SearchIcon />
-            </button>
-            <button className={styles.iconBtn} aria-label='Menu'>
-              <MenuIcon />
-            </button>
             <NavAuthSection />
           </div>
         </div>

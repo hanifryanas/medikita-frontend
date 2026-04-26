@@ -39,3 +39,9 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+// ─── View Transitions ─────────────────────────────────────
+::view-transition-group(dashboard-link) {
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in-out;
+}
