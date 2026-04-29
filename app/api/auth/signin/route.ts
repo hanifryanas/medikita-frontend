@@ -4,7 +4,7 @@ import { SigninData } from '@/lib/types/auth';
 import { User } from '@/lib/types/users';
 import { NextRequest, NextResponse } from 'next/server';
 
-const IS_PROD = appConfig.nodeEnv === 'production';
+const IS_PROD = appConfig.node.env === 'production';
 
 export async function POST(req: NextRequest) {
   try {

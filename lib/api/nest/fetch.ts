@@ -4,7 +4,7 @@ import { FetchOptions } from '../fetch-options';
 export const nestFetch = async <T>(path: string, options: FetchOptions): Promise<T> => {
   const { body, headers, token, ...rest } = options;
 
-  const res = await fetch(`${appConfig.nestApiBaseUrl}${path}`, {
+  const res = await fetch(`${appConfig.nest.api.baseUrl}${path}`, {
     ...rest,
     headers: {
       'Content-Type': 'application/json',

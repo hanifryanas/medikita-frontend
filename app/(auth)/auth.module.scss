@@ -181,6 +181,59 @@
   gap: 0.4rem;
 }
 
+.photoUpload {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.photoPreview {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}
+
+.photoPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  border: 2px dashed #d1d5db;
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.photoBtn {
+  height: 36px;
+  padding: 0 1rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fafafa;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: $navy-900;
+  cursor: pointer;
+  transition:
+    border-color 0.18s,
+    background 0.18s;
+  font-family: inherit;
+
+  &:hover {
+    border-color: $blue-500;
+    background: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
 .passwordField {
   position: relative;
 }

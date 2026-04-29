@@ -9,6 +9,7 @@ export interface SignupPayload {
   phoneNumber: string;
   address: string;
   password: string;
+  photoUrl?: string;
 }
 
 export interface SignupFormPayload extends SignupPayload {

@@ -1,5 +1,6 @@
 'use client';
 
+import { DisplayImage, ImageUploader } from '@/app/components/images';
 import { GoogleIcon } from '@/app/icons';
 import { nextApi } from '@/lib/api/next';
 import type { SignupFormPayload, SignupPayload } from '@/lib/types/auth';
@@ -29,10 +30,15 @@ export default function SignupPage() {
     confirmPassword: '',
     terms: false,
   });
+  const [photoUrl, setPhotoUrl] = useState('');
   const [errors, setErrors] = useState<FormValidationResult<SignupFormPayload>['errors']>({});
 
   const set = (key: keyof SignupFormPayload, value: string | boolean) => {
     setFields((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handlePhotoUpload = (url: string) => {
+    setPhotoUrl(url);
   };
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
@@ -61,6 +67,7 @@ export default function SignupPage() {
         phoneNumber: fields.phoneNumber,
         address: fields.address,
         password: fields.password,
+        ...(photoUrl && { photoUrl }),
       };
       await nextApi.auth.signup(payload);
       router.push('/signin');
@@ -112,6 +119,34 @@ export default function SignupPage() {
           </div>
 
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
+            {/* Profile photo */}
+            <div className={styles.field}>
+              <label className={styles.label}>Profile photo (optional)</label>
+              <div className={styles.photoUpload}>
+                {photoUrl ? (
+                  <DisplayImage
+                    src={photoUrl}
+                    alt='Profile preview'
+                    className={styles.photoPreview}
+                  />
+                ) : (
+                  <div className={styles.photoPlaceholder}>No photo</div>
+                )}
+                <ImageUploader folder='profiles' onUpload={handlePhotoUpload}>
+                  {({ open, isLoading }) => (
+                    <button
+                      type='button'
+                      className={styles.photoBtn}
+                      onClick={open}
+                      disabled={isLoading}
+                    >
+                      {photoUrl ? 'Change photo' : 'Upload photo'}
+                    </button>
+                  )}
+                </ImageUploader>
+              </div>
+            </div>
+
             {/* Identity number */}
             <div className={styles.field}>
               <label htmlFor='identityNumber' className={styles.label}>

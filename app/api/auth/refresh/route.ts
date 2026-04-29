@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   let accessToken: string;
 
   try {
-    const nestRes = await fetch(`${appConfig.nestApiBaseUrl}auth/refresh`, {
+    const nestRes = await fetch(`${appConfig.nest.api.baseUrl}auth/refresh`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refreshToken: cookieToken }),
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
   let user = null;
 
   try {
-    const userRes = await fetch(`${appConfig.nestApiBaseUrl}auth/me`, {
+    const userRes = await fetch(`${appConfig.nest.api.baseUrl}auth/me`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
