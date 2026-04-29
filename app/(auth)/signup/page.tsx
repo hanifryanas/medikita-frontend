@@ -1,12 +1,13 @@
 'use client';
 
-import { DisplayImage, ImageUploader } from '@/app/components/images';
+import { ImageUploader } from '@/app/components/images';
 import { GoogleIcon } from '@/app/icons';
 import { nextApi } from '@/lib/api/next';
 import type { SignupFormPayload, SignupPayload } from '@/lib/types/auth';
 import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
 import { formatDate } from '@/lib/utils/formatters';
 import { validateSignupForm } from '@/lib/validations/auth';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -124,8 +125,10 @@ export default function SignupPage() {
               <label className={styles.label}>Profile photo (optional)</label>
               <div className={styles.photoUpload}>
                 {photoUrl ? (
-                  <DisplayImage
+                  <Image
                     src={photoUrl}
+                    width={64}
+                    height={64}
                     alt='Profile preview'
                     className={styles.photoPreview}
                   />
