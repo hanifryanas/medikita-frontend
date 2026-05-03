@@ -1,3 +1,6 @@
+import { UserGenderType } from './user-gender.enum';
+import { UserRole } from './user-role.enum';
+
 export interface User {
   userId: string;
   identityNumber: string;
@@ -6,8 +9,10 @@ export interface User {
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  gender: 'male' | 'female';
+  gender: UserGenderType;
   dateOfBirth: string;
-  address: string;
+  address?: string;
   age: number;
+  isEmployee?: boolean;
+  role?: UserRole;
 }

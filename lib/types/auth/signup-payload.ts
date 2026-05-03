@@ -1,10 +1,12 @@
+import type { UserGenderType } from '../users';
+
 export interface SignupPayload {
   identityNumber: string;
   firstName: string;
   lastName: string;
   email: string;
   userName: string;
-  gender: 'male' | 'female';
+  gender: UserGenderType;
   dateOfBirth: Date;
   phoneNumber: string;
   address: string;

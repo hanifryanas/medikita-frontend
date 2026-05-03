@@ -12,16 +12,13 @@ export function proxy(req: NextRequest) {
   const isAuthRoute = AUTH_PATHS.some((p) => pathname.startsWith(p));
 
   if (isProtected && !hasSession) {
-    const signinUrl = req.nextUrl.clone();
-    signinUrl.pathname = '/signin';
+    const signinUrl = new URL('/signin', req.url);
     signinUrl.searchParams.set('next', pathname);
     return NextResponse.redirect(signinUrl);
   }
 
   if (isAuthRoute && hasSession) {
-    const homeUrl = req.nextUrl.clone();
-    homeUrl.pathname = '/';
-    return NextResponse.redirect(homeUrl);
+    return NextResponse.redirect(new URL('/', req.url));
   }
 
   return NextResponse.next();

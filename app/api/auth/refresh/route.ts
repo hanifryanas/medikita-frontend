@@ -1,6 +1,11 @@
 import { appConfig } from '@/lib/config/app-config';
 import { NextRequest, NextResponse } from 'next/server';
 
+const clearRefreshCookie = (res: NextResponse) => {
+  res.cookies.set('refreshToken', '', { path: '/', maxAge: 0 });
+  return res;
+};
+
 export async function POST(req: NextRequest) {
   const cookieToken = req.cookies.get('refreshToken')?.value;
 
@@ -19,9 +24,11 @@ export async function POST(req: NextRequest) {
 
     if (!nestRes.ok) {
       const err = await nestRes.json().catch(() => ({ message: 'Refresh failed.' }));
-      return NextResponse.json(
-        { message: err?.message ?? 'Refresh failed.' },
-        { status: nestRes.status }
+      return clearRefreshCookie(
+        NextResponse.json(
+          { message: err?.message ?? 'Refresh failed.' },
+          { status: nestRes.status }
+        )
       );
     }
 
@@ -29,14 +36,13 @@ export async function POST(req: NextRequest) {
     accessToken = raw.accessToken;
 
     if (!accessToken) {
-      return NextResponse.json(
-        { message: 'No access token in refresh response.' },
-        { status: 500 }
+      return clearRefreshCookie(
+        NextResponse.json({ message: 'No access token in refresh response.' }, { status: 500 })
       );
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Refresh token failed.';
-    return NextResponse.json({ message }, { status: 400 });
+    return clearRefreshCookie(NextResponse.json({ message }, { status: 400 }));
   }
 
   let user = null;

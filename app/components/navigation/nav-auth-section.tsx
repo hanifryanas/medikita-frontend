@@ -4,16 +4,39 @@ import { nextApi } from '@/lib/api/next';
 import { AuthStatus, useAuthStore } from '@/lib/stores';
 import { getUserInitial } from '@/lib/utils/formatters';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { ViewTransition } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './nav-auth-section.module.scss';
+
 export const NavAuthSection = () => {
   const user = useAuthStore((state) => state.currentUser);
   const status = useAuthStore((state) => state.status);
   const signout = useAuthStore((state) => state.signout);
-  const pathname = usePathname();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMenuOpen(false);
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [isMenuOpen]);
 
   const handleSignout = async () => {
+    setIsMenuOpen(false);
     try {
       await nextApi.auth.signout();
     } catch (err) {
@@ -36,23 +59,62 @@ export const NavAuthSection = () => {
     );
   }
 
+  const fullName = `${user.firstName} ${user.lastName}`.trim();
+
   return (
-    <div className={styles.navAvatarGroup}>
-      {pathname !== '/dashboard' && (
-        <ViewTransition name='dashboard-link'>
-          <Link href='/dashboard' className={styles.navLink}>
-            Dashboard
-          </Link>
-        </ViewTransition>
-      )}
-      <Link href='/profile' className={styles.navAvatarBtn} aria-label='Open profile'>
+    <div className={styles.navAvatarWrapper} ref={menuRef}>
+      <button
+        type='button'
+        className={styles.navAvatarBtn}
+        onClick={() => setIsMenuOpen((open) => !open)}
+        aria-label='Open account menu'
+        aria-haspopup='menu'
+        aria-expanded={isMenuOpen}
+      >
         <span className={styles.navAvatarInitial}>
           {getUserInitial(user.firstName, user.lastName)}
         </span>
-      </Link>
-      <button type='button' className={styles.navBtnGhost} onClick={handleSignout}>
-        Sign out
       </button>
+
+      {isMenuOpen && (
+        <div className={styles.menu} role='menu'>
+          <div className={styles.menuHeader}>
+            <span className={styles.menuName}>{fullName}</span>
+            <span className={styles.menuEmail}>{user.email}</span>
+            {user.isEmployee && <span className={styles.menuBadge}>Employee</span>}
+          </div>
+
+          <div className={styles.menuDivider} />
+
+          <Link
+            href='/dashboard'
+            className={styles.menuItem}
+            role='menuitem'
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Dashboard
+          </Link>
+          <Link
+            href='/profile'
+            className={styles.menuItem}
+            role='menuitem'
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Profile
+          </Link>
+
+          <div className={styles.menuDivider} />
+
+          <button
+            type='button'
+            className={`${styles.menuItem} ${styles.menuItemDanger}`}
+            role='menuitem'
+            onClick={handleSignout}
+          >
+            Sign out
+          </button>
+        </div>
+      )}
     </div>
   );
 };

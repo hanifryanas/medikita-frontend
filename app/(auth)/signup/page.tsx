@@ -4,6 +4,7 @@ import { ImageUploader } from '@/app/components/images';
 import { GoogleIcon } from '@/app/icons';
 import { nextApi } from '@/lib/api/next';
 import type { SignupFormPayload, SignupPayload } from '@/lib/types/auth';
+import { UserGenderType } from '@/lib/types/users';
 import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
 import { formatDate } from '@/lib/utils/formatters';
 import { validateSignupForm } from '@/lib/validations/auth';
@@ -23,7 +24,7 @@ export default function SignupPage() {
     lastName: '',
     email: '',
     userName: '',
-    gender: 'female',
+    gender: UserGenderType.Female,
     dateOfBirth: new Date('2000-01-01'),
     phoneNumber: '',
     address: '',

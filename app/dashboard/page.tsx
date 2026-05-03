@@ -1,11 +1,18 @@
 'use client';
 
 import { NavAuthSection } from '@/app/components/navigation';
+import { useRequireAuth } from '@/lib/hooks';
+import { AuthStatus } from '@/lib/stores';
 import Link from 'next/link';
-import { ViewTransition } from 'react';
 import styles from './page.module.scss';
 
 export default function DashboardPage() {
+  const status = useRequireAuth();
+
+  if (status !== AuthStatus.Authenticated) {
+    return null;
+  }
+
   return (
     <div className={styles.page}>
       {/* ── Navigation ── */}
@@ -17,11 +24,9 @@ export default function DashboardPage() {
           </Link>
           <ul className={styles.navLinks}>
             <li>
-              <ViewTransition name='dashboard-link'>
-                <Link href='/dashboard' className={styles.navActive}>
-                  Dashboard
-                </Link>
-              </ViewTransition>
+              <Link href='/dashboard' className={styles.navActive}>
+                Dashboard
+              </Link>
             </li>
           </ul>
           <div className={styles.navRight}>

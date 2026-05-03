@@ -2,12 +2,7 @@
 
 import { create } from 'zustand';
 import { User } from '../types/users';
-
-export enum AuthStatus {
-  Idle = 'idle',
-  Authenticated = 'authenticated',
-  Unauthenticated = 'unauthenticated',
-}
+import { AuthStatus } from './auth-status.enum';
 
 export interface AuthStore {
   accessToken?: string;
