@@ -1,0 +1,179 @@
+@use '../../styles/color' as *;
+
+.nav {
+  position: relative;
+  z-index: 10;
+  padding: 1.75rem 0;
+}
+
+.container {
+  width: 100%;
+  padding: 0 2.5rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+
+  @media (max-width: 768px) {
+    padding: 0 1.25rem;
+    gap: 1rem;
+  }
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.625rem;
+  width: 230px;
+  flex: 0 0 230px;
+  padding: 0 1.5rem;
+  font-weight: 700;
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+  color: $white;
+  white-space: nowrap;
+
+  @media (max-width: 900px) {
+    width: auto;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    padding: 0 0 0 1.25rem;
+  }
+}
+.logoAuth {
+  align-self: stretch;
+  margin: -1.75rem 0;
+  padding: 1.75rem 1.5rem;
+  background: rgba(15, 33, 64, 0.45);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-right: 1px solid rgba(58, 123, 213, 0.18);
+
+  @media (max-width: 900px) {
+    margin: -1.75rem 0;
+    padding: 1.75rem 1.25rem;
+    border-right: 0;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.logoMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: $blue-500;
+  border-radius: 8px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.links {
+  display: flex;
+  list-style: none;
+  gap: 2.5rem;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+
+  a {
+    font-size: 1.3rem;
+    color: $muted;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $white;
+    }
+  }
+
+  @media (max-width: 768px) {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    padding: 0.5rem 1.25rem 1rem;
+    background: rgba(11, 26, 46, 0.95);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid rgba(58, 123, 213, 0.18);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    transform: translateY(-8px);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform 0.18s ease,
+      opacity 0.18s ease;
+
+    li {
+      width: 100%;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    a {
+      display: block;
+      width: 100%;
+      padding: 0.875rem 0.25rem;
+      font-size: 1rem;
+    }
+  }
+}
+
+.linksOpen {
+  @media (max-width: 768px) {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.linkActive {
+  color: $white !important;
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: $white;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.32);
+  }
+
+  &[aria-expanded='true'] {
+    background: rgba(58, 123, 213, 0.18);
+    border-color: rgba(58, 123, 213, 0.45);
+  }
+
+  @media (max-width: 768px) {
+    display: inline-flex;
+  }
+}

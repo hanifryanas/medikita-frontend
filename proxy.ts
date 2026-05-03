@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PROTECTED_PATHS = ['/dashboard', '/appointments', '/profile', '/settings'];
+const PROTECTED_PATHS = [
+  '/dashboard',
+  '/patients',
+  '/appointments',
+  '/schedule',
+  '/employees',
+  '/profile',
+  '/settings',
+];
 
 const AUTH_PATHS = ['/signin', '/signup'];
 

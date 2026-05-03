@@ -1,6 +1,7 @@
 'use client';
 
 import { nextApi } from '@/lib/api/next';
+import { getAccountRoleLabel } from '@/lib/navigation';
 import { AuthStatus, useAuthStore } from '@/lib/stores';
 import { getUserInitial } from '@/lib/utils/formatters';
 import Link from 'next/link';
@@ -60,6 +61,7 @@ export const NavAuthSection = () => {
   }
 
   const fullName = `${user.firstName} ${user.lastName}`.trim();
+  const roleLabel = getAccountRoleLabel(user);
 
   return (
     <div className={styles.navAvatarWrapper} ref={menuRef}>
@@ -84,10 +86,10 @@ export const NavAuthSection = () => {
 
       {isMenuOpen && (
         <div className={styles.menu} role='menu'>
-          {user.isEmployee && (
+          {roleLabel && (
             <>
               <div className={styles.menuHeader}>
-                <span className={styles.menuBadge}>Employee</span>
+                <span className={styles.menuBadge}>{roleLabel}</span>
               </div>
               <div className={styles.menuDivider} />
             </>

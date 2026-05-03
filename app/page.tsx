@@ -1,5 +1,4 @@
-import Link from 'next/link';
-import { NavAuthSection } from './components/navigation';
+import { PublicNav } from './components/navigation';
 import { PlayIcon } from './icons';
 import styles from './page.module.scss';
 
@@ -7,36 +6,7 @@ export default function Home() {
   return (
     <main className={styles.hero}>
       {/* ── Navigation ── */}
-      <nav className={styles.nav}>
-        <div className={styles.navContainer}>
-          <Link href='/' className={styles.logo}>
-            <span className={styles.logoMark}>✚</span>
-            MediKita
-          </Link>
-          <ul className={styles.navLinks}>
-            <li>
-              <Link href='/' className={styles.navActive}>
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link href='/about'>About</Link>
-            </li>
-            <li>
-              <Link href='/treatments'>Treatments</Link>
-            </li>
-            <li>
-              <Link href='/blog'>Blog</Link>
-            </li>
-            <li>
-              <Link href='/contact'>Contact</Link>
-            </li>
-          </ul>
-          <div className={styles.navIcons}>
-            <NavAuthSection />
-          </div>
-        </div>
-      </nav>
+      <PublicNav />
 
       {/* ── Hero content ── */}
       <div className={styles.heroBody}>
