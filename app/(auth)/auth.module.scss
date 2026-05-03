@@ -394,52 +394,6 @@
   }
 }
 
-// ─── Divider ─────────────────────────────────────────────
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: #d1d5db;
-  font-size: 0.75rem;
-
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #e5e7eb;
-  }
-}
-
-// ─── OAuth ────────────────────────────────────────────────
-.oauthBtn {
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.625rem;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 10px;
-  background: #fff;
-  color: $navy-900;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    border-color 0.18s,
-    background 0.18s;
-  font-family: inherit;
-
-  &:hover {
-    border-color: #b0b7c3;
-    background: #f9fafb;
-  }
-
-  svg {
-    flex-shrink: 0;
-  }
-}
-
 // ─── Tab switcher ────────────────────────────────────────
 .tabs {
   display: flex;

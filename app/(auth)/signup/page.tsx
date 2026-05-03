@@ -1,7 +1,6 @@
 'use client';
 
 import { ImageUploader } from '@/app/components/images';
-import { GoogleIcon } from '@/app/icons';
 import { nextApi } from '@/lib/api/next';
 import type { SignupFormPayload, SignupPayload } from '@/lib/types/auth';
 import { UserGenderType } from '@/lib/types/users';
@@ -392,13 +391,6 @@ export default function SignupPage() {
               Create account
             </button>
           </form>
-
-          <div className={styles.divider}>or sign up with</div>
-
-          <button type='button' className={styles.oauthBtn}>
-            <GoogleIcon />
-            Continue with Google
-          </button>
 
           <p className={styles.footerText}>
             Already have an account? <Link href='/signin'>Sign in</Link>

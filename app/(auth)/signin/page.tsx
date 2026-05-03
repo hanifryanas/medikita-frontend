@@ -1,6 +1,5 @@
 'use client';
 
-import { GoogleIcon } from '@/app/icons';
 import { nextApi } from '@/lib/api/next';
 import { useAuthStore } from '@/lib/stores';
 import type { SigninPayload } from '@/lib/types/auth';
@@ -152,13 +151,6 @@ export default function SigninPage() {
               Sign in
             </button>
           </form>
-
-          <div className={styles.divider}>or continue with</div>
-
-          <button type='button' className={styles.oauthBtn}>
-            <GoogleIcon />
-            Continue with Google
-          </button>
 
           <p className={styles.footerText}>
             Don&apos;t have an account? <Link href='/signup'>Create one free</Link>
