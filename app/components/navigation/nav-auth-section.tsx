@@ -65,26 +65,33 @@ export const NavAuthSection = () => {
     <div className={styles.navAvatarWrapper} ref={menuRef}>
       <button
         type='button'
-        className={styles.navAvatarBtn}
+        className={styles.navAvatarTrigger}
         onClick={() => setIsMenuOpen((open) => !open)}
         aria-label='Open account menu'
         aria-haspopup='menu'
         aria-expanded={isMenuOpen}
       >
-        <span className={styles.navAvatarInitial}>
-          {getUserInitial(user.firstName, user.lastName)}
+        <span className={styles.navUserInfo}>
+          <span className={styles.navUserName}>{fullName}</span>
+          <span className={styles.navUserHandle}>@{user.userName}</span>
+        </span>
+        <span className={styles.navAvatarBtn} aria-hidden='true'>
+          <span className={styles.navAvatarInitial}>
+            {getUserInitial(user.firstName, user.lastName)}
+          </span>
         </span>
       </button>
 
       {isMenuOpen && (
         <div className={styles.menu} role='menu'>
-          <div className={styles.menuHeader}>
-            <span className={styles.menuName}>{fullName}</span>
-            <span className={styles.menuEmail}>{user.email}</span>
-            {user.isEmployee && <span className={styles.menuBadge}>Employee</span>}
-          </div>
-
-          <div className={styles.menuDivider} />
+          {user.isEmployee && (
+            <>
+              <div className={styles.menuHeader}>
+                <span className={styles.menuBadge}>Employee</span>
+              </div>
+              <div className={styles.menuDivider} />
+            </>
+          )}
 
           <Link
             href='/dashboard'
