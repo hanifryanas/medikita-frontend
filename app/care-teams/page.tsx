@@ -2,13 +2,10 @@
 
 import { PublicNav } from '@/app/components/navigation';
 import { SearchIcon } from '@/app/icons';
-import { useMemo, useState } from 'react';
+import type { CareRole, DayShort } from '@/lib/stores';
+import { useCareTeamsStore, useDepartmentStore } from '@/lib/stores';
+import { useMemo } from 'react';
 import styles from './page.module.scss';
-
-type CareRole = 'doctor' | 'nurse';
-type FilterValue = 'all' | CareRole;
-type DayShort = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
-type SearchMode = 'name' | 'days' | 'department';
 
 interface CareMember {
   id: string;
@@ -78,22 +75,19 @@ const MEMBERS: CareMember[] = [
   },
 ];
 
-const FILTERS: { label: string; value: FilterValue }[] = [
-  { label: 'All', value: 'all' },
-  { label: 'Doctors', value: 'doctor' },
-  { label: 'Nurses', value: 'nurse' },
+const FILTERS = [
+  { label: 'All', value: 'all' as const },
+  { label: 'Doctors', value: 'doctor' as const },
+  { label: 'Nurses', value: 'nurse' as const },
 ];
 
-const SEARCH_MODES: { label: string; value: SearchMode }[] = [
-  { label: 'Name', value: 'name' },
-  { label: 'Days', value: 'days' },
-  { label: 'Department', value: 'department' },
+const SEARCH_MODES = [
+  { label: 'Name', value: 'name' as const },
+  { label: 'Days', value: 'days' as const },
+  { label: 'Department', value: 'department' as const },
 ];
 
 const ALL_DAYS: DayShort[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-const getDepartments = (members: CareMember[]): string[] =>
-  Array.from(new Set(members.map((m) => m.department))).sort();
 
 const getInitials = (name: string) =>
   name
@@ -106,19 +100,19 @@ const getInitials = (name: string) =>
     .toUpperCase();
 
 export default function CareTeamsPage() {
-  const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState<FilterValue>('all');
-  const [searchMode, setSearchMode] = useState<SearchMode>('name');
-  const [selectedDays, setSelectedDays] = useState<DayShort[]>([]);
-  const [selectedDepts, setSelectedDepts] = useState<string[]>([]);
+  const query = useCareTeamsStore((s) => s.query);
+  const filter = useCareTeamsStore((s) => s.roleFilter);
+  const searchMode = useCareTeamsStore((s) => s.searchMode);
+  const selectedDays = useCareTeamsStore((s) => s.selectedDays);
+  const selectedDepts = useCareTeamsStore((s) => s.selectedDepts);
+  const setQuery = useCareTeamsStore((s) => s.setQuery);
+  const setFilter = useCareTeamsStore((s) => s.setRoleFilter);
+  const setSearchMode = useCareTeamsStore((s) => s.setSearchMode);
+  const toggleDay = useCareTeamsStore((s) => s.toggleDay);
+  const toggleDept = useCareTeamsStore((s) => s.toggleDept);
 
-  const departments = useMemo(() => getDepartments(MEMBERS), []);
-
-  const toggleDay = (d: DayShort) =>
-    setSelectedDays((prev) => (prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]));
-
-  const toggleDept = (d: string) =>
-    setSelectedDepts((prev) => (prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]));
+  const departmentItems = useDepartmentStore((s) => s.items);
+  const departments = useMemo(() => departmentItems.map((d) => d.name).sort(), [departmentItems]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
