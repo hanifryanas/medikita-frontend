@@ -8,10 +8,10 @@ export interface NavItem {
 
 export const PUBLIC_NAV_ITEMS: NavItem[] = [
   { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
+  { label: 'Care Teams', href: '/care-teams' },
   { label: 'Treatments', href: '/treatments' },
   { label: 'Blog', href: '/blog' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'About', href: '/about' },
 ];
 
 const USER_NAV_ITEMS: NavItem[] = [
