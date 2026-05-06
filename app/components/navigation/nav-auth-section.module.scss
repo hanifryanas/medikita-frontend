@@ -14,8 +14,8 @@
   border-radius: 9px;
   font-size: 0.95rem;
   font-weight: 500;
-  color: $white;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--hero-text);
+  border: 1px solid var(--glass-border);
   transition:
     background 0.2s,
     border-color 0.2s;
@@ -24,8 +24,8 @@
   cursor: pointer;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.38);
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
   }
 
   @media (max-width: 480px) {
@@ -41,13 +41,13 @@
   border-radius: 9px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: $white;
-  background: $blue-500;
+  color: var(--accent-text);
+  background: var(--accent);
   transition: background 0.2s;
   white-space: nowrap;
 
   &:hover {
-    background: darken($blue-500, 8%);
+    background: var(--accent-hover);
   }
 }
 
@@ -71,19 +71,19 @@
     box-shadow 0.2s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.18);
+    background: var(--glass-bg);
+    border-color: var(--glass-border-soft);
   }
 
   &:focus-visible {
     outline: none;
-    border-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.4);
+    border-color: var(--glass-border);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
 
   &[aria-expanded='true'] {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.28);
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
   }
 }
 
@@ -102,14 +102,14 @@
 .navUserName {
   font-size: 0.95rem;
   font-weight: 600;
-  color: $white;
+  color: var(--hero-text);
   white-space: nowrap;
 }
 
 .navUserHandle {
   font-size: 0.75rem;
   font-weight: 500;
-  color: $muted;
+  color: var(--hero-text-muted);
   white-space: nowrap;
 }
 
@@ -121,23 +121,23 @@
   height: 44px;
   padding: 0;
   border-radius: 50%;
-  background: $blue-500;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: var(--accent);
+  border: 2px solid var(--glass-border);
   transition: border-color 0.2s;
 
   .navAvatarTrigger:hover & {
-    border-color: rgba(255, 255, 255, 0.7);
+    border-color: var(--glass-border);
   }
 
   .navAvatarTrigger[aria-expanded='true'] & {
-    border-color: $white;
+    border-color: var(--accent);
   }
 }
 
 .navAvatarInitial {
   font-size: 1rem;
   font-weight: 700;
-  color: $white;
+  color: var(--accent-text);
   line-height: 1;
 }
 
@@ -149,14 +149,14 @@
   left: 0;
   width: 100%;
   padding: 0.375rem;
-  background: rgba(22, 43, 74, 0.85);
+  background: var(--menu-bg);
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
-  border: 1px solid rgba(58, 123, 213, 0.28);
+  border: 1px solid var(--menu-border);
   border-radius: 12px;
   box-shadow:
-    0 12px 32px rgba(11, 26, 46, 0.45),
-    0 0 0 1px rgba(58, 123, 213, 0.08);
+    0 12px 32px rgba(16, 42, 67, 0.3),
+    0 0 0 1px var(--menu-border);
   z-index: 50;
   display: flex;
   flex-direction: column;
@@ -176,8 +176,8 @@
   align-self: flex-start;
   padding: 0.125rem 0.5rem;
   border-radius: 999px;
-  background: rgba(58, 123, 213, 0.22);
-  color: #9dc1ff;
+  background: var(--accent-soft);
+  color: var(--accent);
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -186,7 +186,7 @@
 
 .menuDivider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--menu-divider);
   margin: 0.25rem 0;
 }
 
@@ -200,7 +200,7 @@
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: $white;
+  color: var(--menu-text);
   text-align: left;
   cursor: pointer;
   transition:
@@ -209,18 +209,18 @@
 
   &:hover,
   &:focus-visible {
-    background: rgba(58, 123, 213, 0.22);
-    color: $white;
+    background: var(--menu-hover);
+    color: var(--menu-text);
     outline: none;
   }
 }
 
 .menuItemDanger {
-  color: #ff8a8a;
+  color: #d24545;
 
   &:hover,
   &:focus-visible {
-    background: rgba(220, 38, 38, 0.22);
-    color: #ffb0b0;
+    background: rgba(220, 38, 38, 0.18);
+    color: #b73030;
   }
 }

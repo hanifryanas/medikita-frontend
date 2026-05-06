@@ -27,10 +27,10 @@ $sidebar-width: 230px;
   display: flex;
   flex-direction: column;
   padding: 1.5rem 1.5rem 1.25rem;
-  background: rgba(15, 33, 64, 0.45);
+  background: var(--surface-translucent);
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
-  border-right: 1px solid rgba(58, 123, 213, 0.18);
+  border-right: 1px solid var(--border-card);
   z-index: 30;
 
   @media (max-width: 900px) {
@@ -39,8 +39,8 @@ $sidebar-width: 230px;
     left: 0;
     transform: translateX(-100%);
     transition: transform 0.22s ease;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-    background: rgba(11, 26, 46, 0.95);
+    box-shadow: 0 16px 40px var(--shadow-modal);
+    background: var(--surface-overlay-strong);
   }
 }
 
@@ -57,8 +57,8 @@ $sidebar-width: 230px;
   margin-bottom: 1rem;
   padding: 0.2rem 0.625rem;
   border-radius: 999px;
-  background: rgba(58, 123, 213, 0.22);
-  color: #9dc1ff;
+  background: var(--accent-soft);
+  color: var(--accent);
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -92,17 +92,17 @@ $sidebar-width: 230px;
     color 0.15s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--glass-bg);
     color: $white;
   }
 }
 
 .navLinkActive {
-  background: rgba(58, 123, 213, 0.22);
+  background: var(--accent-soft);
   color: $white;
 
   &:hover {
-    background: rgba(58, 123, 213, 0.3);
+    background: var(--accent-soft);
   }
 }
 
@@ -114,7 +114,7 @@ $sidebar-width: 230px;
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: var(--shadow-modal);
     border: 0;
     padding: 0;
     cursor: pointer;
@@ -137,8 +137,8 @@ $sidebar-width: 230px;
     display: flex;
     align-items: center;
     padding: 0.75rem 1.25rem;
-    border-bottom: 1px solid rgba(58, 123, 213, 0.18);
-    background: rgba(11, 26, 46, 0.72);
+    border-bottom: 1px solid var(--border-card);
+    background: var(--surface-overlay);
   }
 }
 
@@ -149,7 +149,7 @@ $sidebar-width: 230px;
   padding: 0.5rem 0.875rem;
   border-radius: 10px;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid var(--border-soft);
   color: $white;
   font-size: 0.9rem;
   font-weight: 500;
@@ -159,13 +159,13 @@ $sidebar-width: 230px;
     border-color 0.2s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.32);
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
   }
 
   &[aria-expanded='true'] {
-    background: rgba(58, 123, 213, 0.18);
-    border-color: rgba(58, 123, 213, 0.45);
+    background: var(--accent-soft);
+    border-color: var(--accent);
   }
 }
 

@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { NavAuthSection } from './nav-auth-section';
 import styles from './public-nav.module.scss';
+import { ThemeToggle } from './theme-toggle';
 
 interface PublicNavProps {
   className?: string;
@@ -72,6 +73,7 @@ export const PublicNav = ({ className }: PublicNavProps) => {
         </ul>
 
         <div className={styles.actions}>
+          <ThemeToggle />
           <NavAuthSection />
           <button
             type='button'

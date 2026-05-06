@@ -1,3 +1,5 @@
+import { ThemeProvider } from '@/lib/theme';
+import { getServerTheme } from '@/lib/theme/server';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Hydrator } from './components/hydrators';
@@ -19,16 +21,20 @@ export const metadata: Metadata = {
     'MediKita is here to provide you with the best healthcare experience. Our team of experienced doctors and healthcare professionals are committed to providing high-quality, personalized attention to our patients. Whether you need a routine check-up or specialized care, we are here to support you every step of the way.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const theme = await getServerTheme();
+
   return (
-    <html lang='en' className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang='en' data-theme={theme} className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
-        <Hydrator />
-        {children}
+        <ThemeProvider initial={theme}>
+          <Hydrator />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

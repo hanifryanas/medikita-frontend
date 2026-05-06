@@ -39,9 +39,9 @@
   align-items: center;
   justify-content: center;
   min-height: 240px;
-  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border: 1px dashed var(--border-soft);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--glass-bg);
   color: $muted;
   font-size: 0.95rem;
 }

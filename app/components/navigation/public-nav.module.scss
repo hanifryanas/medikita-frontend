@@ -30,7 +30,7 @@
   font-weight: 700;
   font-size: 1.6rem;
   letter-spacing: -0.01em;
-  color: $white;
+  color: var(--hero-text);
   white-space: nowrap;
 
   @media (max-width: 900px) {
@@ -44,10 +44,10 @@
   align-self: stretch;
   margin: -1.75rem 0;
   padding: 1.75rem 1.5rem;
-  background: rgba(15, 33, 64, 0.45);
+  background: var(--logo-blend-bg);
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
-  border-right: 1px solid rgba(58, 123, 213, 0.18);
+  border-right: 1px solid var(--logo-blend-border);
 
   @media (max-width: 900px) {
     margin: -1.75rem 0;
@@ -65,7 +65,8 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  background: $blue-500;
+  background: var(--accent);
+  color: var(--accent-text);
   border-radius: 8px;
   font-size: 1.4rem;
   font-weight: 700;
@@ -81,11 +82,11 @@
 
   a {
     font-size: 1.3rem;
-    color: $muted;
+    color: var(--hero-text-muted);
     transition: color 0.2s;
 
     &:hover {
-      color: $white;
+      color: var(--hero-text);
     }
   }
 
@@ -97,11 +98,11 @@
     flex-direction: column;
     gap: 0;
     padding: 0.5rem 1.25rem 1rem;
-    background: rgba(11, 26, 46, 0.95);
+    background: var(--nav-drawer-bg);
     backdrop-filter: blur(14px) saturate(140%);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
-    border-bottom: 1px solid rgba(58, 123, 213, 0.18);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    border-bottom: 1px solid var(--nav-drawer-border);
+    box-shadow: 0 12px 32px rgba(16, 42, 67, 0.25);
     transform: translateY(-8px);
     opacity: 0;
     pointer-events: none;
@@ -111,7 +112,7 @@
 
     li {
       width: 100%;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--nav-drawer-divider);
 
       &:last-child {
         border-bottom: none;
@@ -136,7 +137,7 @@
 }
 
 .linkActive {
-  color: $white !important;
+  color: var(--hero-text) !important;
   font-weight: 500;
 }
 
@@ -156,21 +157,21 @@
   padding: 0;
   border-radius: 10px;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: $white;
+  border: 1px solid var(--glass-border);
+  color: var(--hero-text);
   cursor: pointer;
   transition:
     background 0.2s,
     border-color 0.2s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.32);
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
   }
 
   &[aria-expanded='true'] {
-    background: rgba(58, 123, 213, 0.18);
-    border-color: rgba(58, 123, 213, 0.45);
+    background: var(--accent-soft);
+    border-color: var(--accent);
   }
 
   @media (max-width: 768px) {

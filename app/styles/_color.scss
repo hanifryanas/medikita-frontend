@@ -1,7 +1,16 @@
-// ─── Color Tokens ─────────────────────────────────────────
-$navy-900: #0b1a2e;
-$navy-800: #0f2140;
-$navy-700: #162b4a;
-$blue-500: #3a7bd5;
-$white: #e7e6f7;
-$muted: rgba(255, 255, 255, 0.65);
+// ─── Color Tokens (softer hospital palette) ───────────────
+// These SCSS tokens now resolve to CSS custom properties so
+// every page reacts to the runtime `[data-theme]` switch.
+// Keep raw hex values for places that need compile-time math
+// (e.g. building rgba() tints from a fixed accent).
+$navy-900-raw: #102a43;
+$blue-500-raw: #3b8ed4;
+
+$navy-900: var(--surface);
+$navy-800: var(--surface-translucent);
+$navy-700: var(--surface-translucent-hover);
+$blue-500: var(--accent);
+$blue-600: var(--accent-hover);
+$teal-400: #5cc4d4;
+$white: var(--text-strong);
+$muted: var(--text-muted);

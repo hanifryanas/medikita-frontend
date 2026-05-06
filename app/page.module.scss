@@ -7,109 +7,23 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  color: $white;
+  color: var(--hero-text);
   overflow: hidden;
 
   // Replace "/hero.jpg" with your actual hero photo
   background:
     linear-gradient(
       110deg,
-      rgba(11, 26, 46, 0.98) 0%,
-      rgba(11, 26, 46, 0.9) 35%,
-      rgba(11, 26, 46, 0.5) 62%,
-      rgba(11, 26, 46, 0.15) 100%
+      var(--hero-overlay-strong) 0%,
+      var(--hero-overlay-mid) 35%,
+      var(--hero-overlay-soft) 62%,
+      transparent 100%
     ),
     url('/hero.jpg') 70% center / cover no-repeat;
-  background-color: $navy-900;
-}
-
-// ─── Navigation ───────────────────────────────────────────
-.nav {
-  position: relative;
-  z-index: 10;
-  padding: 1.75rem 0;
-}
-
-.navContainer {
-  width: 100%;
-  padding: 0 2.5rem;
-  display: flex;
-  align-items: center;
-  gap: 2.5rem;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  font-weight: 700;
-  font-size: 1.35rem;
-  letter-spacing: -0.01em;
-  color: $white;
-  white-space: nowrap;
-}
-
-.logoMark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: $blue-500;
-  border-radius: 8px;
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-.navLinks {
-  display: flex;
-  list-style: none;
-  gap: 2.25rem;
-  flex: 1;
-
-  a {
-    font-size: 1rem;
-    color: $muted;
-    transition: color 0.2s;
-
-    &:hover {
-      color: $white;
-    }
-  }
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-}
-
-.navActive {
-  color: $white !important;
-  font-weight: 500;
-}
-
-.navIcons {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-left: auto;
-}
-
-.iconBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: $white;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.14);
-  }
+  background-color: var(--hero-bg);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 // ─── Hero body ────────────────────────────────────────────
@@ -135,7 +49,7 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: $muted;
+  color: var(--hero-text-muted);
 }
 
 .heroTitle {
@@ -148,7 +62,7 @@
 .heroDesc {
   font-size: 0.95rem;
   line-height: 1.8;
-  color: $muted;
+  color: var(--hero-text-muted);
   max-width: 400px;
 }
 
@@ -158,7 +72,7 @@
   gap: 1rem;
   background: none;
   border: none;
-  color: $white;
+  color: var(--hero-text);
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
@@ -166,7 +80,7 @@
   margin-top: 0.25rem;
 
   &:hover .ctaIcon {
-    background: rgba(255, 255, 255, 0.22);
+    background: var(--glass-bg-hover);
   }
 }
 
@@ -177,8 +91,8 @@
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.13);
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   backdrop-filter: blur(6px);
   transition: background 0.2s;
 }
@@ -191,11 +105,11 @@
   display: flex;
   align-items: center;
   gap: 0.875rem;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--card-bg);
   backdrop-filter: blur(16px);
   border-radius: 14px;
   padding: 0.9rem 1.25rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 40px rgba(16, 42, 67, 0.2);
   z-index: 5;
 
   @media (max-width: 900px) {
@@ -240,12 +154,12 @@
 .cardNum {
   font-size: 1rem;
   font-weight: 700;
-  color: $navy-900;
+  color: var(--card-text);
 }
 
 .cardLabel {
   font-size: 0.68rem;
-  color: #888;
+  color: var(--card-text-muted);
   white-space: nowrap;
 }
 
@@ -256,8 +170,8 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: $blue-500;
-  color: $white;
+  background: var(--accent);
+  color: var(--accent-text);
   font-size: 0.65rem;
   font-weight: 700;
   flex-shrink: 0;
@@ -266,9 +180,9 @@
 // ─── Stats bar ────────────────────────────────────────────
 .statsBar {
   display: flex;
-  background: rgba(8, 18, 35, 0.75);
+  background: var(--stats-bg);
   backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-top: 1px solid var(--stats-border);
 }
 
 .statItem {
@@ -277,7 +191,7 @@
   flex-direction: column;
   gap: 0.4rem;
   padding: 2.25rem 2.5rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  border-right: 1px solid var(--stats-border);
 
   &:last-child {
     border-right: none;
@@ -297,7 +211,7 @@
 
 .statLabel {
   font-size: 0.8rem;
-  color: $muted;
+  color: var(--hero-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

@@ -108,7 +108,7 @@
   justify-content: center;
   align-items: center;
   padding: 3rem 1.5rem;
-  background: #fff;
+  background: var(--surface-elevated);
 
   @media (min-width: 768px) {
     padding: 3rem 4rem;
@@ -122,7 +122,7 @@
   gap: 0.5rem;
   font-weight: 700;
   font-size: 1.1rem;
-  color: $navy-900;
+  color: var(--text-on-card);
   margin-bottom: 2.5rem;
   align-self: flex-start;
 
@@ -149,12 +149,12 @@
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: $navy-900;
+  color: var(--text-on-card);
 }
 
 .formSubtitle {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-on-card-muted);
   line-height: 1.6;
 }
 
@@ -192,7 +192,7 @@
   height: 64px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-input);
 }
 
 .photoPlaceholder {
@@ -202,21 +202,21 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: #f3f4f6;
-  border: 2px dashed #d1d5db;
+  background: var(--input-bg);
+  border: 2px dashed var(--border-input);
   font-size: 0.7rem;
-  color: #9ca3af;
+  color: var(--text-on-card-muted);
 }
 
 .photoBtn {
   height: 36px;
   padding: 0 1rem;
-  border: 1.5px solid #e5e7eb;
+  border: 1.5px solid var(--border-input);
   border-radius: 8px;
-  background: #fafafa;
+  background: var(--input-bg);
   font-size: 0.8rem;
   font-weight: 500;
-  color: $navy-900;
+  color: var(--text-on-card);
   cursor: pointer;
   transition:
     border-color 0.18s,
@@ -224,8 +224,8 @@
   font-family: inherit;
 
   &:hover {
-    border-color: $blue-500;
-    background: #fff;
+    border-color: var(--accent);
+    background: var(--input-bg-focus);
   }
 
   &:disabled {
@@ -241,18 +241,18 @@
 .label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: $navy-900;
+  color: var(--text-on-card);
   letter-spacing: 0.01em;
 }
 
 .input {
   height: 44px;
-  border: 1.5px solid #e5e7eb;
+  border: 1.5px solid var(--border-input);
   border-radius: 10px;
   padding: 0 3.9rem 0 0.875rem;
   font-size: 0.875rem;
-  color: $navy-900;
-  background: #fafafa;
+  color: var(--text-on-card);
+  background: var(--input-bg);
   outline: none;
   transition:
     border-color 0.18s,
@@ -261,13 +261,13 @@
   width: 100%;
 
   &::placeholder {
-    color: #b0b7c3;
+    color: var(--text-placeholder);
   }
 
   &:focus {
-    border-color: $blue-500;
-    box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.12);
-    background: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--input-focus-ring);
+    background: var(--input-bg-focus);
   }
 }
 
@@ -294,13 +294,13 @@
 
 .textarea {
   min-height: 96px;
-  border: 1.5px solid #e5e7eb;
+  border: 1.5px solid var(--border-input);
   border-radius: 10px;
   padding: 0.75rem 0.875rem;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: $navy-900;
-  background: #fafafa;
+  color: var(--text-on-card);
+  background: var(--input-bg);
   outline: none;
   transition:
     border-color 0.18s,
@@ -310,13 +310,13 @@
   resize: vertical;
 
   &::placeholder {
-    color: #b0b7c3;
+    color: var(--text-placeholder);
   }
 
   &:focus {
-    border-color: $blue-500;
-    box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.12);
-    background: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--input-focus-ring);
+    background: var(--input-bg-focus);
   }
 }
 
@@ -344,12 +344,12 @@
   align-items: center;
   gap: 0.45rem;
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--text-on-card-muted);
   cursor: pointer;
   user-select: none;
 
   input[type='checkbox'] {
-    accent-color: $blue-500;
+    accent-color: var(--accent);
     width: 15px;
     height: 15px;
     cursor: pointer;
@@ -386,7 +386,7 @@
   margin-top: 0.25rem;
 
   &:hover {
-    background: darken($blue-500, 8%);
+    background: var(--accent-hover);
   }
 
   &:active {
@@ -394,53 +394,14 @@
   }
 }
 
-// ─── Tab switcher ────────────────────────────────────────
-.tabs {
-  display: flex;
-  background: #f3f4f6;
-  border-radius: 10px;
-  padding: 4px;
-  gap: 4px;
-}
-
-.tab {
-  flex: 1;
-  height: 36px;
-  border: none;
-  border-radius: 7px;
-  background: transparent;
-  color: #6b7280;
-  font-size: 0.82rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background 0.18s,
-    color 0.18s,
-    box-shadow 0.18s;
-  font-family: inherit;
-  white-space: nowrap;
-
-  &:hover:not(.tabActive) {
-    background: rgba(255, 255, 255, 0.6);
-    color: $navy-900;
-  }
-}
-
-.tabActive {
-  background: #fff;
-  color: $navy-900;
-  font-weight: 600;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-}
-
 // ─── Footer link ─────────────────────────────────────────
 .footerText {
   text-align: center;
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--text-on-card-muted);
 
   a {
-    color: $blue-500;
+    color: var(--accent);
     font-weight: 600;
 
     &:hover {

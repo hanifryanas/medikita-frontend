@@ -1,14 +1,157 @@
-// Variables
+// ─── Theme Tokens ─────────────────────────────────────────
+// Default = dark hospital theme. Toggled at runtime via
+// `document.documentElement.dataset.theme = 'light' | 'dark'`.
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0c2238;
+  --foreground: #f0f6fb;
+
+  // Hero / nav surfaces
+  --hero-bg: #102a43;
+  --hero-overlay-strong: rgba(16, 42, 67, 0.95);
+  --hero-overlay-mid: rgba(16, 42, 67, 0.65);
+  --hero-overlay-soft: rgba(16, 42, 67, 0.2);
+  --hero-text: #f0f6fb;
+  --hero-text-muted: rgba(240, 246, 251, 0.7);
+
+  // Glass / chrome
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-bg-hover: rgba(255, 255, 255, 0.16);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-border-soft: rgba(255, 255, 255, 0.1);
+
+  // Stats bar
+  --stats-bg: rgba(13, 32, 53, 0.78);
+  --stats-border: rgba(255, 255, 255, 0.07);
+
+  // Accent (medical blue)
+  --accent: #3b8ed4;
+  --accent-hover: #2f7bbd;
+  --accent-soft: rgba(59, 142, 212, 0.22);
+  --accent-text: #ffffff;
+
+  // Floating cards
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-text: #102a43;
+  --card-text-muted: #6c8aa4;
+
+  // Dropdown menu
+  --menu-bg: rgba(22, 43, 74, 0.92);
+  --menu-border: rgba(58, 142, 212, 0.3);
+  --menu-text: #f0f6fb;
+  --menu-divider: rgba(255, 255, 255, 0.08);
+  --menu-hover: rgba(58, 142, 212, 0.22);
+
+  // Mobile nav drawer
+  --nav-drawer-bg: rgba(16, 42, 67, 0.96);
+  --nav-drawer-border: rgba(58, 142, 212, 0.18);
+  --nav-drawer-divider: rgba(255, 255, 255, 0.06);
+
+  // Auth shell logo blend
+  --logo-blend-bg: rgba(15, 33, 64, 0.45);
+  --logo-blend-border: rgba(58, 142, 212, 0.18);
+
+  // Surfaces (used by every page)
+  --surface: #102a43;
+  --surface-overlay: rgba(11, 26, 46, 0.72);
+  --surface-overlay-strong: rgba(11, 26, 46, 0.95);
+  --surface-translucent: rgba(15, 33, 64, 0.45);
+  --surface-translucent-hover: rgba(15, 33, 64, 0.65);
+  --surface-elevated: #ffffff;
+  --surface-tab: #f3f4f6;
+  --surface-tab-hover: rgba(255, 255, 255, 0.6);
+
+  // Text
+  --text-strong: #f0f6fb;
+  --text-muted: rgba(240, 246, 251, 0.7);
+  --text-on-card: #102a43;
+  --text-on-card-muted: #6b7280;
+  --text-placeholder: #b0b7c3;
+
+  // Borders
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-soft: rgba(255, 255, 255, 0.18);
+  --border-card: rgba(58, 142, 212, 0.18);
+  --border-card-hover: rgba(58, 142, 212, 0.45);
+  --border-input: #e5e7eb;
+
+  // Form inputs (white-card forms)
+  --input-bg: #fafafa;
+  --input-bg-focus: #ffffff;
+  --input-focus-ring: rgba(58, 123, 213, 0.12);
+
+  // Shadows
+  --shadow-card: rgba(0, 0, 0, 0.1);
+  --shadow-modal: rgba(0, 0, 0, 0.45);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+[data-theme='light'] {
+  --background: #f4f9fd;
+  --foreground: #102a43;
+
+  --hero-bg: #eaf3fb;
+  --hero-overlay-strong: rgba(234, 243, 251, 0.92);
+  --hero-overlay-mid: rgba(234, 243, 251, 0.7);
+  --hero-overlay-soft: rgba(234, 243, 251, 0.2);
+  --hero-text: #102a43;
+  --hero-text-muted: rgba(16, 42, 67, 0.65);
+
+  --glass-bg: rgba(16, 42, 67, 0.05);
+  --glass-bg-hover: rgba(16, 42, 67, 0.1);
+  --glass-border: rgba(16, 42, 67, 0.18);
+  --glass-border-soft: rgba(16, 42, 67, 0.1);
+
+  --stats-bg: rgba(255, 255, 255, 0.85);
+  --stats-border: rgba(16, 42, 67, 0.08);
+
+  --accent: #2b7bbd;
+  --accent-hover: #1f6aa6;
+  --accent-soft: rgba(43, 123, 189, 0.15);
+  --accent-text: #ffffff;
+
+  --card-bg: #ffffff;
+  --card-text: #102a43;
+  --card-text-muted: #6c8aa4;
+
+  --menu-bg: rgba(255, 255, 255, 0.96);
+  --menu-border: rgba(16, 42, 67, 0.15);
+  --menu-text: #102a43;
+  --menu-divider: rgba(16, 42, 67, 0.08);
+  --menu-hover: rgba(43, 123, 189, 0.12);
+
+  --nav-drawer-bg: rgba(255, 255, 255, 0.96);
+  --nav-drawer-border: rgba(16, 42, 67, 0.12);
+  --nav-drawer-divider: rgba(16, 42, 67, 0.06);
+
+  --logo-blend-bg: rgba(255, 255, 255, 0.6);
+  --logo-blend-border: rgba(16, 42, 67, 0.1);
+
+  --surface: #f4f9fd;
+  --surface-overlay: rgba(255, 255, 255, 0.78);
+  --surface-overlay-strong: rgba(255, 255, 255, 0.96);
+  --surface-translucent: rgba(255, 255, 255, 0.7);
+  --surface-translucent-hover: rgba(255, 255, 255, 0.92);
+  --surface-elevated: #ffffff;
+  --surface-tab: #e8eef5;
+  --surface-tab-hover: rgba(255, 255, 255, 0.85);
+
+  --text-strong: #102a43;
+  --text-muted: rgba(16, 42, 67, 0.65);
+  --text-on-card: #102a43;
+  --text-on-card-muted: #6b7280;
+  --text-placeholder: #9aa6b5;
+
+  --border-subtle: rgba(16, 42, 67, 0.08);
+  --border-soft: rgba(16, 42, 67, 0.18);
+  --border-card: rgba(43, 123, 189, 0.22);
+  --border-card-hover: rgba(43, 123, 189, 0.5);
+  --border-input: #d1d9e2;
+
+  --input-bg: #ffffff;
+  --input-bg-focus: #ffffff;
+  --input-focus-ring: rgba(43, 123, 189, 0.18);
+
+  --shadow-card: rgba(16, 42, 67, 0.08);
+  --shadow-modal: rgba(16, 42, 67, 0.2);
 }
 
 // Reset / Base
