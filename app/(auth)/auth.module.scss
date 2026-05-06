@@ -45,11 +45,11 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  background: $blue-500;
+  background: var(--text-strong);
+  color: var(--surface);
   border-radius: 6px;
   font-size: 1rem;
   font-weight: 700;
-  color: $white;
 }
 
 .panelBody {

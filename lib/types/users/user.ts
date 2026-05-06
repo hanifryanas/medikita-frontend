@@ -14,6 +14,7 @@ export interface User {
   dateOfBirth: string;
   address?: string;
   age: number;
+  photoUrl?: string;
   isEmployee?: boolean;
   role?: UserRole;
   employee?: Employee;

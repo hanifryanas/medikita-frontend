@@ -78,9 +78,14 @@ export const NavAuthSection = () => {
           <span className={styles.navUserHandle}>@{user.userName}</span>
         </span>
         <span className={styles.navAvatarBtn} aria-hidden='true'>
-          <span className={styles.navAvatarInitial}>
-            {getUserInitial(user.firstName, user.lastName)}
-          </span>
+          {user.photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={user.photoUrl} alt='' className={styles.navAvatarImg} />
+          ) : (
+            <span className={styles.navAvatarInitial}>
+              {getUserInitial(user.firstName, user.lastName)}
+            </span>
+          )}
         </span>
       </button>
 

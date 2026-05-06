@@ -121,8 +121,9 @@
   height: 44px;
   padding: 0;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--text-strong);
   border: 2px solid var(--glass-border);
+  overflow: hidden;
   transition: border-color 0.2s;
 
   .navAvatarTrigger:hover & {
@@ -134,10 +135,17 @@
   }
 }
 
+.navAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .navAvatarInitial {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--accent-text);
+  color: var(--surface);
   line-height: 1;
 }
 
