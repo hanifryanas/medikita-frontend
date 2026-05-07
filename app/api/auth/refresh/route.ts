@@ -1,4 +1,5 @@
-import { appConfig } from '@/lib/config/app-config';
+import { nestApi } from '@/lib/api/nest';
+import { User } from '@/lib/types/users';
 import { NextRequest, NextResponse } from 'next/server';
 
 const clearRefreshCookie = (res: NextResponse) => {
@@ -16,45 +17,26 @@ export async function POST(req: NextRequest) {
   let accessToken: string;
 
   try {
-    const nestRes = await fetch(`${appConfig.nest.api.baseUrl}auth/refresh`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken: cookieToken }),
+    const tokenResponse = await nestApi.post<{ accessToken?: string }>('auth/refresh', {
+      refreshToken: cookieToken,
     });
 
-    if (!nestRes.ok) {
-      const err = await nestRes.json().catch(() => ({ message: 'Refresh failed.' }));
-      return clearRefreshCookie(
-        NextResponse.json(
-          { message: err?.message ?? 'Refresh failed.' },
-          { status: nestRes.status }
-        )
-      );
-    }
-
-    const raw = await nestRes.json();
-    accessToken = raw.accessToken;
-
-    if (!accessToken) {
+    if (!tokenResponse.accessToken) {
       return clearRefreshCookie(
         NextResponse.json({ message: 'No access token in refresh response.' }, { status: 500 })
       );
     }
+
+    accessToken = tokenResponse.accessToken;
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Refresh token failed.';
     return clearRefreshCookie(NextResponse.json({ message }, { status: 400 }));
   }
 
-  let user = null;
+  let user: User | null = null;
 
   try {
-    const userRes = await fetch(`${appConfig.nest.api.baseUrl}auth/me`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    if (userRes.ok) {
-      user = await userRes.json();
-    }
+    user = await nestApi.get<User>('auth/me', { token: accessToken });
   } catch (err) {
     console.error('[refresh] Failed to fetch user:', err instanceof Error ? err.message : err);
   }
