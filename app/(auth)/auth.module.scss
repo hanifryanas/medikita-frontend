@@ -371,22 +371,23 @@
 // ─── Submit button ────────────────────────────────────────
 .submitBtn {
   height: 46px;
-  background: $blue-500;
-  color: $white;
-  border: none;
+  background: var(--hero-text);
+  color: var(--hero-bg);
+  border: 1px solid var(--hero-text);
   border-radius: 10px;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition:
     background 0.2s,
-    transform 0.15s;
+    transform 0.15s,
+    opacity 0.2s;
   font-family: inherit;
   letter-spacing: 0.01em;
   margin-top: 0.25rem;
 
   &:hover {
-    background: var(--accent-hover);
+    opacity: 0.88;
   }
 
   &:active {

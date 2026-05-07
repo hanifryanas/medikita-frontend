@@ -41,13 +41,17 @@
   border-radius: 9px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--accent-text);
-  background: var(--accent);
-  transition: background 0.2s;
+  color: var(--surface);
+  background: var(--hero-text);
+  border: 1px solid var(--hero-text);
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    opacity 0.2s;
   white-space: nowrap;
 
   &:hover {
-    background: var(--accent-hover);
+    opacity: 0.88;
   }
 }
 
