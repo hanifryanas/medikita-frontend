@@ -3,6 +3,7 @@ import { getServerTheme } from '@/lib/theme/server';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Hydrator } from './components/hydrators';
+import { PageLoader } from './components/loading';
 import './globals.scss';
 
 const geistSans = Geist({
@@ -31,6 +32,9 @@ export default async function RootLayout({
   return (
     <html lang='en' data-theme={theme} className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
+        <div id='__initial_splash' aria-hidden='true'>
+          <PageLoader />
+        </div>
         <ThemeProvider initial={theme}>
           <Hydrator />
           {children}
