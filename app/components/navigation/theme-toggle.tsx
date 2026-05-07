@@ -12,13 +12,21 @@ export const ThemeToggle = () => {
   return (
     <button
       type='button'
-      className={styles.toggle}
+      role='switch'
+      aria-checked={isDark}
+      className={`${styles.toggle} ${isDark ? styles.toggleDark : styles.toggleLight}`}
       onClick={toggleTheme}
       aria-label={label}
       title={label}
     >
-      <span className={styles.icon} aria-hidden='true'>
-        {isDark ? <SunIcon /> : <MoonIcon />}
+      <span className={styles.track} aria-hidden='true'>
+        <span className={`${styles.iconSlot} ${styles.iconSun}`}>
+          <SunIcon />
+        </span>
+        <span className={`${styles.iconSlot} ${styles.iconMoon}`}>
+          <MoonIcon />
+        </span>
+        <span className={styles.thumb} />
       </span>
     </button>
   );

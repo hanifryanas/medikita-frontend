@@ -1,39 +1,105 @@
+$track-w: 64px;
+$track-h: 30px;
+$thumb-size: 24px;
+$thumb-pad: 3px;
+
 .toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
   padding: 0;
-  border-radius: 999px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border-soft);
-  color: var(--hero-text);
+  background: transparent;
+  border: none;
   cursor: pointer;
-  transition:
-    background 0.2s,
-    border-color 0.2s,
-    color 0.2s,
-    transform 0.2s;
-
-  &:hover {
-    background: var(--glass-bg-hover);
-    border-color: var(--glass-border);
-  }
+  border-radius: 999px;
+  transition: transform 0.15s;
 
   &:focus-visible {
     outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
+
+    .track {
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
   }
 
   &:active {
-    transform: scale(0.94);
+    transform: scale(0.96);
   }
 }
 
-.icon {
+.track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: $track-w;
+  height: $track-h;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--hero-text);
+  border: 1px solid var(--hero-text);
+  transition:
+    background 0.25s,
+    border-color 0.25s,
+    box-shadow 0.2s,
+    opacity 0.2s;
+
+  .toggle:hover & {
+    opacity: 0.88;
+  }
+}
+
+.iconSlot {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--hero-bg);
+  transition:
+    opacity 0.25s,
+    color 0.25s;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.toggleLight {
+  .iconMoon {
+    opacity: 0.55;
+  }
+  .iconSun {
+    opacity: 1;
+  }
+}
+
+.toggleDark {
+  .iconSun {
+    opacity: 0.55;
+  }
+  .iconMoon {
+    opacity: 1;
+  }
+}
+
+.thumb {
+  position: absolute;
+  top: 50%;
+  left: $thumb-pad;
+  width: $thumb-size;
+  height: $thumb-size;
+  border-radius: 50%;
+  background: var(--hero-bg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transform: translateY(-50%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+
+  .toggleDark & {
+    transform: translate(calc(#{$track-w} - #{$thumb-size} - #{$thumb-pad} * 2 - 2px), -50%);
+  }
 }
