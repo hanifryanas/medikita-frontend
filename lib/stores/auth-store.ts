@@ -1,8 +1,8 @@
 'use client';
 
 import { create } from 'zustand';
+import { AuthStatus } from '../types/auth';
 import { AccountUser } from '../types/users';
-import { AuthStatus } from './auth-status.enum';
 
 export interface AuthStore {
   accessToken?: string;
