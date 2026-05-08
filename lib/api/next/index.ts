@@ -1,11 +1,5 @@
-import { SigninPayload, SignupPayload } from '../../types/auth';
-import { hydrateAuth, signinAuth, signoutAuth, signupAuth } from '../auth';
+import { authNextApi } from './auth';
 
 export const nextApi = {
-  auth: {
-    signin: signinAuth,
-    signup: signupAuth,
-    signout: signoutAuth,
-    hydrate: hydrateAuth,
-  },
+  auth: authNextApi,
 };
