@@ -390,11 +390,10 @@ export default function SignupPage() {
             <button type='submit' className={styles.submitBtn}>
               Create account
             </button>
+            <p className={styles.footerText}>
+              Already have an account? <Link href='/signin'>Sign in</Link>
+            </p>
           </form>
-
-          <p className={styles.footerText}>
-            Already have an account? <Link href='/signin'>Sign in</Link>
-          </p>
         </div>
       </section>
     </div>

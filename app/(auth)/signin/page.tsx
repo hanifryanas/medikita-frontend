@@ -150,11 +150,10 @@ export default function SigninPage() {
             <button type='submit' className={styles.submitBtn}>
               Sign in
             </button>
+            <p className={styles.footerText}>
+              Don&apos;t have an account? <Link href='/signup'>Create one free</Link>
+            </p>
           </form>
-
-          <p className={styles.footerText}>
-            Don&apos;t have an account? <Link href='/signup'>Create one free</Link>
-          </p>
         </div>
       </section>
     </div>
