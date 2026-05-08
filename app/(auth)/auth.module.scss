@@ -371,9 +371,9 @@
 // ─── Submit button ────────────────────────────────────────
 .submitBtn {
   height: 46px;
-  background: var(--hero-text);
-  color: var(--hero-bg);
-  border: 1px solid var(--hero-text);
+  background: var(--text-on-card);
+  color: var(--surface-elevated);
+  border: 1px solid var(--text-on-card);
   border-radius: 10px;
   font-size: 0.9rem;
   font-weight: 600;
