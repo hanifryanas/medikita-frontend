@@ -1,14 +1,14 @@
 'use client';
 
 import { create } from 'zustand';
-import { User } from '../types/users';
+import { AccountUser } from '../types/users';
 import { AuthStatus } from './auth-status.enum';
 
 export interface AuthStore {
   accessToken?: string;
-  currentUser?: User;
+  currentUser?: AccountUser;
   status: AuthStatus;
-  signin: (user: User, accessToken: string) => void;
+  signin: (user: AccountUser, accessToken: string) => void;
   signout: () => void;
   reset: () => void;
 }

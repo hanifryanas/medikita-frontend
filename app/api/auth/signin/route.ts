@@ -1,7 +1,7 @@
 import { nestApi } from '@/lib/api/nest';
 import { appConfig } from '@/lib/config/app-config';
 import { SigninData } from '@/lib/types/auth';
-import { User } from '@/lib/types/users';
+import { AccountUser } from '@/lib/types/users';
 import { NextRequest, NextResponse } from 'next/server';
 
 const IS_PROD = appConfig.node.env === 'production';
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const currentUser = await nestApi.get<User>('auth/me', { token: accessToken });
+    const currentUser = await nestApi.get<AccountUser>('auth/me', { token: accessToken });
 
     const res = NextResponse.json({ accessToken, user: currentUser });
 

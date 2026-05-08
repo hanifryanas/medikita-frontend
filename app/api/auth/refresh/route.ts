@@ -1,5 +1,5 @@
 import { nestApi } from '@/lib/api/nest';
-import { User } from '@/lib/types/users';
+import { AccountUser } from '@/lib/types/users';
 import { NextRequest, NextResponse } from 'next/server';
 
 const clearRefreshCookie = (res: NextResponse) => {
@@ -33,10 +33,10 @@ export async function POST(req: NextRequest) {
     return clearRefreshCookie(NextResponse.json({ message }, { status: 400 }));
   }
 
-  let user: User | null = null;
+  let user: AccountUser | null = null;
 
   try {
-    user = await nestApi.get<User>('auth/me', { token: accessToken });
+    user = await nestApi.get<AccountUser>('auth/me', { token: accessToken });
   } catch (err) {
     console.error('[refresh] Failed to fetch user:', err instanceof Error ? err.message : err);
   }

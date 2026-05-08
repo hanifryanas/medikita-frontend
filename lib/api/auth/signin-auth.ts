@@ -1,9 +1,9 @@
 import { SigninPayload } from '@/lib/types/auth/signin-payload';
-import { User } from '@/lib/types/users';
+import { AccountUser } from '@/lib/types/users';
 
 export interface SigninResult {
   accessToken: string;
-  user: User;
+  user: AccountUser;
 }
 
 export const signinAuth = async (payload: SigninPayload): Promise<SigninResult> => {

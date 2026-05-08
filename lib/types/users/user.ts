@@ -1,6 +1,5 @@
 import { Employee } from '../employees';
 import { UserGenderType } from './user-gender.enum';
-import { UserRole } from './user-role.enum';
 
 export interface User {
   userId: string;
@@ -15,7 +14,5 @@ export interface User {
   address?: string;
   age: number;
   photoUrl?: string;
-  isEmployee?: boolean;
-  role?: UserRole;
   employee?: Employee;
 }

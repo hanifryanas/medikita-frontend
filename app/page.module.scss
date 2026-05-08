@@ -10,16 +10,13 @@
   color: var(--hero-text);
   overflow: hidden;
 
-  // Replace "/hero.jpg" with your actual hero photo
-  background:
-    linear-gradient(
-      110deg,
-      var(--hero-overlay-strong) 0%,
-      var(--hero-overlay-mid) 35%,
-      var(--hero-overlay-soft) 62%,
-      transparent 100%
-    ),
-    url('/hero.jpg') 70% center / cover no-repeat;
+  background: linear-gradient(
+    110deg,
+    var(--hero-overlay-strong) 0%,
+    var(--hero-overlay-mid) 35%,
+    var(--hero-overlay-soft) 62%,
+    transparent 100%
+  );
   background-color: var(--hero-bg);
   transition:
     background-color 0.3s ease,

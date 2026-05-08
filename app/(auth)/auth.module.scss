@@ -12,14 +12,12 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 2.5rem;
-  background:
-    linear-gradient(
-      160deg,
-      rgba(11, 26, 46, 0.97) 0%,
-      rgba(11, 26, 46, 0.85) 60%,
-      rgba(58, 123, 213, 0.25) 100%
-    ),
-    url('/hero.jpg') 60% center / cover no-repeat;
+  background: linear-gradient(
+    160deg,
+    rgba(11, 26, 46, 0.97) 0%,
+    rgba(11, 26, 46, 0.85) 60%,
+    rgba(58, 123, 213, 0.25) 100%
+  );
   background-color: $navy-900;
 
   @media (min-width: 768px) {

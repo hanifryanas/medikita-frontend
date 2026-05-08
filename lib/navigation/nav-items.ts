@@ -1,5 +1,5 @@
 import { EmployeePosition } from '@/lib/types/employees';
-import type { User } from '@/lib/types/users';
+import type { AccountUser } from '@/lib/types/users';
 
 export interface NavItem {
   label: string;
@@ -40,7 +40,7 @@ const STAFF_NAV_ITEMS: NavItem[] = [
   { label: 'Employees', href: '/employees' },
 ];
 
-export const getAccountNavItems = (user: User): NavItem[] => {
+export const getAccountNavItems = (user: AccountUser): NavItem[] => {
   if (!user.isEmployee || !user.employee) return USER_NAV_ITEMS;
 
   switch (user.employee.position) {
@@ -55,7 +55,7 @@ export const getAccountNavItems = (user: User): NavItem[] => {
   }
 };
 
-export const getAccountRoleLabel = (user: User): string | null => {
+export const getAccountRoleLabel = (user: AccountUser): string | null => {
   if (!user.isEmployee || !user.employee) return null;
   switch (user.employee.position) {
     case EmployeePosition.Doctor:
