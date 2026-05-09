@@ -15,9 +15,7 @@ export default function SpecialtiesPage() {
 
   const otherClinics = useMemo(() => {
     const featuredIds = new Set(featured.map((d) => d.departmentId));
-    return departments
-      .filter((d) => d.isClinic && d.isActive && !featuredIds.has(d.departmentId))
-      .sort((a, b) => a.displayName.localeCompare(b.displayName));
+    return departments.filter((d) => d.isClinic && d.isActive && !featuredIds.has(d.departmentId));
   }, [departments, featured]);
 
   return (
@@ -39,7 +37,7 @@ export default function SpecialtiesPage() {
               Featured specialties
             </h2>
             <p className={styles.sectionCaption}>
-              Specialty centers built around our most trusted clinicians.
+              Specialty centers built around our most trusted specialists.
             </p>
           </div>
 

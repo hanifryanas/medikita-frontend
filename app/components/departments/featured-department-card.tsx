@@ -3,6 +3,7 @@
 import type { Department } from '@/lib/types/departments';
 import type { Employee } from '@/lib/types/employees';
 import { getSeniorDoctorEmployees } from '@/lib/utils/departments';
+import Link from 'next/link';
 import { DepartmentIcon } from './department-icon';
 import styles from './featured-department-card.module.scss';
 
@@ -33,7 +34,7 @@ export const FeaturedDepartmentCard = ({
   const seniorDoctors = getSeniorDoctorEmployees(department, maxDoctors);
 
   return (
-    <article className={styles.card}>
+    <Link href={`/specialties/${department.typeCode}`} className={styles.card}>
       <header className={styles.header}>
         <div className={styles.iconWrap} aria-hidden='true'>
           <DepartmentIcon name={department.iconName} size={28} />
@@ -77,6 +78,6 @@ export const FeaturedDepartmentCard = ({
           <span className={styles.emptyDoctors}>Doctor roster coming soon.</span>
         )}
       </div>
-    </article>
+    </Link>
   );
 };
