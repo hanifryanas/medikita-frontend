@@ -34,9 +34,3 @@ export const useDepartmentStore = create<DepartmentStore>()((set) => ({
 
   reset: () => set(initialState),
 }));
-
-/** Selector: featured departments, sorted by `featuredOrdinal` ascending. */
-export const selectFeaturedDepartments = (state: DepartmentStore): Department[] =>
-  state.departments
-    .filter((d) => d.featuredOrdinal != null)
-    .sort((a, b) => (a.featuredOrdinal ?? 0) - (b.featuredOrdinal ?? 0));
