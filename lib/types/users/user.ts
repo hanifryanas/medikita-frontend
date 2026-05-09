@@ -1,5 +1,6 @@
-import { Employee } from '../employees';
+import type { Employee } from '../employees';
 import { UserGenderType } from './user-gender.enum';
+import type { UserPatient } from './user-patient';
 
 export interface User {
   userId: string;
@@ -15,4 +16,5 @@ export interface User {
   age: number;
   photoUrl?: string;
   employee?: Employee;
+  userPatients?: UserPatient[];
 }

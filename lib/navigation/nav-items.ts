@@ -1,4 +1,3 @@
-import { EmployeePosition } from '@/lib/types/employees';
 import type { AccountUser } from '@/lib/types/users';
 
 export interface NavItem {
@@ -42,29 +41,14 @@ const STAFF_NAV_ITEMS: NavItem[] = [
 
 export const getAccountNavItems = (user: AccountUser): NavItem[] => {
   if (!user.isEmployee || !user.employee) return USER_NAV_ITEMS;
-
-  switch (user.employee.position) {
-    case EmployeePosition.Doctor:
-      return DOCTOR_NAV_ITEMS;
-    case EmployeePosition.Nurse:
-      return NURSE_NAV_ITEMS;
-    case EmployeePosition.Staff:
-      return STAFF_NAV_ITEMS;
-    default:
-      return USER_NAV_ITEMS;
-  }
+  if (user.employee.doctor) return DOCTOR_NAV_ITEMS;
+  if (user.employee.nurse) return NURSE_NAV_ITEMS;
+  return STAFF_NAV_ITEMS;
 };
 
 export const getAccountRoleLabel = (user: AccountUser): string | null => {
   if (!user.isEmployee || !user.employee) return null;
-  switch (user.employee.position) {
-    case EmployeePosition.Doctor:
-      return 'Doctor';
-    case EmployeePosition.Nurse:
-      return 'Nurse';
-    case EmployeePosition.Staff:
-      return 'Staff';
-    default:
-      return 'Employee';
-  }
+  if (user.employee.doctor) return 'Doctor';
+  if (user.employee.nurse) return 'Nurse';
+  return 'Staff';
 };
