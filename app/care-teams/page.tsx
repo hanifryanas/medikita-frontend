@@ -111,8 +111,11 @@ export default function CareTeamsPage() {
   const toggleDay = useCareTeamsStore((s) => s.toggleDay);
   const toggleDept = useCareTeamsStore((s) => s.toggleDept);
 
-  const departmentItems = useDepartmentStore((s) => s.items);
-  const departments = useMemo(() => departmentItems.map((d) => d.name).sort(), [departmentItems]);
+  const departmentItems = useDepartmentStore((s) => s.departments);
+  const departments = useMemo(
+    () => departmentItems.map((d) => d.displayName).sort(),
+    [departmentItems]
+  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

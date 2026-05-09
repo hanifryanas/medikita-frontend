@@ -1,35 +1,42 @@
 'use client';
 
 import { create } from 'zustand';
-
-export interface Department {
-  id: string;
-  name: string;
-}
+import type { Department } from '../types/departments';
 
 export interface DepartmentStore {
-  items: Department[];
-  loaded: boolean;
-  loading: boolean;
-  error?: string;
-  setItems: (items: Department[]) => void;
+  departments: Department[];
+  featuredDepartments: Department[];
+  isLoaded: boolean;
+  isLoading: boolean;
+  setDepartments: (departments: Department[]) => void;
+  setFeaturedDepartments: (featuredDepartments: Department[]) => void;
   setLoading: (loading: boolean) => void;
-  setError: (error?: string) => void;
   reset: () => void;
 }
 
 const initialState = {
-  items: [] as Department[],
-  loaded: false,
-  loading: false,
-  error: undefined as string | undefined,
+  departments: [] as Department[],
+  featuredDepartments: [] as Department[],
+  isLoaded: false,
+  isLoading: false,
 };
 
 export const useDepartmentStore = create<DepartmentStore>()((set) => ({
   ...initialState,
 
-  setItems: (items) => set({ items, loaded: true, loading: false, error: undefined }),
-  setLoading: (loading) => set({ loading }),
-  setError: (error) => set({ error, loading: false }),
+  setDepartments: (departments) =>
+    set({ departments, isLoaded: true, isLoading: false }),
+
+  setFeaturedDepartments: (featuredDepartments) =>
+    set({ featuredDepartments, isLoaded: true, isLoading: false }),
+
+  setLoading: (isLoading) => set({ isLoading }),
+
   reset: () => set(initialState),
 }));
+
+/** Selector: featured departments, sorted by `featuredOrdinal` ascending. */
+export const selectFeaturedDepartments = (state: DepartmentStore): Department[] =>
+  state.departments
+    .filter((d) => d.featuredOrdinal != null)
+    .sort((a, b) => (a.featuredOrdinal ?? 0) - (b.featuredOrdinal ?? 0));
