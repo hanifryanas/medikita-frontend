@@ -10,7 +10,7 @@ interface CarouselProps {
   ariaLabel?: string;
   /** Number of slides visible at once on desktop. Defaults to 6. */
   slidesToShow?: number;
-  /** Number of slides per arrow click. Defaults to `slidesToShow` (page-by-page). */
+  /** Number of slides per arrow click. Defaults to 1 (one-by-one). */
   slidesToScroll?: number;
   /** Tailwind-style breakpoint overrides for slidesToShow. Mobile-first not required — uses max-width media queries internally. */
   responsive?: {
@@ -29,14 +29,14 @@ export const Carousel = ({
   children,
   ariaLabel = 'Carousel',
   slidesToShow = 6,
-  slidesToScroll,
+  slidesToScroll = 1,
   responsive,
   className,
 }: CarouselProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     containScroll: 'trimSnaps',
-    slidesToScroll: slidesToScroll ?? slidesToShow,
+    slidesToScroll: slidesToScroll,
   });
 
   const [canScrollPrev, setCanScrollPrev] = useState(false);

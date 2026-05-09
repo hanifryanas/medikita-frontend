@@ -12,16 +12,16 @@
 .content {
   flex: 1;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 3.5rem 2.5rem 5rem;
+  padding: 1.5rem 2.5rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 1.5rem;
 
   @media (max-width: 768px) {
-    padding: 2rem 1.25rem 3.5rem;
-    gap: 2rem;
+    padding: 1.5rem 1.25rem 1rem;
+    gap: 0.75rem;
   }
 }
 
@@ -30,11 +30,11 @@
   max-width: 720px;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.35rem;
 }
 
 .eyebrow {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -42,15 +42,16 @@
 }
 
 .heading {
-  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
   letter-spacing: -0.015em;
+  line-height: 1.1;
   margin: 0;
 }
 
 .subtitle {
-  font-size: 1.05rem;
-  line-height: 1.55;
+  font-size: 0.9rem;
+  line-height: 1.4;
   color: $muted;
   margin: 0;
 }
@@ -59,7 +60,7 @@
 .section {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.4rem;
 }
 
 .sectionHeader {
@@ -71,14 +72,14 @@
 }
 
 .sectionTitle {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   margin: 0;
 }
 
 .sectionCaption {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: $muted;
   margin: 0;
 }
@@ -86,8 +87,8 @@
 // ─── Featured grid ────────────────────────────────────────
 .featuredGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
 }
 
 // ─── Empty / loading states ───────────────────────────────

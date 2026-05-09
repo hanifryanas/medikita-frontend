@@ -8,7 +8,7 @@ import styles from './featured-department-card.module.scss';
 
 interface FeaturedDepartmentCardProps {
   department: Department;
-  /** Maximum number of senior doctors to show. Default 3. */
+  /** Maximum number of senior doctors to show. Default 2. */
   maxDoctors?: number;
 }
 
@@ -22,7 +22,7 @@ const formatDoctorName = (employee: Employee): string => {
   const first = employee.user?.firstName ?? '';
   const last = employee.user?.lastName ?? '';
   const title = employee.doctor?.title;
-  const base = `Dr. ${first} ${last}`.replace(/\s+/g, ' ').trim();
+  const base = `dr. ${first} ${last}`.replace(/\s+/g, ' ').trim();
   return title ? `${base}, ${title}` : base;
 };
 

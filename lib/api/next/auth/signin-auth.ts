@@ -1,10 +1,5 @@
 import { SigninPayload } from '@/lib/types/auth/signin-payload';
-import { AccountUser } from '@/lib/types/users';
-
-export interface SigninResult {
-  accessToken: string;
-  user: AccountUser;
-}
+import { SigninResult } from './types';
 
 export const signinAuth = async (payload: SigninPayload): Promise<SigninResult> => {
   const res = await fetch('/api/auth/signin', {

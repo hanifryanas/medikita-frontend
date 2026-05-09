@@ -20,12 +20,14 @@
 
 .track {
   display: flex;
+  align-items: stretch;
   gap: var(--slide-gap);
   touch-action: pan-y pinch-zoom;
 
   > * {
     flex: 0 0 calc((100% - (var(--slides-to-show) - 1) * var(--slide-gap)) / var(--slides-to-show));
     min-width: 0;
+    display: flex;
   }
 
   @media (max-width: 1024px) {

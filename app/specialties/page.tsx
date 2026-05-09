@@ -28,8 +28,7 @@ export default function SpecialtiesPage() {
           <span className={styles.eyebrow}>Our Specialties</span>
           <h1 className={styles.heading}>Care that meets every need</h1>
           <p className={styles.subtitle}>
-            From featured centers of excellence to a full roster of outpatient clinics, our team
-            brings together specialists across every stage of life.
+            From flagship centers to everyday clinics — care for every stage of life.
           </p>
         </header>
 
