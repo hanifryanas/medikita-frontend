@@ -2,16 +2,22 @@
 
 import { create } from 'zustand';
 import type { Department } from '../types/departments';
+import type { Employee } from '../types/employees';
 
 export interface DepartmentStore {
   departments: Department[];
   featuredDepartments: Department[];
+  departmentDoctorEmployeeMap: Map<string, Employee[]>;
+  departmentNurseEmployeeMap: Map<string, Employee[]>;
+  departmentStaffEmployeeMap: Map<string, Employee[]>;
   isLoaded: boolean;
   isLoading: boolean;
+  reset: () => void;
+  setIsLoading: (isLoading: boolean) => void;
   setDepartments: (departments: Department[]) => void;
   setFeaturedDepartments: (featuredDepartments: Department[]) => void;
-  setLoading: (loading: boolean) => void;
-  reset: () => void;
+  getDepartmentByTypeCode: (typeCode: string) => Department | undefined;
+  getFeaturedEmployees: (typeCode: string, limit?: number) => Employee[];
 }
 
 const initialState = {
@@ -19,18 +25,72 @@ const initialState = {
   featuredDepartments: [] as Department[],
   isLoaded: false,
   isLoading: false,
+  departmentDoctorEmployeeMap: new Map<string, Employee[]>(),
+  departmentNurseEmployeeMap: new Map<string, Employee[]>(),
+  departmentStaffEmployeeMap: new Map<string, Employee[]>(),
 };
 
-export const useDepartmentStore = create<DepartmentStore>()((set) => ({
+export const useDepartmentStore = create<DepartmentStore>()((set, get) => ({
   ...initialState,
 
-  setDepartments: (departments) =>
-    set({ departments, isLoaded: true, isLoading: false }),
+  reset: () => set(initialState),
+
+  setIsLoading: (isLoading) => set({ isLoading }),
+
+  setDepartments: (departments) => {
+    const departmentDoctorEmployeeMap = new Map<string, Employee[]>();
+    const departmentNurseEmployeeMap = new Map<string, Employee[]>();
+    const departmentStaffEmployeeMap = new Map<string, Employee[]>();
+
+    departments.forEach((department) => {
+      const doctors: Employee[] = [];
+      const nurses: Employee[] = [];
+      const staff: Employee[] = [];
+
+      (department.employees ?? []).forEach((employee) => {
+        if (employee.doctor) doctors.push(employee);
+        else if (employee.nurse) nurses.push(employee);
+        else staff.push(employee);
+      });
+
+      departmentDoctorEmployeeMap.set(department.typeCode, doctors);
+      departmentNurseEmployeeMap.set(department.typeCode, nurses);
+      departmentStaffEmployeeMap.set(department.typeCode, staff);
+    });
+
+    set({
+      departments,
+      departmentDoctorEmployeeMap,
+      departmentNurseEmployeeMap,
+      departmentStaffEmployeeMap,
+      isLoaded: true,
+      isLoading: false,
+    });
+  },
 
   setFeaturedDepartments: (featuredDepartments) =>
     set({ featuredDepartments, isLoaded: true, isLoading: false }),
 
-  setLoading: (isLoading) => set({ isLoading }),
+  getDepartmentByTypeCode: (typeCode) => get().departments.find((d) => d.typeCode === typeCode),
 
-  reset: () => set(initialState),
+  getFeaturedEmployees: (typeCode, limit = 3) => {
+    const { departmentDoctorEmployeeMap, departmentNurseEmployeeMap, departmentStaffEmployeeMap } =
+      get();
+
+    const doctors = departmentDoctorEmployeeMap.get(typeCode) ?? [];
+    const nurses = departmentNurseEmployeeMap.get(typeCode) ?? [];
+    const staff = departmentStaffEmployeeMap.get(typeCode) ?? [];
+
+    const bySeniority = (a: Employee, b: Employee) => {
+      const aStart = a.startDate ? new Date(a.startDate).getTime() : Infinity;
+      const bStart = b.startDate ? new Date(b.startDate).getTime() : Infinity;
+      return aStart - bStart;
+    };
+
+    return [
+      ...[...doctors].sort(bySeniority),
+      ...[...nurses].sort(bySeniority),
+      ...[...staff].sort(bySeniority),
+    ].slice(0, limit);
+  },
 }));

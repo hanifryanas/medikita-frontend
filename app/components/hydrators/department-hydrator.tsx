@@ -7,11 +7,11 @@ import { useEffect } from 'react';
 export const DepartmentHydrator = () => {
   useEffect(() => {
     (async () => {
-      const { isLoaded, isLoading, setDepartments, setFeaturedDepartments, setLoading, reset } =
+      const { isLoaded, isLoading, setDepartments, setFeaturedDepartments, setIsLoading, reset } =
         useDepartmentStore.getState();
       if (isLoaded || isLoading) return;
 
-      setLoading(true);
+      setIsLoading(true);
       try {
         const { departments, featuredDepartments } = await nextApi.departments.getDepartments();
         setDepartments(departments);
@@ -19,7 +19,7 @@ export const DepartmentHydrator = () => {
       } catch {
         reset();
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     })();
   }, []);

@@ -5,12 +5,7 @@ const nextConfig: NextConfig = {
     viewTransition: true,
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-      },
-    ],
+    remotePatterns: [{ protocol: 'https', hostname: '**' }],
   },
 };
 

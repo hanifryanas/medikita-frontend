@@ -4,6 +4,7 @@ import { PublicNav } from '@/app/components/navigation';
 import { SearchIcon } from '@/app/icons';
 import type { CareRole, DayShort } from '@/lib/stores';
 import { useCareTeamsStore, useDepartmentStore } from '@/lib/stores';
+import { getUserInitial } from '@/lib/utils/formatters';
 import { useMemo } from 'react';
 import styles from './page.module.scss';
 
@@ -88,16 +89,6 @@ const SEARCH_MODES = [
 ];
 
 const ALL_DAYS: DayShort[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-const getInitials = (name: string) =>
-  name
-    .replace(/^Dr\.\s*/i, '')
-    .split(' ')
-    .map((p) => p[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
 
 export default function CareTeamsPage() {
   const query = useCareTeamsStore((s) => s.query);
@@ -235,7 +226,7 @@ export default function CareTeamsPage() {
               <li key={m.id} className={styles.card}>
                 <div className={styles.cardHeader}>
                   <span className={styles.avatar} aria-hidden>
-                    {getInitials(m.name)}
+                    {getUserInitial(m.name.split(' ')[0], m.name.split(' ')[1], '?')}
                   </span>
                   <div>
                     <h2 className={styles.cardName}>{m.name}</h2>

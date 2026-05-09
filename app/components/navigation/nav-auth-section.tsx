@@ -4,6 +4,7 @@ import { nextApi } from '@/lib/api/next';
 import { getAccountRoleLabel } from '@/lib/navigation';
 import { AuthStatus, useAuthStore } from '@/lib/stores';
 import { getUserInitial } from '@/lib/utils/formatters';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import styles from './nav-auth-section.module.scss';
@@ -79,8 +80,13 @@ export const NavAuthSection = () => {
         </span>
         <span className={styles.navAvatarBtn} aria-hidden='true'>
           {user.photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={user.photoUrl} alt='' className={styles.navAvatarImg} />
+            <Image
+              src={user.photoUrl}
+              alt=''
+              className={styles.navAvatarImg}
+              width={40}
+              height={40}
+            />
           ) : (
             <span className={styles.navAvatarInitial}>
               {getUserInitial(user.firstName, user.lastName)}

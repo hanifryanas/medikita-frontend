@@ -1,0 +1,56 @@
+'use client';
+
+import type { Employee } from '@/lib/types/employees';
+import { getUserInitial } from '@/lib/utils/formatters';
+import Image from 'next/image';
+import styles from './employee-card.module.scss';
+
+export type EmployeeCardVariant = 'row' | 'card';
+
+interface EmployeeCardProps {
+  employee: Employee;
+  variant?: EmployeeCardVariant;
+  name?: string;
+  subtitle?: string;
+  avatarSize?: number;
+  className?: string;
+}
+
+export const EmployeeCard = ({
+  employee,
+  variant = 'row',
+  name,
+  subtitle,
+  avatarSize,
+  className,
+}: EmployeeCardProps) => {
+  const photoUrl = employee.photoUrl ?? employee.user?.photoUrl;
+  const displayName = name ?? employee.fullName;
+  const displaySubtitle = subtitle ?? employee.doctor?.jobTitle ?? employee.jobTitle;
+  const size = avatarSize ?? (variant === 'card' ? 56 : 32);
+
+  const rootClass = [styles.root, styles[variant], className].filter(Boolean).join(' ');
+
+  return (
+    <div className={rootClass}>
+      {photoUrl ? (
+        <Image
+          className={styles.avatarImg}
+          src={photoUrl}
+          alt=''
+          width={size}
+          height={size}
+          style={{ width: size, height: size }}
+        />
+      ) : (
+        <span className={styles.avatar} aria-hidden='true' style={{ width: size, height: size }}>
+          {getUserInitial(employee.user?.firstName, employee.user?.lastName, '?')}
+        </span>
+      )}
+      <span className={styles.meta}>
+        <span className={styles.name}>{displayName}</span>
+        {displaySubtitle && <span className={styles.subtitle}>{displaySubtitle}</span>}
+      </span>
+    </div>
+  );
+};
