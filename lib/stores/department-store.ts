@@ -17,6 +17,11 @@ export interface DepartmentStore {
   setDepartments: (departments: Department[]) => void;
   setFeaturedDepartments: (featuredDepartments: Department[]) => void;
   getDepartmentByTypeCode: (typeCode: string) => Department | undefined;
+  getDepartmentsByFlag: (flags: {
+    isClinical?: boolean;
+    isClinic?: boolean;
+    isFeatured?: boolean;
+  }) => Department[];
   getFeaturedEmployees: (typeCode: string, limit?: number) => Employee[];
 }
 
@@ -72,6 +77,14 @@ export const useDepartmentStore = create<DepartmentStore>()((set, get) => ({
     set({ featuredDepartments, isLoaded: true, isLoading: false }),
 
   getDepartmentByTypeCode: (typeCode) => get().departments.find((d) => d.typeCode === typeCode),
+
+  getDepartmentsByFlag: (flags) =>
+    get().departments.filter((dept) => {
+      if (flags.isClinical !== undefined && dept.isClinical !== flags.isClinical) return false;
+      if (flags.isClinic !== undefined && dept.isClinic !== flags.isClinic) return false;
+      if (flags.isFeatured !== undefined && dept.featuredOrdinal === undefined) return false;
+      return true;
+    }),
 
   getFeaturedEmployees: (typeCode, limit = 3) => {
     const { departmentDoctorEmployeeMap, departmentNurseEmployeeMap, departmentStaffEmployeeMap } =

@@ -4,19 +4,12 @@ import { Carousel } from '@/app/components/common';
 import { DepartmentTile, FeaturedDepartmentCard } from '@/app/components/departments';
 import { PublicNav } from '@/app/components/navigation';
 import { useDepartmentStore } from '@/lib/stores';
-import { useMemo } from 'react';
 import styles from './page.module.scss';
 
 export default function SpecialtiesPage() {
-  const departments = useDepartmentStore((s) => s.departments);
-  const featured = useDepartmentStore((s) => s.featuredDepartments);
-  const isLoading = useDepartmentStore((s) => s.isLoading);
-  const isLoaded = useDepartmentStore((s) => s.isLoaded);
-
-  const otherClinics = useMemo(() => {
-    const featuredIds = new Set(featured.map((d) => d.departmentId));
-    return departments.filter((d) => d.isClinic && d.isActive && !featuredIds.has(d.departmentId));
-  }, [departments, featured]);
+  const { isLoaded, isLoading, featuredDepartments, getDepartmentsByFlag } =
+    useDepartmentStore.getState();
+  const otherDepartmentClinics = getDepartmentsByFlag({ isClinic: true, isFeatured: false });
 
   return (
     <div className={styles.page}>
@@ -43,13 +36,13 @@ export default function SpecialtiesPage() {
 
           {isLoading && !isLoaded && <div className={styles.empty}>Loading specialties…</div>}
 
-          {isLoaded && featured.length === 0 && (
+          {isLoaded && featuredDepartments.length === 0 && (
             <div className={styles.empty}>No featured specialties yet.</div>
           )}
 
-          {featured.length > 0 && (
+          {featuredDepartments.length > 0 && (
             <div className={styles.featuredGrid}>
-              {featured.map((department) => (
+              {featuredDepartments.map((department) => (
                 <FeaturedDepartmentCard key={department.departmentId} department={department} />
               ))}
             </div>
@@ -67,13 +60,13 @@ export default function SpecialtiesPage() {
             </p>
           </div>
 
-          {isLoaded && otherClinics.length === 0 && (
+          {isLoaded && otherDepartmentClinics.length === 0 && (
             <div className={styles.empty}>No additional clinics to show.</div>
           )}
 
-          {otherClinics.length > 0 && (
+          {otherDepartmentClinics.length > 0 && (
             <Carousel ariaLabel='All clinics'>
-              {otherClinics.map((department) => (
+              {otherDepartmentClinics.map((department) => (
                 <DepartmentTile key={department.departmentId} department={department} />
               ))}
             </Carousel>
