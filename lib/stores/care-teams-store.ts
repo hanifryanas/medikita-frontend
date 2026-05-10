@@ -19,6 +19,8 @@ export interface CareTeamsStore {
   setSearchMode: (m: CareTeamsSearchMode) => void;
   toggleDay: (d: DayShort) => void;
   toggleDept: (d: string) => void;
+  clearDays: () => void;
+  clearDepts: () => void;
   reset: () => void;
 }
 
@@ -35,7 +37,8 @@ export const useCareTeamsStore = create<CareTeamsStore>()((set) => ({
 
   setQuery: (query) => set({ query }),
   setRoleFilter: (roleFilter) => set({ roleFilter }),
-  setSearchMode: (searchMode) => set({ searchMode }),
+  setSearchMode: (searchMode) =>
+    set({ searchMode, query: '', selectedDays: [], selectedDepts: [] }),
 
   toggleDay: (d) =>
     set((s) => ({
@@ -50,6 +53,9 @@ export const useCareTeamsStore = create<CareTeamsStore>()((set) => ({
         ? s.selectedDepts.filter((x) => x !== d)
         : [...s.selectedDepts, d],
     })),
+
+  clearDays: () => set({ selectedDays: [] }),
+  clearDepts: () => set({ selectedDepts: [] }),
 
   reset: () => set(initialState),
 }));

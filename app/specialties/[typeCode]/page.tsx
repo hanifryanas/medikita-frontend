@@ -16,13 +16,11 @@ export default function DepartmentDetailPage() {
   const params = useParams<{ typeCode: string }>();
   const typeCode = params?.typeCode;
 
-  const {
-    isLoading,
-    isLoaded,
-    departmentDoctorEmployeeMap,
-    departmentNurseEmployeeMap,
-    getDepartmentByTypeCode,
-  } = useDepartmentStore.getState();
+  const isLoading = useDepartmentStore((s) => s.isLoading);
+  const isLoaded = useDepartmentStore((s) => s.isLoaded);
+  const departmentDoctorEmployeeMap = useDepartmentStore((s) => s.departmentDoctorEmployeeMap);
+  const departmentNurseEmployeeMap = useDepartmentStore((s) => s.departmentNurseEmployeeMap);
+  const getDepartmentByTypeCode = useDepartmentStore((s) => s.getDepartmentByTypeCode);
   const department = getDepartmentByTypeCode(typeCode);
   const doctors = departmentDoctorEmployeeMap.get(typeCode) ?? [];
   const nurses = departmentNurseEmployeeMap.get(typeCode) ?? [];

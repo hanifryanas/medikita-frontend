@@ -1,5 +1,6 @@
 'use client';
 
+import { ChipPicker } from '@/app/components/common';
 import { PublicNav } from '@/app/components/navigation';
 import { SearchIcon } from '@/app/icons';
 import type { CareRole, DayShort } from '@/lib/stores';
@@ -101,12 +102,12 @@ export default function CareTeamsPage() {
   const setSearchMode = useCareTeamsStore((s) => s.setSearchMode);
   const toggleDay = useCareTeamsStore((s) => s.toggleDay);
   const toggleDept = useCareTeamsStore((s) => s.toggleDept);
+  const clearDays = useCareTeamsStore((s) => s.clearDays);
+  const clearDepts = useCareTeamsStore((s) => s.clearDepts);
 
-  const departmentItems = useDepartmentStore((s) => s.departments);
-  const departments = useMemo(
-    () => departmentItems.map((d) => d.displayName).sort(),
-    [departmentItems]
-  );
+  const getDepartmentsByFlag = useDepartmentStore((s) => s.getDepartmentsByFlag);
+  const departments = getDepartmentsByFlag({ isClinical: true });
+  const departmentCodes = useMemo(() => departments.map((d) => d.typeCode), [departments]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -129,8 +130,11 @@ export default function CareTeamsPage() {
       <PublicNav />
       <main className={styles.content}>
         <header className={styles.header}>
-          <h1 className={styles.heading}>Care Teams</h1>
-          <p className={styles.subtitle}>Meet the specialists behind MediKita.</p>
+          <span className={styles.eyebrow}>Care Teams</span>
+          <h1 className={styles.heading}>Meet the people behind your care</h1>
+          <p className={styles.subtitle}>
+            Browse the full roster — by name, schedule, or department.
+          </p>
         </header>
 
         <div className={styles.toolbar}>
@@ -148,38 +152,22 @@ export default function CareTeamsPage() {
                   onChange={(e) => setQuery(e.target.value)}
                 />
               </div>
+            ) : searchMode === 'days' ? (
+              <ChipPicker
+                options={ALL_DAYS}
+                selected={selectedDays}
+                onToggle={toggleDay}
+                onClear={clearDays}
+                ariaLabel='Filter by day'
+              />
             ) : (
-              <div className={styles.chipPicker}>
-                {searchMode === 'days'
-                  ? ALL_DAYS.map((d) => {
-                      const active = selectedDays.includes(d);
-                      return (
-                        <button
-                          key={d}
-                          type='button'
-                          aria-pressed={active}
-                          className={`${styles.chip} ${active ? styles.chipActive : ''}`}
-                          onClick={() => toggleDay(d)}
-                        >
-                          {d}
-                        </button>
-                      );
-                    })
-                  : departments.map((d) => {
-                      const active = selectedDepts.includes(d);
-                      return (
-                        <button
-                          key={d}
-                          type='button'
-                          aria-pressed={active}
-                          className={`${styles.chip} ${active ? styles.chipActive : ''}`}
-                          onClick={() => toggleDept(d)}
-                        >
-                          {d}
-                        </button>
-                      );
-                    })}
-              </div>
+              <ChipPicker
+                options={departmentCodes}
+                selected={selectedDepts}
+                onToggle={toggleDept}
+                onClear={clearDepts}
+                ariaLabel='Filter by department'
+              />
             )}
 
             <div className={styles.searchModes} role='tablist' aria-label='Search by'>

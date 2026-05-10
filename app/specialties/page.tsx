@@ -7,8 +7,10 @@ import { useDepartmentStore } from '@/lib/stores';
 import styles from './page.module.scss';
 
 export default function SpecialtiesPage() {
-  const { isLoaded, isLoading, featuredDepartments, getDepartmentsByFlag } =
-    useDepartmentStore.getState();
+  const isLoaded = useDepartmentStore((s) => s.isLoaded);
+  const isLoading = useDepartmentStore((s) => s.isLoading);
+  const featuredDepartments = useDepartmentStore((s) => s.featuredDepartments);
+  const getDepartmentsByFlag = useDepartmentStore((s) => s.getDepartmentsByFlag);
   const otherDepartmentClinics = getDepartmentsByFlag({ isClinic: true, isFeatured: false });
 
   return (
