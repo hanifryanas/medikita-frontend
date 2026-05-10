@@ -1,23 +1,23 @@
 'use client';
 
 import { create } from 'zustand';
+import { Day } from '../types/common';
 
 export type CareRole = 'doctor' | 'nurse';
 export type CareTeamsRoleFilter = 'all' | CareRole;
 export type CareTeamsSearchMode = 'name' | 'days' | 'department';
-export type DayShort = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
 
 export interface CareTeamsStore {
   query: string;
   roleFilter: CareTeamsRoleFilter;
   searchMode: CareTeamsSearchMode;
-  selectedDays: DayShort[];
+  selectedDays: Day[];
   selectedDepts: string[];
 
   setQuery: (q: string) => void;
   setRoleFilter: (f: CareTeamsRoleFilter) => void;
   setSearchMode: (m: CareTeamsSearchMode) => void;
-  toggleDay: (d: DayShort) => void;
+  toggleDay: (d: Day) => void;
   toggleDept: (d: string) => void;
   clearDays: () => void;
   clearDepts: () => void;
@@ -28,7 +28,7 @@ const initialState = {
   query: '',
   roleFilter: 'all' as CareTeamsRoleFilter,
   searchMode: 'name' as CareTeamsSearchMode,
-  selectedDays: [] as DayShort[],
+  selectedDays: [] as Day[],
   selectedDepts: [] as string[],
 };
 

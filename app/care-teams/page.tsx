@@ -1,81 +1,14 @@
 'use client';
 
+import { CareTeamCard } from '@/app/components/care-teams';
 import { ChipPicker } from '@/app/components/common';
 import { PublicNav } from '@/app/components/navigation';
 import { SearchIcon } from '@/app/icons';
-import type { CareRole, DayShort } from '@/lib/stores';
-import { useCareTeamsStore, useDepartmentStore } from '@/lib/stores';
-import { getUserInitial } from '@/lib/utils/formatters';
+import { useCareTeamsStore, useDepartmentStore, useDoctorStore } from '@/lib/stores';
+import { Day } from '@/lib/types/common';
+import type { Doctor } from '@/lib/types/doctors';
 import { useMemo } from 'react';
 import styles from './page.module.scss';
-
-interface CareMember {
-  id: string;
-  name: string;
-  role: CareRole;
-  specialization: string;
-  department: string;
-  scheduledDays: DayShort[];
-}
-
-const MEMBERS: CareMember[] = [
-  {
-    id: '1',
-    name: 'Dr. Aulia Pramudita',
-    role: 'doctor',
-    specialization: 'Cardiology',
-    department: 'Heart Center',
-    scheduledDays: ['Mon', 'Wed', 'Fri'],
-  },
-  {
-    id: '2',
-    name: 'Dr. Rendra Wicaksana',
-    role: 'doctor',
-    specialization: 'Pediatrics',
-    department: 'Children Care',
-    scheduledDays: ['Tue', 'Thu', 'Sat'],
-  },
-  {
-    id: '3',
-    name: 'Dr. Maya Larasati',
-    role: 'doctor',
-    specialization: 'Dermatology',
-    department: 'Skin & Aesthetics',
-    scheduledDays: ['Mon', 'Tue', 'Thu'],
-  },
-  {
-    id: '4',
-    name: 'Siti Nurhaliza',
-    role: 'nurse',
-    specialization: 'Emergency Care',
-    department: 'ER',
-    scheduledDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-  },
-  {
-    id: '5',
-    name: 'Bagus Setiawan',
-    role: 'nurse',
-    specialization: 'Pediatric Nursing',
-    department: 'Children Care',
-    scheduledDays: ['Wed', 'Thu', 'Fri', 'Sat'],
-  },
-  {
-    id: '6',
-    name: 'Dr. Hanif Ryan',
-    role: 'doctor',
-    specialization: 'Neurology',
-    department: 'Neuroscience',
-    scheduledDays: ['Mon', 'Wed', 'Fri'],
-  },
-  {
-    id: '7',
-    name: 'Indah Permata',
-    role: 'nurse',
-    specialization: 'Surgical Nursing',
-    department: 'Operating Theatre',
-    scheduledDays: ['Tue', 'Thu', 'Sat', 'Sun'],
-  },
-];
 
 const FILTERS = [
   { label: 'All', value: 'all' as const },
@@ -89,7 +22,24 @@ const SEARCH_MODES = [
   { label: 'Department', value: 'department' as const },
 ];
 
-const ALL_DAYS: DayShort[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAY_OPTIONS: { value: Day; label: string }[] = [
+  { value: Day.Monday, label: 'Mon' },
+  { value: Day.Tuesday, label: 'Tue' },
+  { value: Day.Wednesday, label: 'Wed' },
+  { value: Day.Thursday, label: 'Thu' },
+  { value: Day.Friday, label: 'Fri' },
+  { value: Day.Saturday, label: 'Sat' },
+  { value: Day.Sunday, label: 'Sun' },
+];
+
+const getDoctorName = (d: Doctor) => {
+  const employee = d.employee;
+  const fullName =
+    employee?.fullName ||
+    [employee?.user?.firstName, employee?.user?.lastName].filter(Boolean).join(' ') ||
+    'Unknown';
+  return d.title ? `${d.title} ${fullName}` : fullName;
+};
 
 export default function CareTeamsPage() {
   const query = useCareTeamsStore((s) => s.query);
@@ -105,25 +55,31 @@ export default function CareTeamsPage() {
   const clearDays = useCareTeamsStore((s) => s.clearDays);
   const clearDepts = useCareTeamsStore((s) => s.clearDepts);
 
+  const doctors = useDoctorStore((s) => s.doctors);
+
   const getDepartmentsByFlag = useDepartmentStore((s) => s.getDepartmentsByFlag);
   const departments = getDepartmentsByFlag({ isClinical: true });
   const departmentCodes = useMemo(() => departments.map((d) => d.typeCode), [departments]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return MEMBERS.filter((m) => {
-      if (filter !== 'all' && m.role !== filter) return false;
+    return doctors.filter((d) => {
+      if (filter === 'nurse') return false;
 
-      if (searchMode === 'name' && q && !m.name.toLowerCase().includes(q)) return false;
+      if (searchMode === 'name' && q) {
+        if (!getDoctorName(d).toLowerCase().includes(q)) return false;
+      }
       if (searchMode === 'days' && selectedDays.length > 0) {
-        if (!selectedDays.every((d) => m.scheduledDays.includes(d))) return false;
+        const days = d.scheduleDays ?? [];
+        if (!selectedDays.every((day) => days.includes(day))) return false;
       }
       if (searchMode === 'department' && selectedDepts.length > 0) {
-        if (!selectedDepts.includes(m.department)) return false;
+        const code = d.employee?.department?.typeCode;
+        if (!code || !selectedDepts.includes(code)) return false;
       }
       return true;
     });
-  }, [query, filter, searchMode, selectedDays, selectedDepts]);
+  }, [doctors, query, filter, searchMode, selectedDays, selectedDepts]);
 
   return (
     <div className={styles.page}>
@@ -154,7 +110,7 @@ export default function CareTeamsPage() {
               </div>
             ) : searchMode === 'days' ? (
               <ChipPicker
-                options={ALL_DAYS}
+                options={DAY_OPTIONS}
                 selected={selectedDays}
                 onToggle={toggleDay}
                 onClear={clearDays}
@@ -209,40 +165,11 @@ export default function CareTeamsPage() {
         {filtered.length === 0 ? (
           <div className={styles.empty}>No team members match your search.</div>
         ) : (
-          <ul className={styles.grid}>
-            {filtered.map((m) => (
-              <li key={m.id} className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <span className={styles.avatar} aria-hidden>
-                    {getUserInitial(m.name.split(' ')[0], m.name.split(' ')[1], '?')}
-                  </span>
-                  <div>
-                    <h2 className={styles.cardName}>{m.name}</h2>
-                    <p className={styles.cardRole}>{m.specialization}</p>
-                  </div>
-                </div>
-                <span
-                  className={`${styles.roleBadge} ${
-                    m.role === 'doctor' ? styles.roleBadgeDoctor : styles.roleBadgeNurse
-                  }`}
-                >
-                  {m.role}
-                </span>
-                <div className={styles.cardMeta}>
-                  <span>
-                    Department: <strong>{m.department}</strong>
-                  </span>
-                </div>
-                <div className={styles.dayTags} aria-label='Scheduled days'>
-                  {m.scheduledDays.map((d) => (
-                    <span key={d} className={styles.dayTag}>
-                      {d}
-                    </span>
-                  ))}
-                </div>
-              </li>
+          <div className={styles.grid}>
+            {filtered.map((d) => (
+              <CareTeamCard key={d.doctorId} doctor={d} />
             ))}
-          </ul>
+          </div>
         )}
       </main>
     </div>
