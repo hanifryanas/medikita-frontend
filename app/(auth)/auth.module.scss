@@ -2,8 +2,10 @@
 
 // ─── Page wrapper ──────────────────────────────────────────
 .page {
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
   display: flex;
+  overflow: hidden;
 }
 
 // ─── Left branding panel ──────────────────────────────────
@@ -107,9 +109,20 @@
   align-items: center;
   padding: 3rem 1.5rem;
   background: var(--surface-elevated);
+  height: 100vh;
+  overflow-y: auto;
 
   @media (min-width: 768px) {
     padding: 3rem 4rem;
+  }
+}
+
+// Compact variant for dense forms (e.g. signup) — fits viewport without page scroll
+.formSideCompact {
+  padding: 1.5rem 1.5rem;
+
+  @media (min-width: 768px) {
+    padding: 1.75rem 2.5rem;
   }
 }
 
@@ -139,6 +152,20 @@
   gap: 2rem;
 }
 
+// Wider card used by signup for two-column layout
+.formCardWide {
+  max-width: 420px;
+  gap: 1rem;
+
+  .formTitle {
+    font-size: 1.4rem;
+  }
+
+  .formSubtitle {
+    font-size: 0.8rem;
+  }
+}
+
 .formHeader {
   display: flex;
   flex-direction: column;
@@ -163,6 +190,62 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+}
+
+// Two-column grid form used by signup — compact layout
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fieldFull {
+  grid-column: 1 / -1;
+}
+
+// Tighten controls inside the compact grid form so it fits the viewport
+.formGrid {
+  .field {
+    gap: 0.3rem;
+  }
+
+  .input {
+    height: 38px;
+  }
+
+  .textarea {
+    min-height: 60px;
+  }
+
+  .photoUpload {
+    gap: 0.5rem;
+  }
+
+  .photoPreview,
+  .photoPlaceholder {
+    width: 38px;
+    height: 38px;
+    font-size: 0.6rem;
+  }
+
+  .photoBtn {
+    height: 38px;
+    padding: 0 0.65rem;
+    font-size: 0.75rem;
+  }
+
+  .submitBtn {
+    height: 42px;
+    margin-top: 0;
+  }
+
+  .label {
+    font-size: 0.75rem;
+  }
 }
 
 .fieldRow {
@@ -199,6 +282,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  line-height: 1.1;
   width: 64px;
   height: 64px;
   border-radius: 50%;
@@ -236,6 +321,10 @@
 
 .passwordField {
   position: relative;
+
+  .input {
+    padding-right: 3.9rem;
+  }
 }
 
 .label {
@@ -249,7 +338,7 @@
   height: 44px;
   border: 1.5px solid var(--border-input);
   border-radius: 10px;
-  padding: 0 3.9rem 0 0.875rem;
+  padding: 0 0.875rem;
   font-size: 0.875rem;
   color: var(--text-on-card);
   background: var(--input-bg);
@@ -393,6 +482,19 @@
   &:active {
     transform: scale(0.98);
   }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.btnLoading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 // ─── Footer link ─────────────────────────────────────────

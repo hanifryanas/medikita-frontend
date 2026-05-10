@@ -1,0 +1,16 @@
+.spinner {
+  display: inline-block;
+  vertical-align: middle;
+  border-style: solid;
+  border-color: currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinnerSpin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spinnerSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

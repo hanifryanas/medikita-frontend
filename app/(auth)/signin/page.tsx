@@ -1,5 +1,6 @@
 'use client';
 
+import { SubmitButton } from '@/app/components/common';
 import { nextApi } from '@/lib/api/next';
 import { useAuthStore } from '@/lib/stores';
 import type { SigninPayload } from '@/lib/types/auth';
@@ -12,8 +13,9 @@ import styles from '../auth.module.scss';
 
 export default function SigninPage() {
   const router = useRouter();
-  const signin = useAuthStore((s) => s.signin);
+  const { signin } = useAuthStore();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [fields, setFields] = useState<SigninPayload>({
     identifier: '',
     password: '',
@@ -21,12 +23,13 @@ export default function SigninPage() {
   });
   const [errors, setErrors] = useState<FormValidationResult<SigninPayload>['errors']>({});
 
-  const set = (key: keyof SigninPayload, value: string | boolean) => {
+  const setField = (key: keyof SigninPayload, value: SigninPayload[keyof SigninPayload]) => {
     setFields((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
     const validation = validateSignin(fields);
 
@@ -36,6 +39,7 @@ export default function SigninPage() {
     }
 
     setErrors({});
+    setIsSubmitting(true);
 
     try {
       const data = await nextApi.auth.signin(fields);
@@ -43,6 +47,7 @@ export default function SigninPage() {
       router.push('/');
     } catch (err) {
       setErrors({ identifier: err instanceof Error ? err.message : 'Sign in failed.' });
+      setIsSubmitting(false);
     }
   };
 
@@ -98,7 +103,7 @@ export default function SigninPage() {
                 autoComplete='username'
                 placeholder='you@example.com'
                 value={fields.identifier}
-                onChange={(e) => set('identifier', e.target.value)}
+                onChange={(e) => setField('identifier', e.target.value)}
                 className={`${styles.input} ${errors.identifier ? styles.inputError : ''}`}
               />
               {errors.identifier && <span className={styles.errorMsg}>{errors.identifier}</span>}
@@ -116,7 +121,7 @@ export default function SigninPage() {
                   autoComplete='current-password'
                   placeholder='••••••••'
                   value={fields.password}
-                  onChange={(e) => set('password', e.target.value)}
+                  onChange={(e) => setField('password', e.target.value)}
                   className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
                 />
                 <button
@@ -138,7 +143,7 @@ export default function SigninPage() {
                 <input
                   type='checkbox'
                   checked={fields.isRemember}
-                  onChange={(e) => set('isRemember', e.target.checked)}
+                  onChange={(e) => setField('isRemember', e.target.checked)}
                 />
                 Remember me
               </label>
@@ -147,9 +152,9 @@ export default function SigninPage() {
               </Link>
             </div>
 
-            <button type='submit' className={styles.submitBtn}>
+            <SubmitButton isLoading={isSubmitting} loadingLabel='Signing in…'>
               Sign in
-            </button>
+            </SubmitButton>
             <p className={styles.footerText}>
               Don&apos;t have an account? <Link href='/signup'>Create one free</Link>
             </p>
