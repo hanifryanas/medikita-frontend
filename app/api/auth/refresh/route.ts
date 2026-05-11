@@ -1,4 +1,5 @@
 import { nestApi } from '@/lib/api/nest';
+import { HydrateResult } from '@/lib/api/next/auth/types/hydrate-result';
 import { AccountUser } from '@/lib/types/users';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -38,8 +39,9 @@ export async function POST(req: NextRequest) {
   try {
     user = await nestApi.get<AccountUser>('auth/me', { token: accessToken });
   } catch (err) {
-    console.error('[refresh] Failed to fetch user:', err instanceof Error ? err.message : err);
+    const message = err instanceof Error ? err.message : 'Failed to fetch user.';
+    return clearRefreshCookie(NextResponse.json({ message }, { status: 500 }));
   }
 
-  return NextResponse.json({ accessToken, user });
+  return NextResponse.json<HydrateResult>({ accessToken, user });
 }

@@ -1,6 +1,11 @@
-import { DepartmentResult } from './types';
+import { Department } from '@/lib/types/departments';
+import { FeaturedDepartment } from '@/lib/types/departments/featured-department';
+import { sanitizeGroupedDepartmentResult } from './sanitizers';
 
-export const getDepartments = async (): Promise<DepartmentResult> => {
+export const getDepartments = async (): Promise<{
+  departments: Department[];
+  featuredDepartments: FeaturedDepartment[];
+}> => {
   const res = await fetch('/api/departments', { method: 'GET' });
 
   if (!res.ok) {
@@ -8,5 +13,8 @@ export const getDepartments = async (): Promise<DepartmentResult> => {
     throw new Error(err?.message ?? 'Failed to fetch departments.');
   }
 
-  return (await res.json()) as DepartmentResult;
+  return sanitizeGroupedDepartmentResult(await res.json()) as {
+    departments: Department[];
+    featuredDepartments: FeaturedDepartment[];
+  };
 };

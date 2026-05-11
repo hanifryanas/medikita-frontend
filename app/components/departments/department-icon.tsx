@@ -5,7 +5,6 @@ import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 export interface DepartmentIconProps {
   /** Lucide icon name in kebab-case (matches `Department.iconName`). */
   name?: string | null;
-  /** Fallback icon name when `name` is missing or invalid. */
   fallback?: IconName;
   size?: number;
   strokeWidth?: number;
@@ -13,10 +12,6 @@ export interface DepartmentIconProps {
   'aria-label'?: string;
 }
 
-/**
- * Renders a Lucide icon by name. Lazy-loads only the requested icon, so the
- * full Lucide bundle is never shipped to the client.
- */
 export const DepartmentIcon = ({
   name,
   fallback = 'stethoscope',

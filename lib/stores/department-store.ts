@@ -2,37 +2,38 @@
 
 import { create } from 'zustand';
 import type { Department } from '../types/departments';
-import type { Employee } from '../types/employees';
+import { FeaturedDepartment } from '../types/departments/featured-department';
+import { EmployeeRole } from '../types/employees';
+import { DepartmentEmployee } from '../types/employees/department-employee';
 
 export interface DepartmentStore {
-  departments: Department[];
-  featuredDepartments: Department[];
-  departmentDoctorEmployeeMap: Map<string, Employee[]>;
-  departmentNurseEmployeeMap: Map<string, Employee[]>;
-  departmentStaffEmployeeMap: Map<string, Employee[]>;
+  departmentMap: Map<string, Department>;
+  featuredDepartmentMap: Map<string, FeaturedDepartment>;
+  departmentDoctorEmployeeMap: Map<string, DepartmentEmployee[]>;
+  departmentNurseEmployeeMap: Map<string, DepartmentEmployee[]>;
+  departmentStaffEmployeeMap: Map<string, DepartmentEmployee[]>;
   isLoaded: boolean;
   isLoading: boolean;
   reset: () => void;
   setIsLoading: (isLoading: boolean) => void;
   setDepartments: (departments: Department[]) => void;
-  setFeaturedDepartments: (featuredDepartments: Department[]) => void;
+  setFeaturedDepartments: (featuredDepartments: FeaturedDepartment[]) => void;
   getDepartmentByTypeCode: (typeCode: string) => Department | undefined;
   getDepartmentsByFlag: (flags: {
     isClinical?: boolean;
     isClinic?: boolean;
     isFeatured?: boolean;
   }) => Department[];
-  getFeaturedEmployees: (typeCode: string, limit?: number) => Employee[];
 }
 
 const initialState = {
-  departments: [] as Department[],
-  featuredDepartments: [] as Department[],
+  departmentMap: new Map<string, Department>(),
+  featuredDepartmentMap: new Map<string, FeaturedDepartment>(),
+  departmentDoctorEmployeeMap: new Map<string, DepartmentEmployee[]>(),
+  departmentNurseEmployeeMap: new Map<string, DepartmentEmployee[]>(),
+  departmentStaffEmployeeMap: new Map<string, DepartmentEmployee[]>(),
   isLoaded: false,
   isLoading: false,
-  departmentDoctorEmployeeMap: new Map<string, Employee[]>(),
-  departmentNurseEmployeeMap: new Map<string, Employee[]>(),
-  departmentStaffEmployeeMap: new Map<string, Employee[]>(),
 };
 
 export const useDepartmentStore = create<DepartmentStore>()((set, get) => ({
@@ -43,19 +44,23 @@ export const useDepartmentStore = create<DepartmentStore>()((set, get) => ({
   setIsLoading: (isLoading) => set({ isLoading }),
 
   setDepartments: (departments) => {
-    const departmentDoctorEmployeeMap = new Map<string, Employee[]>();
-    const departmentNurseEmployeeMap = new Map<string, Employee[]>();
-    const departmentStaffEmployeeMap = new Map<string, Employee[]>();
+    const departmentDoctorEmployeeMap = new Map<string, DepartmentEmployee[]>();
+    const departmentNurseEmployeeMap = new Map<string, DepartmentEmployee[]>();
+    const departmentStaffEmployeeMap = new Map<string, DepartmentEmployee[]>();
 
     departments.forEach((department) => {
-      const doctors: Employee[] = [];
-      const nurses: Employee[] = [];
-      const staff: Employee[] = [];
+      const doctors: DepartmentEmployee[] = [];
+      const nurses: DepartmentEmployee[] = [];
+      const staff: DepartmentEmployee[] = [];
 
       (department.employees ?? []).forEach((employee) => {
-        if (employee.doctor) doctors.push(employee);
-        else if (employee.nurse) nurses.push(employee);
-        else staff.push(employee);
+        if (employee.role === EmployeeRole.Doctor) {
+          doctors.push(employee);
+        } else if (employee.role === EmployeeRole.Nurse) {
+          nurses.push(employee);
+        } else {
+          staff.push(employee);
+        }
       });
 
       departmentDoctorEmployeeMap.set(department.typeCode, doctors);
@@ -64,7 +69,7 @@ export const useDepartmentStore = create<DepartmentStore>()((set, get) => ({
     });
 
     set({
-      departments,
+      departmentMap: new Map(departments.map((department) => [department.typeCode, department])),
       departmentDoctorEmployeeMap,
       departmentNurseEmployeeMap,
       departmentStaffEmployeeMap,
@@ -74,36 +79,24 @@ export const useDepartmentStore = create<DepartmentStore>()((set, get) => ({
   },
 
   setFeaturedDepartments: (featuredDepartments) =>
-    set({ featuredDepartments, isLoaded: true, isLoading: false }),
-
-  getDepartmentByTypeCode: (typeCode) => get().departments.find((d) => d.typeCode === typeCode),
-
-  getDepartmentsByFlag: (flags) =>
-    get().departments.filter((dept) => {
-      if (flags.isClinical !== undefined && dept.isClinical !== flags.isClinical) return false;
-      if (flags.isClinic !== undefined && dept.isClinic !== flags.isClinic) return false;
-      if (flags.isFeatured !== undefined && dept.featuredOrdinal === undefined) return false;
-      return true;
+    set({
+      featuredDepartmentMap: new Map(
+        featuredDepartments.map((department) => [department.typeCode, department])
+      ),
+      isLoaded: true,
+      isLoading: false,
     }),
 
-  getFeaturedEmployees: (typeCode, limit = 3) => {
-    const { departmentDoctorEmployeeMap, departmentNurseEmployeeMap, departmentStaffEmployeeMap } =
-      get();
+  getDepartmentByTypeCode: (typeCode) => get().departmentMap.get(typeCode),
 
-    const doctors = departmentDoctorEmployeeMap.get(typeCode) ?? [];
-    const nurses = departmentNurseEmployeeMap.get(typeCode) ?? [];
-    const staff = departmentStaffEmployeeMap.get(typeCode) ?? [];
-
-    const bySeniority = (a: Employee, b: Employee) => {
-      const aStart = a.startDate ? new Date(a.startDate).getTime() : Infinity;
-      const bStart = b.startDate ? new Date(b.startDate).getTime() : Infinity;
-      return aStart - bStart;
-    };
-
-    return [
-      ...[...doctors].sort(bySeniority),
-      ...[...nurses].sort(bySeniority),
-      ...[...staff].sort(bySeniority),
-    ].slice(0, limit);
-  },
+  getDepartmentsByFlag: (flags) =>
+    Array.from(get().departmentMap.values()).filter((dept) => {
+      if (flags.isClinical !== undefined && dept.isClinical !== flags.isClinical) return false;
+      if (flags.isClinic !== undefined && dept.isClinic !== flags.isClinic) return false;
+      if (flags.isFeatured !== undefined) {
+        const isFeatured = get().featuredDepartmentMap.has(dept.typeCode);
+        if (isFeatured !== flags.isFeatured) return false;
+      }
+      return true;
+    }),
 }));

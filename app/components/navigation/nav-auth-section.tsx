@@ -89,7 +89,7 @@ export const NavAuthSection = () => {
             />
           ) : (
             <span className={styles.navAvatarInitial}>
-              {getUserInitial(user.firstName, user.lastName)}
+              {getUserInitial({ firstName: user.firstName, lastName: user.lastName })}
             </span>
           )}
         </span>

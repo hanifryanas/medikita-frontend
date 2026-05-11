@@ -42,7 +42,7 @@ export const CareTeamCard = ({ doctor, className }: CareTeamCardProps) => {
     <div className={rootClass}>
       <div className={styles.cardHeader}>
         <span className={styles.avatar} aria-hidden>
-          {getUserInitial(first, second, '?')}
+          {getUserInitial({ firstName: first, lastName: second, fallback: '?' })}
         </span>
         <div>
           <h2 className={styles.cardName}>{name}</h2>

@@ -13,7 +13,8 @@ export const DepartmentHydrator = () => {
 
       setIsLoading(true);
       try {
-        const { departments, featuredDepartments } = await nextApi.departments.getDepartments();
+        const departmentGroupedResult = await nextApi.departments.getDepartments();
+        const { departments, featuredDepartments } = departmentGroupedResult;
         setDepartments(departments);
         setFeaturedDepartments(featuredDepartments);
       } catch {

@@ -1,4 +1,4 @@
-import type { Employee } from '../employees';
+import { DepartmentEmployee } from '../employees/department-employee';
 import { DepartmentContent } from './department-content';
 
 export interface Department {
@@ -8,9 +8,7 @@ export interface Department {
   iconName?: string;
   description?: string;
   content?: DepartmentContent;
-  featuredOrdinal?: number;
   isClinical: boolean;
   isClinic: boolean;
-  isActive: boolean;
-  employees?: Employee[];
+  employees?: DepartmentEmployee[];
 }

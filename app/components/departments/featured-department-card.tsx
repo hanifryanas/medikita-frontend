@@ -1,24 +1,17 @@
 'use client';
 
-import { useDepartmentStore } from '@/lib/stores';
-import type { Department } from '@/lib/types/departments';
+import { FeaturedDepartment } from '@/lib/types/departments/featured-department';
 import Link from 'next/link';
 import { EmployeeCard } from '../employees';
 import { DepartmentIcon } from './department-icon';
 import styles from './featured-department-card.module.scss';
 
 interface FeaturedDepartmentCardProps {
-  department: Department;
-  maxDoctors?: number;
+  department: FeaturedDepartment;
 }
 
-export const FeaturedDepartmentCard = ({
-  department,
-  maxDoctors = 3,
-}: FeaturedDepartmentCardProps) => {
-  const getFeaturedEmployees = useDepartmentStore((s) => s.getFeaturedEmployees);
-  const featuredEmployees = getFeaturedEmployees(department.typeCode, maxDoctors);
-
+export const FeaturedDepartmentCard = ({ department }: FeaturedDepartmentCardProps) => {
+  const featuredEmployees = department.employees ?? [];
   return (
     <Link href={`/specialties/${department.typeCode}`} className={styles.card}>
       <header className={styles.header}>

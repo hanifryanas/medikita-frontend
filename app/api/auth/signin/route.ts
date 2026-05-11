@@ -1,4 +1,5 @@
 import { nestApi } from '@/lib/api/nest';
+import { SigninResult } from '@/lib/api/next/auth/types';
 import { appConfig } from '@/lib/config/app-config';
 import { SigninData } from '@/lib/types/auth';
 import { AccountUser } from '@/lib/types/users';
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     const currentUser = await nestApi.get<AccountUser>('auth/me', { token: accessToken });
 
-    const res = NextResponse.json({ accessToken, user: currentUser });
+    const res = NextResponse.json<SigninResult>({ accessToken, user: currentUser });
 
     res.cookies.set('refreshToken', refreshToken, {
       httpOnly: true,

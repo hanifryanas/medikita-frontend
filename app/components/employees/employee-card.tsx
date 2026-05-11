@@ -7,8 +7,11 @@ import styles from './employee-card.module.scss';
 
 export type EmployeeCardVariant = 'row' | 'card';
 
-interface EmployeeCardProps {
-  employee: Employee;
+export type EmployeeCardEmployee = Pick<Employee, 'employeeId' | 'fullName'> &
+  Partial<Pick<Employee, 'user' | 'doctor' | 'photoUrl' | 'jobTitle'>>;
+
+interface EmployeeCardProps<T extends EmployeeCardEmployee = Employee> {
+  employee: T;
   variant?: EmployeeCardVariant;
   name?: string;
   subtitle?: string;
@@ -16,14 +19,14 @@ interface EmployeeCardProps {
   className?: string;
 }
 
-export const EmployeeCard = ({
+export const EmployeeCard = <T extends EmployeeCardEmployee = Employee>({
   employee,
   variant = 'row',
   name,
   subtitle,
   avatarSize,
   className,
-}: EmployeeCardProps) => {
+}: EmployeeCardProps<T>) => {
   const photoUrl = employee.photoUrl ?? employee.user?.photoUrl;
   const displayName = name ?? employee.fullName;
   const displaySubtitle = subtitle ?? employee.doctor?.jobTitle ?? employee.jobTitle;
@@ -44,7 +47,7 @@ export const EmployeeCard = ({
         />
       ) : (
         <span className={styles.avatar} aria-hidden='true' style={{ width: size, height: size }}>
-          {getUserInitial(employee.user?.firstName, employee.user?.lastName, '?')}
+          {getUserInitial({ fullName: employee.fullName, fallback: '?' })}
         </span>
       )}
       <span className={styles.meta}>
