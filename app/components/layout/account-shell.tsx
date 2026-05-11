@@ -3,7 +3,7 @@
 import { PublicNav } from '@/app/components/navigation';
 import { MenuIcon } from '@/app/icons';
 import { getAccountNavItems, getAccountRoleLabel } from '@/lib/navigation';
-import { useAuthStore } from '@/lib/stores';
+import { useStores } from '@/lib/stores';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
@@ -14,7 +14,9 @@ interface AccountShellProps {
 }
 
 export const AccountShell = ({ children }: AccountShellProps) => {
-  const user = useAuthStore((s) => s.currentUser);
+  const {
+    authStore: { currentUser },
+  } = useStores();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [lastPath, setLastPath] = useState(pathname);
@@ -33,8 +35,8 @@ export const AccountShell = ({ children }: AccountShellProps) => {
     return () => document.removeEventListener('keydown', handleKey);
   }, [isOpen]);
 
-  const navItems = user ? getAccountNavItems(user) : [];
-  const roleLabel = user ? getAccountRoleLabel(user) : null;
+  const navItems = currentUser ? getAccountNavItems(currentUser) : [];
+  const roleLabel = currentUser ? getAccountRoleLabel(currentUser) : null;
 
   return (
     <div className={styles.outer}>

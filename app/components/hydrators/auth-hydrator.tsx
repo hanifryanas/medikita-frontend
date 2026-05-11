@@ -1,13 +1,14 @@
 'use client';
 
 import { nextApi } from '@/lib/api/next';
-import { AuthStatus, useAuthStore } from '@/lib/stores';
+import { stores } from '@/lib/stores';
+import { AuthStatus } from '@/lib/types/auth';
 import { useEffect } from 'react';
 
 export const AuthHydrator = () => {
   useEffect(() => {
     (async () => {
-      const { status, signin, reset } = useAuthStore.getState();
+      const { status, signin, reset } = stores.auth;
       if (status === AuthStatus.Authenticated) return;
 
       try {

@@ -2,11 +2,14 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { AuthStatus, useAuthStore } from '../stores';
+import { useStores } from '../stores';
+import { AuthStatus } from '../types/auth';
 
 export const useRequireAuth = (redirectPath = '/signin') => {
   const router = useRouter();
-  const status = useAuthStore((state) => state.status);
+  const {
+    authStore: { status },
+  } = useStores();
 
   useEffect(() => {
     if (status !== AuthStatus.Unauthenticated) return;

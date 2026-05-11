@@ -4,7 +4,7 @@ import { CareTeamCard } from '@/app/components/care-teams';
 import { ChipPicker } from '@/app/components/common';
 import { PublicNav } from '@/app/components/navigation';
 import { SearchIcon } from '@/app/icons';
-import { useCareTeamsStore, useDepartmentStore, useDoctorStore } from '@/lib/stores';
+import { useStores } from '@/lib/stores';
 import { Day } from '@/lib/types/common';
 import type { Doctor } from '@/lib/types/doctors';
 import { useMemo } from 'react';
@@ -42,22 +42,25 @@ const getDoctorName = (d: Doctor) => {
 };
 
 export default function CareTeamsPage() {
-  const query = useCareTeamsStore((s) => s.query);
-  const filter = useCareTeamsStore((s) => s.roleFilter);
-  const searchMode = useCareTeamsStore((s) => s.searchMode);
-  const selectedDays = useCareTeamsStore((s) => s.selectedDays);
-  const selectedDepts = useCareTeamsStore((s) => s.selectedDepts);
-  const setQuery = useCareTeamsStore((s) => s.setQuery);
-  const setFilter = useCareTeamsStore((s) => s.setRoleFilter);
-  const setSearchMode = useCareTeamsStore((s) => s.setSearchMode);
-  const toggleDay = useCareTeamsStore((s) => s.toggleDay);
-  const toggleDept = useCareTeamsStore((s) => s.toggleDept);
-  const clearDays = useCareTeamsStore((s) => s.clearDays);
-  const clearDepts = useCareTeamsStore((s) => s.clearDepts);
+  const {
+    careTeamsStore: {
+      query,
+      roleFilter: filter,
+      searchMode,
+      selectedDays,
+      selectedDepts,
+      setQuery,
+      setRoleFilter: setFilter,
+      setSearchMode,
+      toggleDay,
+      toggleDept,
+      clearDays,
+      clearDepts,
+    },
+    doctorStore: { doctors },
+    departmentStore: { getDepartmentsByFlag },
+  } = useStores();
 
-  const doctors = useDoctorStore((s) => s.doctors);
-
-  const getDepartmentsByFlag = useDepartmentStore((s) => s.getDepartmentsByFlag);
   const departments = getDepartmentsByFlag({ isClinical: true });
   const departmentCodes = useMemo(() => departments.map((d) => d.typeCode), [departments]);
 

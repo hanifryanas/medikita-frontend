@@ -1,5 +1,41 @@
-export * from '../types/auth/auth-status.enum';
-export * from './auth-store';
-export * from './care-teams-store';
-export * from './department-store';
-export * from './doctor-store';
+import { useAuthStore } from './auth-store';
+import { useCareTeamsStore } from './care-teams-store';
+import { useDepartmentStore } from './department-store';
+import { useDoctorStore } from './doctor-store';
+
+/**
+ * Reactive store access — call inside the render body of a client component.
+ * Each property subscribes the component to that store's updates.
+ */
+export const useStores = () => ({
+  authStore: useAuthStore(),
+  careTeamsStore: useCareTeamsStore(),
+  departmentStore: useDepartmentStore(),
+  doctorStore: useDoctorStore(),
+});
+
+/**
+ * Non-reactive store snapshots — for use inside `useEffect`, event handlers,
+ * and other imperative code paths. Reading these does NOT subscribe the
+ * caller to changes.
+ *
+ * Example:
+ *   useEffect(() => {
+ *     if (stores.auth.status === AuthStatus.Authenticated) return;
+ *     void stores.auth.hydrate?.();
+ *   }, []);
+ */
+export const stores = {
+  get auth() {
+    return useAuthStore.getState();
+  },
+  get careTeams() {
+    return useCareTeamsStore.getState();
+  },
+  get department() {
+    return useDepartmentStore.getState();
+  },
+  get doctor() {
+    return useDoctorStore.getState();
+  },
+};

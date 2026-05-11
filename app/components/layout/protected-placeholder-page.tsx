@@ -1,7 +1,7 @@
 'use client';
 
 import { useRequireAuth } from '@/lib/hooks';
-import { AuthStatus } from '@/lib/stores';
+import { AuthStatus } from '@/lib/types/auth';
 import { AccountShell } from './account-shell';
 import styles from './placeholder-page.module.scss';
 

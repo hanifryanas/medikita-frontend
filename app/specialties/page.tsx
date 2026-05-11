@@ -3,15 +3,14 @@
 import { Carousel } from '@/app/components/common';
 import { DepartmentTile, FeaturedDepartmentCard } from '@/app/components/departments';
 import { PublicNav } from '@/app/components/navigation';
-import { useDepartmentStore } from '@/lib/stores';
+import { useStores } from '@/lib/stores';
 import styles from './page.module.scss';
 
 export default function SpecialtiesPage() {
-  const isLoaded = useDepartmentStore((s) => s.isLoaded);
-  const isLoading = useDepartmentStore((s) => s.isLoading);
-  const featuredDepartmentMap = useDepartmentStore((s) => s.featuredDepartmentMap);
+  const {
+    departmentStore: { isLoaded, isLoading, featuredDepartmentMap, getDepartmentsByFlag },
+  } = useStores();
   const featuredDepartments = Array.from(featuredDepartmentMap.values());
-  const getDepartmentsByFlag = useDepartmentStore((s) => s.getDepartmentsByFlag);
   const otherDepartmentClinics = getDepartmentsByFlag({ isClinic: true, isFeatured: false });
 
   return (

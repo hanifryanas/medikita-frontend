@@ -2,17 +2,18 @@
 
 import { nextApi } from '@/lib/api/next';
 import { getAccountRoleLabel } from '@/lib/navigation';
-import { AuthStatus, useAuthStore } from '@/lib/stores';
+import { useStores } from '@/lib/stores';
 import { getUserInitial } from '@/lib/utils/formatters';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import styles from './nav-auth-section.module.scss';
+import { AuthStatus } from '@/lib/types/auth';
 
 export const NavAuthSection = () => {
-  const user = useAuthStore((state) => state.currentUser);
-  const status = useAuthStore((state) => state.status);
-  const signout = useAuthStore((state) => state.signout);
+  const {
+    authStore: { status, currentUser: user, signout },
+  } = useStores();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);

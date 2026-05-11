@@ -6,7 +6,7 @@ import {
   DepartmentPeopleSection,
 } from '@/app/components/departments';
 import { PublicNav } from '@/app/components/navigation';
-import { useDepartmentStore } from '@/lib/stores';
+import { useStores } from '@/lib/stores';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -15,12 +15,16 @@ import styles from './page.module.scss';
 export default function DepartmentDetailPage() {
   const params = useParams<{ typeCode: string }>();
   const typeCode = params?.typeCode;
+  const {
+    departmentStore: {
+      isLoading,
+      isLoaded,
+      getDepartmentByTypeCode,
+      departmentDoctorEmployeeMap,
+      departmentNurseEmployeeMap,
+    },
+  } = useStores();
 
-  const isLoading = useDepartmentStore((s) => s.isLoading);
-  const isLoaded = useDepartmentStore((s) => s.isLoaded);
-  const departmentDoctorEmployeeMap = useDepartmentStore((s) => s.departmentDoctorEmployeeMap);
-  const departmentNurseEmployeeMap = useDepartmentStore((s) => s.departmentNurseEmployeeMap);
-  const getDepartmentByTypeCode = useDepartmentStore((s) => s.getDepartmentByTypeCode);
   const department = getDepartmentByTypeCode(typeCode);
   const doctors = departmentDoctorEmployeeMap.get(typeCode) ?? [];
   const nurses = departmentNurseEmployeeMap.get(typeCode) ?? [];

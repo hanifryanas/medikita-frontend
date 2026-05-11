@@ -2,7 +2,7 @@
 
 import { SubmitButton } from '@/app/components/common';
 import { nextApi } from '@/lib/api/next';
-import { useAuthStore } from '@/lib/stores';
+import { useStores } from '@/lib/stores';
 import type { SigninPayload } from '@/lib/types/auth';
 import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
 import { validateSignin } from '@/lib/validations/auth';
@@ -13,7 +13,9 @@ import styles from '../auth.module.scss';
 
 export default function SigninPage() {
   const router = useRouter();
-  const { signin } = useAuthStore();
+  const {
+    authStore: { signin },
+  } = useStores();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fields, setFields] = useState<SigninPayload>({

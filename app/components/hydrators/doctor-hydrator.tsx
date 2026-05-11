@@ -1,13 +1,13 @@
 'use client';
 
 import { nextApi } from '@/lib/api';
-import { useDoctorStore } from '@/lib/stores';
+import { stores } from '@/lib/stores';
 import { useEffect } from 'react';
 
 export const DoctorHydrator = () => {
   useEffect(() => {
     (async () => {
-      const { isLoaded, isLoading, setDoctors, setIsLoading, reset } = useDoctorStore.getState();
+      const { isLoaded, isLoading, setDoctors, setIsLoading, reset } = stores.doctor;
       if (isLoaded || isLoading) return;
 
       setIsLoading(true);

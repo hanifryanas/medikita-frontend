@@ -2,7 +2,8 @@
 
 import { MenuIcon } from '@/app/icons';
 import { PUBLIC_NAV_ITEMS } from '@/lib/navigation';
-import { AuthStatus, useAuthStore } from '@/lib/stores';
+import { useStores } from '@/lib/stores';
+import { AuthStatus } from '@/lib/types/auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -26,7 +27,10 @@ const ACCOUNT_PATH_PREFIXES = [
 
 export const PublicNav = ({ className }: PublicNavProps) => {
   const pathname = usePathname();
-  const status = useAuthStore((s) => s.status);
+  const {
+    authStore: { status },
+  } = useStores();
+
   const isAuthenticated = status === AuthStatus.Authenticated;
   const isAccountRoute = ACCOUNT_PATH_PREFIXES.some((p) => pathname.startsWith(p));
   const showSidebarBlend = isAuthenticated && isAccountRoute;
