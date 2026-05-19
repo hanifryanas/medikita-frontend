@@ -8,6 +8,7 @@ export interface Employee {
   employeeId: string;
   user: User;
   fullName: string;
+  displayName: string;
   role: EmployeeRole;
   department?: Department;
   doctor?: Doctor;

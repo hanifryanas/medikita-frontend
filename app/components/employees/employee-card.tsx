@@ -7,7 +7,7 @@ import styles from './employee-card.module.scss';
 
 export type EmployeeCardVariant = 'row' | 'card';
 
-export type EmployeeCardEmployee = Pick<Employee, 'employeeId' | 'fullName'> &
+export type EmployeeCardEmployee = Pick<Employee, 'employeeId' | 'fullName' | 'displayName'> &
   Partial<Pick<Employee, 'user' | 'doctor' | 'photoUrl' | 'jobTitle'>>;
 
 interface EmployeeCardProps<T extends EmployeeCardEmployee = Employee> {
@@ -28,7 +28,7 @@ export const EmployeeCard = <T extends EmployeeCardEmployee = Employee>({
   className,
 }: EmployeeCardProps<T>) => {
   const photoUrl = employee.photoUrl ?? employee.user?.photoUrl;
-  const displayName = name ?? employee.fullName;
+  const displayName = name ?? employee.displayName ?? employee.fullName;
   const displaySubtitle = subtitle ?? employee.doctor?.jobTitle ?? employee.jobTitle;
   const size = avatarSize ?? (variant === 'card' ? 56 : 32);
 

@@ -10,8 +10,6 @@ interface DepartmentPeopleSectionProps {
   emptyMessage?: string;
   titleId?: string;
   variant?: EmployeeCardVariant;
-  formatName?: (employee: DepartmentEmployee) => string;
-  formatSubtitle?: (employee: DepartmentEmployee) => string | undefined;
 }
 
 const slugify = (text: string) =>
@@ -26,8 +24,6 @@ export const DepartmentPeopleSection = ({
   emptyMessage,
   titleId,
   variant = 'row',
-  formatName,
-  formatSubtitle,
 }: DepartmentPeopleSectionProps) => {
   if (employees.length === 0 && !emptyMessage) return null;
 
@@ -42,17 +38,10 @@ export const DepartmentPeopleSection = ({
         </h2>
         <span className={styles.count}>{employees.length}</span>
       </div>
-
       {employees.length > 0 ? (
         <div className={gridClass}>
           {employees.map((emp) => (
-            <EmployeeCard
-              key={emp.employeeId}
-              employee={emp}
-              variant={variant}
-              name={formatName?.(emp)}
-              subtitle={formatSubtitle?.(emp)}
-            />
+            <EmployeeCard key={emp.employeeId} employee={emp} variant={variant} />
           ))}
         </div>
       ) : (

@@ -6,6 +6,7 @@ export interface EmployeeResult {
   employeeId: string;
   user: User;
   fullName: string;
+  displayName: string;
   nurse?: Nurse;
   doctor?: Doctor;
   photoUrl?: string;
