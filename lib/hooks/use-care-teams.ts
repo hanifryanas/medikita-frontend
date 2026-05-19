@@ -1,20 +1,16 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useCareTeamsStore } from '../stores/care-teams-store';
-import { useDoctorStore } from '../stores/doctor-store';
+import { useStores } from '../stores';
 import { CareTeam } from '../types/care-teams';
 import { EmployeeRole } from '../types/employees';
 import { sanitizeDoctorToCareTeam } from '../utils/sanitizers';
 
 export function useCareTeams(): CareTeam[] {
-  const doctors = useDoctorStore((s) => s.doctors);
-
-  const query = useCareTeamsStore((s) => s.query);
-  const roleFilter = useCareTeamsStore((s) => s.roleFilter);
-  const searchMode = useCareTeamsStore((s) => s.searchMode);
-  const selectedDays = useCareTeamsStore((s) => s.selectedDays);
-  const selectedDepartments = useCareTeamsStore((s) => s.selectedDepartments);
+  const {
+    doctorStore: { doctors },
+    careTeamsStore: { query, roleFilter, searchMode, selectedDays, selectedDepartments },
+  } = useStores();
 
   return useMemo(() => {
     const doctorCareTeam = doctors.map(sanitizeDoctorToCareTeam);
