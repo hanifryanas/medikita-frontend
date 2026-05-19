@@ -1,10 +1,10 @@
 'use client';
 
 import { create } from 'zustand';
+import { CareTeam } from '../types/care-teams';
 import { Day } from '../types/common';
 
-export type CareRole = 'doctor' | 'nurse';
-export type CareTeamsRoleFilter = 'all' | CareRole;
+export type CareTeamsRoleFilter = 'all' | CareTeam['role'];
 export type CareTeamsSearchMode = 'name' | 'days' | 'department';
 
 export interface CareTeamsStore {
@@ -12,15 +12,15 @@ export interface CareTeamsStore {
   roleFilter: CareTeamsRoleFilter;
   searchMode: CareTeamsSearchMode;
   selectedDays: Day[];
-  selectedDepts: string[];
+  selectedDepartments: string[];
 
   setQuery: (q: string) => void;
   setRoleFilter: (f: CareTeamsRoleFilter) => void;
   setSearchMode: (m: CareTeamsSearchMode) => void;
   toggleDay: (d: Day) => void;
-  toggleDept: (d: string) => void;
+  toggleDepartment: (d: string) => void;
   clearDays: () => void;
-  clearDepts: () => void;
+  clearDepartments: () => void;
   reset: () => void;
 }
 
@@ -29,7 +29,7 @@ const initialState = {
   roleFilter: 'all' as CareTeamsRoleFilter,
   searchMode: 'name' as CareTeamsSearchMode,
   selectedDays: [] as Day[],
-  selectedDepts: [] as string[],
+  selectedDepartments: [] as string[],
 };
 
 export const useCareTeamsStore = create<CareTeamsStore>()((set) => ({
@@ -38,7 +38,7 @@ export const useCareTeamsStore = create<CareTeamsStore>()((set) => ({
   setQuery: (query) => set({ query }),
   setRoleFilter: (roleFilter) => set({ roleFilter }),
   setSearchMode: (searchMode) =>
-    set({ searchMode, query: '', selectedDays: [], selectedDepts: [] }),
+    set({ searchMode, query: '', selectedDays: [], selectedDepartments: [] }),
 
   toggleDay: (d) =>
     set((s) => ({
@@ -47,15 +47,15 @@ export const useCareTeamsStore = create<CareTeamsStore>()((set) => ({
         : [...s.selectedDays, d],
     })),
 
-  toggleDept: (d) =>
+  toggleDepartment: (d) =>
     set((s) => ({
-      selectedDepts: s.selectedDepts.includes(d)
-        ? s.selectedDepts.filter((x) => x !== d)
-        : [...s.selectedDepts, d],
+      selectedDepartments: s.selectedDepartments.includes(d)
+        ? s.selectedDepartments.filter((x) => x !== d)
+        : [...s.selectedDepartments, d],
     })),
 
   clearDays: () => set({ selectedDays: [] }),
-  clearDepts: () => set({ selectedDepts: [] }),
+  clearDepartments: () => set({ selectedDepartments: [] }),
 
   reset: () => set(initialState),
 }));

@@ -1,11 +1,8 @@
-import { Schedule } from '../common';
+import { CareTeam } from '../care-teams';
 import type { Employee } from '../employees';
 
-export interface Doctor {
+export interface Doctor extends Omit<CareTeam, 'careTeamId' | 'role' | 'departmentTypeCode'> {
   doctorId: string;
   employee?: Employee;
-  title?: string;
-  jobTitle?: string;
-  schedules: Schedule[];
   isAvailable?: boolean;
 }

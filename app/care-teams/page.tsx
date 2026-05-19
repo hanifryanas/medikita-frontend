@@ -4,16 +4,18 @@ import { CareTeamCard } from '@/app/components/care-teams';
 import { ChipPicker } from '@/app/components/common';
 import { PublicNav } from '@/app/components/navigation';
 import { SearchIcon } from '@/app/icons';
+import { useCareTeams } from '@/lib/hooks';
 import { useStores } from '@/lib/stores';
+import { CareTeamsRoleFilter } from '@/lib/stores/care-teams-store';
 import { Day } from '@/lib/types/common';
-import type { Doctor } from '@/lib/types/doctors';
+import { EmployeeRole } from '@/lib/types/employees';
 import { useMemo } from 'react';
 import styles from './page.module.scss';
 
-const FILTERS = [
-  { label: 'All', value: 'all' as const },
-  { label: 'Doctors', value: 'doctor' as const },
-  { label: 'Nurses', value: 'nurse' as const },
+const FILTERS: { label: string; value: CareTeamsRoleFilter }[] = [
+  { label: 'All', value: 'all' },
+  { label: 'Doctors', value: EmployeeRole.Doctor },
+  { label: 'Nurses', value: EmployeeRole.Nurse },
 ];
 
 const SEARCH_MODES = [
@@ -32,15 +34,6 @@ const DAY_OPTIONS: { value: Day; label: string }[] = [
   { value: Day.Sunday, label: 'Sun' },
 ];
 
-const getDoctorName = (d: Doctor) => {
-  const employee = d.employee;
-  const fullName =
-    employee?.fullName ||
-    [employee?.user?.firstName, employee?.user?.lastName].filter(Boolean).join(' ') ||
-    'Unknown';
-  return d.title ? `${d.title} ${fullName}` : fullName;
-};
-
 export default function CareTeamsPage() {
   const {
     careTeamsStore: {
@@ -48,41 +41,22 @@ export default function CareTeamsPage() {
       roleFilter: filter,
       searchMode,
       selectedDays,
-      selectedDepts,
+      selectedDepartments,
       setQuery,
       setRoleFilter: setFilter,
       setSearchMode,
       toggleDay,
-      toggleDept,
+      toggleDepartment,
       clearDays,
-      clearDepts,
+      clearDepartments,
     },
-    doctorStore: { doctors },
     departmentStore: { getDepartmentsByFlag },
   } = useStores();
 
   const departments = getDepartmentsByFlag({ isClinical: true });
   const departmentCodes = useMemo(() => departments.map((d) => d.typeCode), [departments]);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return doctors.filter((d) => {
-      if (filter === 'nurse') return false;
-
-      if (searchMode === 'name' && q) {
-        if (!getDoctorName(d).toLowerCase().includes(q)) return false;
-      }
-      if (searchMode === 'days' && selectedDays.length > 0) {
-        const days = d.scheduleDays ?? [];
-        if (!selectedDays.every((day) => days.includes(day))) return false;
-      }
-      if (searchMode === 'department' && selectedDepts.length > 0) {
-        const code = d.employee?.department?.typeCode;
-        if (!code || !selectedDepts.includes(code)) return false;
-      }
-      return true;
-    });
-  }, [doctors, query, filter, searchMode, selectedDays, selectedDepts]);
+  const filtered = useCareTeams();
 
   return (
     <div className={styles.page}>
@@ -122,9 +96,9 @@ export default function CareTeamsPage() {
             ) : (
               <ChipPicker
                 options={departmentCodes}
-                selected={selectedDepts}
-                onToggle={toggleDept}
-                onClear={clearDepts}
+                selected={selectedDepartments}
+                onToggle={toggleDepartment}
+                onClear={clearDepartments}
                 ariaLabel='Filter by department'
               />
             )}
@@ -169,8 +143,8 @@ export default function CareTeamsPage() {
           <div className={styles.empty}>No team members match your search.</div>
         ) : (
           <div className={styles.grid}>
-            {filtered.map((d) => (
-              <CareTeamCard key={d.doctorId} doctor={d} />
+            {filtered.map((c) => (
+              <CareTeamCard key={c.careTeamId} careTeam={c} />
             ))}
           </div>
         )}

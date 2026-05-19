@@ -43,7 +43,6 @@
 
 .avatar {
   flex: 0 0 auto;
-  border-radius: 50%;
   display: grid;
   place-items: center;
   font-size: 0.72rem;
@@ -56,8 +55,29 @@
 
 .avatarImg {
   flex: 0 0 auto;
-  border-radius: 50%;
   object-fit: cover;
+}
+
+.avatarRoot {
+  flex: 0 0 auto;
+}
+
+// Row variant uses a rounded-square avatar to mirror the row pill shape.
+.row {
+  .avatarRoot,
+  .avatar,
+  .avatarImg {
+    border-radius: 8px;
+  }
+}
+
+// Card variant keeps the circular, photo-centric avatar.
+.card {
+  .avatarRoot,
+  .avatar,
+  .avatarImg {
+    border-radius: 50%;
+  }
 }
 
 .meta {

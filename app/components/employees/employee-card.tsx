@@ -1,8 +1,7 @@
 'use client';
 
+import { Avatar } from '@/app/components/common';
 import type { Employee } from '@/lib/types/employees';
-import { getUserInitial } from '@/lib/utils/formatters';
-import Image from 'next/image';
 import styles from './employee-card.module.scss';
 
 export type EmployeeCardVariant = 'row' | 'card';
@@ -36,20 +35,15 @@ export const EmployeeCard = <T extends EmployeeCardEmployee = Employee>({
 
   return (
     <div className={rootClass}>
-      {photoUrl ? (
-        <Image
-          className={styles.avatarImg}
-          src={photoUrl}
-          alt=''
-          width={size}
-          height={size}
-          style={{ width: size, height: size }}
-        />
-      ) : (
-        <span className={styles.avatar} aria-hidden='true' style={{ width: size, height: size }}>
-          {getUserInitial({ fullName: employee.fullName, fallback: '?' })}
-        </span>
-      )}
+      <Avatar
+        photoUrl={photoUrl}
+        name={{ fullName: employee.fullName, fallback: '?' }}
+        size={size}
+        className={styles.avatarRoot}
+        imageClassName={styles.avatarImg}
+        initialClassName={styles.avatar}
+        style={{ width: size, height: size }}
+      />
       <span className={styles.meta}>
         <span className={styles.name}>{displayName}</span>
         {displaySubtitle && <span className={styles.subtitle}>{displaySubtitle}</span>}

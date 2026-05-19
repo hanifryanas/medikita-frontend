@@ -1,14 +1,13 @@
 'use client';
 
+import { Avatar } from '@/app/components/common';
 import { nextApi } from '@/lib/api/next';
 import { getAccountRoleLabel } from '@/lib/navigation';
 import { useStores } from '@/lib/stores';
-import { getUserInitial } from '@/lib/utils/formatters';
-import Image from 'next/image';
+import { AuthStatus } from '@/lib/types/auth';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import styles from './nav-auth-section.module.scss';
-import { AuthStatus } from '@/lib/types/auth';
 
 export const NavAuthSection = () => {
   const {
@@ -79,21 +78,14 @@ export const NavAuthSection = () => {
           <span className={styles.navUserName}>{fullName}</span>
           <span className={styles.navUserHandle}>@{user.userName}</span>
         </span>
-        <span className={styles.navAvatarBtn} aria-hidden='true'>
-          {user.photoUrl ? (
-            <Image
-              src={user.photoUrl}
-              alt=''
-              className={styles.navAvatarImg}
-              width={40}
-              height={40}
-            />
-          ) : (
-            <span className={styles.navAvatarInitial}>
-              {getUserInitial({ firstName: user.firstName, lastName: user.lastName })}
-            </span>
-          )}
-        </span>
+        <Avatar
+          photoUrl={user.photoUrl}
+          name={{ firstName: user.firstName, lastName: user.lastName }}
+          size={40}
+          className={styles.navAvatarBtn}
+          imageClassName={styles.navAvatarImg}
+          initialClassName={styles.navAvatarInitial}
+        />
       </button>
 
       {isMenuOpen && (

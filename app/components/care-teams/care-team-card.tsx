@@ -1,30 +1,39 @@
 'use client';
 
-import type { Doctor } from '@/lib/types/doctors';
-import { formatDay, getUserInitial } from '@/lib/utils/formatters';
+import { Avatar } from '@/app/components/common';
+import { useStores } from '@/lib/stores';
+import { CareTeam } from '@/lib/types/care-teams';
+import { formatDay } from '@/lib/utils/formatters';
 import styles from './care-team-card.module.scss';
 
 interface CareTeamCardProps {
-  doctor: Doctor;
+  careTeam: CareTeam;
   className?: string;
 }
 
-export const CareTeamCard = ({ doctor, className }: CareTeamCardProps) => {
-  const name = doctor.fullName;
-  const departmentName = doctor.employee?.departmentTypeCode ?? '—';
-  const days = doctor.scheduleDays ?? [];
+export const CareTeamCard = ({ careTeam, className }: CareTeamCardProps) => {
+  const {
+    departmentStore: { getDepartmentByTypeCode },
+  } = useStores();
+
+  const name = careTeam.displayName;
+  const departmentName = getDepartmentByTypeCode(careTeam.departmentTypeCode)?.displayName ?? '—';
+  const days = careTeam.schedules?.map((s) => s.day) ?? [];
 
   const rootClass = [styles.card, className].filter(Boolean).join(' ');
 
   return (
     <div className={rootClass}>
       <div className={styles.cardHeader}>
-        <span className={styles.avatar} aria-hidden>
-          {getUserInitial({ fullName: name, fallback: '?' })}
-        </span>
+        <Avatar
+          photoUrl={careTeam.photoUrl}
+          name={{ fullName: name, fallback: '?' }}
+          size={56}
+          className={styles.avatar}
+        />
         <div>
           <h2 className={styles.cardName}>{name}</h2>
-          <p className={styles.cardRole}>{doctor.jobTitle ?? 'Doctor'}</p>
+          <p className={styles.cardRole}>{careTeam.jobTitle ?? 'Doctor'}</p>
         </div>
       </div>
       <span className={`${styles.roleBadge} ${styles.roleBadgeDoctor}`}>doctor</span>
