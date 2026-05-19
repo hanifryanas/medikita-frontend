@@ -1,8 +1,7 @@
-import { EmployeeRole } from '@/lib/types/employees';
-import { DepartmentEmployee } from '@/lib/types/employees/department-employee';
-import type { EmployeeResult } from '../types';
+import type { EmployeeResult } from '@/lib/api/next/employees/types';
+import { DepartmentEmployee, EmployeeRole } from '@/lib/types/employees';
 
-export const sanitizeDepartmentEmployeeResult = (
+export const sanitizeEmployeeResultToDepartmentEmployee = (
   departmentTypeCode: string,
   employee: EmployeeResult
 ): DepartmentEmployee => ({

@@ -1,4 +1,4 @@
-import { Day } from '../common';
+import { Schedule } from '../common';
 import type { Employee } from '../employees';
 
 export interface Doctor {
@@ -7,6 +7,6 @@ export interface Doctor {
   employee?: Employee;
   title?: string;
   jobTitle?: string;
-  scheduleDays?: Day[];
+  schedules: Schedule[];
   isAvailable?: boolean;
 }

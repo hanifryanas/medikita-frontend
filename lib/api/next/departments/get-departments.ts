@@ -1,6 +1,6 @@
 import { Department } from '@/lib/types/departments';
 import { FeaturedDepartment } from '@/lib/types/departments/featured-department';
-import { sanitizeGroupedDepartmentResult } from './sanitizers';
+import { sanitizeGroupedDepartmentResult } from '@/lib/utils/sanitizers';
 
 export const getDepartments = async (): Promise<{
   departments: Department[];
