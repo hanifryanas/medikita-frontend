@@ -2,8 +2,9 @@
 
 import { Avatar } from '@/app/components/common';
 import { useStores } from '@/lib/stores';
-import { CareTeam } from '@/lib/types/care-teams';
+import { CareTeam, careTeamRoleToSegment } from '@/lib/types/care-teams';
 import { formatDay } from '@/lib/utils/formatters';
+import Link from 'next/link';
 import styles from './care-team-card.module.scss';
 
 interface CareTeamCardProps {
@@ -21,9 +22,10 @@ export const CareTeamCard = ({ careTeam, className }: CareTeamCardProps) => {
   const days = careTeam.schedules?.map((s) => s.day) ?? [];
 
   const rootClass = [styles.card, className].filter(Boolean).join(' ');
+  const href = `/care-teams/${careTeamRoleToSegment(careTeam.role)}/${careTeam.careTeamId}`;
 
   return (
-    <div className={rootClass}>
+    <Link href={href} className={rootClass}>
       <div className={styles.cardHeader}>
         <Avatar
           photoUrl={careTeam.photoUrl}
@@ -49,6 +51,6 @@ export const CareTeamCard = ({ careTeam, className }: CareTeamCardProps) => {
           </span>
         ))}
       </div>
-    </div>
+    </Link>
   );
 };

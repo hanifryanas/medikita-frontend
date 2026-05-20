@@ -1,0 +1,366 @@
+@use '../../../styles/color' as *;
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: $navy-900;
+  color: $white;
+}
+
+.content {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    padding: 0.75rem 1.25rem 3rem;
+    gap: 1rem;
+  }
+}
+
+// ─── Back link ────────────────────────────────────────────
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  align-self: flex-start;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: $muted;
+  text-decoration: none;
+  padding: 0.35rem 0.65rem 0.35rem 0.4rem;
+  border-radius: 999px;
+  transition:
+    color 0.15s,
+    background 0.15s;
+
+  &:hover {
+    color: $white;
+    background: var(--surface-translucent);
+  }
+}
+
+// ─── Two-column layout ────────────────────────────────────
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Profile card (LEFT) ─────────────────────────────────
+.profileCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 1.5rem;
+  border-radius: 20px;
+  background: var(--surface-translucent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid var(--border-card);
+  text-align: center;
+  overflow: hidden;
+  isolation: isolate;
+  position: sticky;
+  top: 1.5rem;
+
+  @media (max-width: 900px) {
+    position: static;
+  }
+}
+
+.profileGlow {
+  position: absolute;
+  inset: -30% -10% auto -10%;
+  height: 60%;
+  background:
+    radial-gradient(circle at 50% 40%, var(--accent-soft), transparent 65%),
+    radial-gradient(circle at 70% 80%, rgba(92, 196, 212, 0.18), transparent 65%);
+  filter: blur(40px);
+  opacity: 0.85;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.profilePhoto {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--accent-soft);
+  border: 1px solid var(--border-card);
+  margin-bottom: 0.5rem;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18);
+}
+
+.profileAvatar {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 16px;
+  background: transparent;
+}
+
+.profileAvatarImage {
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.profileAvatarInitial {
+  font-size: 4rem;
+  color: $white;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.profileName {
+  margin: 0.25rem 0 0;
+  font-size: clamp(1.4rem, 2.2vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.profileJob {
+  margin: 0;
+  font-size: 0.9rem;
+  color: $muted;
+  line-height: 1.45;
+}
+
+.profileStats {
+  margin: 0.75rem 0 0;
+  padding: 0.75rem 0 0;
+  width: 100%;
+  border-top: 1px solid var(--border-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.statItem {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.statLabel {
+  margin: 0;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $muted;
+}
+
+.statValue {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: $white;
+  text-align: right;
+}
+
+.statLink {
+  color: var(--accent);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// ─── Schedule card (RIGHT) ───────────────────────────────
+.scheduleCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 18px;
+  background: var(--surface-translucent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid var(--border-card);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.sectionIcon {
+  color: var(--accent);
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sectionSubtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  color: $muted;
+}
+
+.scheduleList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.scheduleItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--border-card);
+  transition:
+    border-color 0.15s,
+    transform 0.15s,
+    background 0.15s;
+
+  &:hover {
+    border-color: var(--border-card-hover);
+  }
+
+  @media (max-width: 540px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+}
+
+.scheduleItemDisabled {
+  opacity: 0.55;
+
+  &:hover {
+    border-color: var(--border-card);
+  }
+}
+
+.scheduleInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.scheduleDayName {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: $white;
+  min-width: 3.25rem;
+}
+
+.scheduleTimeBlock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--surface-translucent);
+  border: 1px solid var(--border-card);
+  font-size: 0.82rem;
+  color: $white;
+  font-variant-numeric: tabular-nums;
+}
+
+.scheduleTimeIcon {
+  color: var(--accent);
+}
+
+// ─── Per-row CTA ─────────────────────────────────────────
+.bookCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: $white;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 6px 14px rgba(59, 142, 212, 0.22);
+  transition:
+    background 0.15s,
+    transform 0.15s,
+    box-shadow 0.15s;
+
+  &:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(59, 142, 212, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.bookCtaDisabled {
+  background: var(--glass-bg);
+  color: $muted;
+  border: 1px solid var(--border-card);
+  cursor: not-allowed;
+  box-shadow: none;
+
+  &:hover {
+    background: var(--glass-bg);
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+// ─── Empty / loading states ───────────────────────────────
+.empty {
+  padding: 1.25rem;
+  border-radius: 14px;
+  background: var(--surface-translucent);
+  border: 1px solid var(--border-card);
+  color: $muted;
+  font-size: 0.9rem;
+}

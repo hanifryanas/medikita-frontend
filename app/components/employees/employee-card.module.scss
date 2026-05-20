@@ -14,6 +14,22 @@
   }
 }
 
+// Linked variant — adds clickable affordances when EmployeeCard wraps a <Link>.
+.linked {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover .name {
+    color: var(--accent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
 // ─── Variants ─────────────────────────────────────────────
 .row {
   flex-direction: row;

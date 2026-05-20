@@ -10,5 +10,6 @@ export interface CareTeam {
   photoUrl?: string;
   title?: string;
   jobTitle?: string;
+  employmentDuration?: string;
   schedules: Schedule[];
 }

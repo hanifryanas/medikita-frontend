@@ -2,6 +2,7 @@
 
 import { Avatar } from '@/app/components/common';
 import type { Employee } from '@/lib/types/employees';
+import Link from 'next/link';
 import styles from './employee-card.module.scss';
 
 export type EmployeeCardVariant = 'row' | 'card';
@@ -16,6 +17,7 @@ interface EmployeeCardProps<T extends EmployeeCardEmployee = Employee> {
   subtitle?: string;
   avatarSize?: number;
   className?: string;
+  href?: string;
 }
 
 export const EmployeeCard = <T extends EmployeeCardEmployee = Employee>({
@@ -25,16 +27,19 @@ export const EmployeeCard = <T extends EmployeeCardEmployee = Employee>({
   subtitle,
   avatarSize,
   className,
+  href,
 }: EmployeeCardProps<T>) => {
   const photoUrl = employee.photoUrl ?? employee.user?.photoUrl;
   const displayName = name ?? employee.displayName ?? employee.fullName;
   const displaySubtitle = subtitle ?? employee.doctor?.jobTitle ?? employee.jobTitle;
   const size = avatarSize ?? (variant === 'card' ? 56 : 32);
 
-  const rootClass = [styles.root, styles[variant], className].filter(Boolean).join(' ');
+  const rootClass = [styles.root, styles[variant], href && styles.linked, className]
+    .filter(Boolean)
+    .join(' ');
 
-  return (
-    <div className={rootClass}>
+  const inner = (
+    <>
       <Avatar
         photoUrl={photoUrl}
         name={{ fullName: employee.fullName, fallback: '?' }}
@@ -48,6 +53,16 @@ export const EmployeeCard = <T extends EmployeeCardEmployee = Employee>({
         <span className={styles.name}>{displayName}</span>
         {displaySubtitle && <span className={styles.subtitle}>{displaySubtitle}</span>}
       </span>
-    </div>
+    </>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className={rootClass}>
+        {inner}
+      </Link>
+    );
+  }
+
+  return <div className={rootClass}>{inner}</div>;
 };

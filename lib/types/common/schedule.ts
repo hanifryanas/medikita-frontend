@@ -4,4 +4,5 @@ export interface Schedule {
   day: Day;
   startTime: string;
   endTime: string;
+  isDisabled?: boolean;
 }

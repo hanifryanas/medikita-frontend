@@ -1,5 +1,6 @@
 'use client';
 
+import { buildCareTeamLink } from '@/lib/types/care-teams';
 import { DepartmentEmployee } from '@/lib/types/employees/department-employee';
 import { EmployeeCard, type EmployeeCardVariant } from '../employees';
 import styles from './department-people-section.module.scss';
@@ -41,7 +42,12 @@ export const DepartmentPeopleSection = ({
       {employees.length > 0 ? (
         <div className={gridClass}>
           {employees.map((emp) => (
-            <EmployeeCard key={emp.employeeId} employee={emp} variant={variant} />
+            <EmployeeCard
+              key={emp.employeeId}
+              employee={emp}
+              variant={variant}
+              href={buildCareTeamLink(emp.role, emp.employeeId)}
+            />
           ))}
         </div>
       ) : (
