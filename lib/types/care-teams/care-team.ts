@@ -1,4 +1,4 @@
-import { Schedule } from '../common';
+import { Day } from '../common';
 import { EmployeeRole } from '../employees';
 
 export interface CareTeam {
@@ -10,6 +10,5 @@ export interface CareTeam {
   photoUrl?: string;
   title?: string;
   jobTitle?: string;
-  employmentDuration?: string;
-  schedules: Schedule[];
+  scheduleDays?: Day[];
 }

@@ -12,7 +12,6 @@ export const sanitizeDoctorToCareTeam = (doctor: Doctor): CareTeam => {
     photoUrl: doctor.photoUrl ?? doctor.employee?.photoUrl,
     title: doctor.title,
     jobTitle: doctor.jobTitle,
-    employmentDuration: doctor.employee?.employmentDuration,
-    schedules: doctor.schedules ?? [],
+    scheduleDays: doctor.scheduleDays ?? [],
   };
 };

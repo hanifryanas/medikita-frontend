@@ -19,7 +19,7 @@ export const CareTeamCard = ({ careTeam, className }: CareTeamCardProps) => {
 
   const name = careTeam.displayName;
   const departmentName = getDepartmentByTypeCode(careTeam.departmentTypeCode)?.displayName ?? '—';
-  const days = careTeam.schedules?.map((s) => s.day) ?? [];
+  const days = careTeam.scheduleDays ?? [];
 
   const rootClass = [styles.card, className].filter(Boolean).join(' ');
   const href = `/care-teams/${careTeamRoleToSegment(careTeam.role)}/${careTeam.careTeamId}`;
