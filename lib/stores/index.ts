@@ -1,7 +1,6 @@
 import { useAuthStore } from './auth-store';
 import { useCareTeamsStore } from './care-teams-store';
 import { useDepartmentStore } from './department-store';
-import { useDoctorStore } from './doctor-store';
 
 /**
  * Reactive store access — call inside the render body of a client component.
@@ -11,7 +10,6 @@ export const useStores = () => ({
   authStore: useAuthStore(),
   careTeamsStore: useCareTeamsStore(),
   departmentStore: useDepartmentStore(),
-  doctorStore: useDoctorStore(),
 });
 
 /**
@@ -34,8 +32,5 @@ export const stores = {
   },
   get department() {
     return useDepartmentStore.getState();
-  },
-  get doctor() {
-    return useDoctorStore.getState();
   },
 };

@@ -4,32 +4,35 @@ import { useMemo } from 'react';
 import { useStores } from '../stores';
 import { CareTeam } from '../types/care-teams';
 import { EmployeeRole } from '../types/employees';
-import { sanitizeDoctorToCareTeam } from '../utils/sanitizers';
 
 export function useCareTeams(): CareTeam[] {
   const {
-    doctorStore: { doctors },
-    careTeamsStore: { query, roleFilter, searchMode, selectedDays, selectedDepartments },
+    careTeamsStore: { careTeamMap, query, roleFilter, selectedDays, selectedDepartments },
   } = useStores();
 
   return useMemo(() => {
-    const doctorCareTeam = doctors.map(sanitizeDoctorToCareTeam);
+    const careTeams = Array.from(careTeamMap.values());
     const formattedQuery = query.trim().toLowerCase();
-    return doctorCareTeam.filter((d) => {
-      if (roleFilter === EmployeeRole.Nurse) return false;
 
-      if (searchMode === 'name' && formattedQuery) {
-        if (!d.fullName.toLowerCase().includes(formattedQuery)) return false;
+    return careTeams.filter((d) => {
+      if (roleFilter === EmployeeRole.Nurse && d.role !== EmployeeRole.Nurse) return false;
+      if (roleFilter === EmployeeRole.Doctor && d.role !== EmployeeRole.Doctor) return false;
+
+      if (formattedQuery && !d.fullName.toLowerCase().includes(formattedQuery)) {
+        return false;
       }
-      if (searchMode === 'days' && selectedDays.length > 0) {
-        const days = d.schedules?.map((s) => s.day) ?? [];
-        if (!selectedDays.every((day) => days.includes(day))) return false;
-      }
-      if (searchMode === 'department' && selectedDepartments.length > 0) {
+
+      if (selectedDepartments.length > 0) {
         const code = d.departmentTypeCode;
         if (!code || !selectedDepartments.includes(code)) return false;
       }
+
+      if (selectedDays.length > 0) {
+        const hasAnyDay = d.scheduleDays?.some((day) => selectedDays.includes(day)) ?? false;
+        if (!hasAnyDay) return false;
+      }
+
       return true;
     });
-  }, [doctors, query, roleFilter, searchMode, selectedDays, selectedDepartments]);
+  }, [careTeamMap, query, roleFilter, selectedDays, selectedDepartments]);
 }

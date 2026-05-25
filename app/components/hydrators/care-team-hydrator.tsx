@@ -2,18 +2,19 @@
 
 import { nextApi } from '@/lib/api';
 import { stores } from '@/lib/stores';
+import { sanitizeDoctorResultToCareTeam } from '@/lib/utils/sanitizers';
 import { useEffect } from 'react';
 
-export const DoctorHydrator = () => {
+export const CareTeamHydrator = () => {
   useEffect(() => {
     (async () => {
-      const { isLoaded, isLoading, setDoctors, setIsLoading, reset } = stores.doctor;
+      const { isLoaded, isLoading, setCareTeams, setIsLoading, reset } = stores.careTeams;
       if (isLoaded || isLoading) return;
 
       setIsLoading(true);
       try {
         const doctors = await nextApi.doctors.getDoctors();
-        setDoctors(doctors);
+        setCareTeams(doctors.map(sanitizeDoctorResultToCareTeam));
       } catch {
         reset();
       } finally {

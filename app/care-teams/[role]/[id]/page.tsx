@@ -70,7 +70,7 @@ export default function CareTeamDetailPage() {
 
   const careTeam = useCareTeam(role, id);
   const {
-    doctorStore: { isLoading, isLoaded },
+    careTeamsStore: { isLoading, isLoaded },
     departmentStore: { getDepartmentByTypeCode },
   } = useStores();
 

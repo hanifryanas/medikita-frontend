@@ -5,15 +5,28 @@ import { CareTeam } from '../types/care-teams';
 import { Day } from '../types/common';
 
 export type CareTeamsRoleFilter = 'all' | CareTeam['role'];
-export type CareTeamsSearchMode = 'name' | 'days' | 'department';
+export type CareTeamsSearchMode = 'name' | 'department' | 'days';
 
 export interface CareTeamsStore {
+  // ─── Data ────────────────────────────────────────────
+  careTeamMap: Map<string, CareTeam>;
+  isLoaded: boolean;
+  isLoading: boolean;
+
+  // ─── Filter state ────────────────────────────────────
   query: string;
   roleFilter: CareTeamsRoleFilter;
   searchMode: CareTeamsSearchMode;
   selectedDays: Day[];
   selectedDepartments: string[];
 
+  // ─── Data actions ────────────────────────────────────
+  setIsLoading: (isLoading: boolean) => void;
+  setCareTeams: (careTeams: CareTeam[]) => void;
+  getCareTeamById: (id: string) => CareTeam | undefined;
+  getCareTeams: () => CareTeam[];
+
+  // ─── Filter actions ──────────────────────────────────
   setQuery: (q: string) => void;
   setRoleFilter: (f: CareTeamsRoleFilter) => void;
   setSearchMode: (m: CareTeamsSearchMode) => void;
@@ -21,24 +34,45 @@ export interface CareTeamsStore {
   toggleDepartment: (d: string) => void;
   clearDays: () => void;
   clearDepartments: () => void;
+  clearFilters: () => void;
+
+  // ─── Lifecycle ───────────────────────────────────────
   reset: () => void;
 }
 
-const initialState = {
+const initialFilterState = {
   query: '',
   roleFilter: 'all' as CareTeamsRoleFilter,
   searchMode: 'name' as CareTeamsSearchMode,
-  selectedDays: [] as Day[],
   selectedDepartments: [] as string[],
+  selectedDays: [] as Day[],
 };
 
-export const useCareTeamsStore = create<CareTeamsStore>()((set) => ({
+const initialState = {
+  careTeamMap: new Map<string, CareTeam>(),
+  isLoaded: false,
+  isLoading: false,
+  ...initialFilterState,
+};
+
+export const useCareTeamsStore = create<CareTeamsStore>()((set, get) => ({
   ...initialState,
+
+  setIsLoading: (isLoading) => set({ isLoading }),
+
+  setCareTeams: (careTeams) =>
+    set({
+      careTeamMap: new Map(careTeams.map((c) => [c.careTeamId, c])),
+      isLoaded: true,
+      isLoading: false,
+    }),
+
+  getCareTeamById: (id) => get().careTeamMap.get(id),
+  getCareTeams: () => Array.from(get().careTeamMap.values()),
 
   setQuery: (query) => set({ query }),
   setRoleFilter: (roleFilter) => set({ roleFilter }),
-  setSearchMode: (searchMode) =>
-    set({ searchMode, query: '', selectedDays: [], selectedDepartments: [] }),
+  setSearchMode: (searchMode) => set({ searchMode }),
 
   toggleDay: (d) =>
     set((s) => ({
@@ -56,6 +90,7 @@ export const useCareTeamsStore = create<CareTeamsStore>()((set) => ({
 
   clearDays: () => set({ selectedDays: [] }),
   clearDepartments: () => set({ selectedDepartments: [] }),
+  clearFilters: () => set(initialFilterState),
 
   reset: () => set(initialState),
 }));

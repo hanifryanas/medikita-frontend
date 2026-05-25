@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { Tag } from '../tags';
 import styles from './chip-picker.module.scss';
 
 export interface ChipPickerOption<T extends string = string> {
@@ -89,15 +90,14 @@ export const ChipPicker = <T extends string>({
           const label = typeof opt === 'string' ? opt : (opt.label ?? opt.value);
           const active = selected.includes(value);
           return (
-            <button
+            <Tag
               key={value}
-              type='button'
-              aria-pressed={active}
-              className={`${styles.chip} ${active ? styles.chipActive : ''}`}
+              active={active}
               onClick={() => onToggle(value)}
+              className={styles.chip}
             >
               {label}
-            </button>
+            </Tag>
           );
         })}
       </div>

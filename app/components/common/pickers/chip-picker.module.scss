@@ -90,36 +90,7 @@
 }
 
 .chip {
+  // Marker class used by ChipPicker's scroll measurement.
+  // Visuals (background, border, hover, active) are provided by the Tag component.
   flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 28px;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  background: var(--glass-bg);
-  border: 1px solid var(--border-card);
-  color: $muted;
-  font-size: 0.78rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    color 0.15s,
-    border-color 0.15s;
-
-  &:hover {
-    color: $white;
-    border-color: var(--border-card-hover);
-  }
-}
-
-.chipActive {
-  background: var(--accent-soft);
-  border-color: var(--border-card-hover);
-  color: $white;
-
-  &:hover {
-    background: var(--accent-soft);
-  }
 }

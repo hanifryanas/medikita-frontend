@@ -1,6 +1,6 @@
-import { Doctor } from '@/lib/types/doctors';
+import { DoctorResult } from './types/doctor-result';
 
-export const getDoctors = async (): Promise<Doctor[]> => {
+export const getDoctors = async (): Promise<DoctorResult[]> => {
   const res = await fetch('/api/doctors', { method: 'GET' });
 
   if (!res.ok) {
@@ -8,5 +8,5 @@ export const getDoctors = async (): Promise<Doctor[]> => {
     throw new Error(err?.message ?? 'Failed to fetch doctors.');
   }
 
-  return (await res.json()).doctors as Doctor[];
+  return (await res.json()).doctors as DoctorResult[];
 };

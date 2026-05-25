@@ -1,7 +1,7 @@
 'use client';
 
 import { CareTeamCard } from '@/app/components/care-teams';
-import { ChipPicker } from '@/app/components/common';
+import { ChipPicker, Tag } from '@/app/components/common';
 import { PublicNav } from '@/app/components/navigation';
 import { SearchIcon } from '@/app/icons';
 import { useCareTeams } from '@/lib/hooks';
@@ -20,8 +20,8 @@ const FILTERS: { label: string; value: CareTeamsRoleFilter }[] = [
 
 const SEARCH_MODES = [
   { label: 'Name', value: 'name' as const },
-  { label: 'Days', value: 'days' as const },
   { label: 'Department', value: 'department' as const },
+  { label: 'Days', value: 'days' as const },
 ];
 
 const DAY_OPTIONS: { value: Day; label: string }[] = [
@@ -33,6 +33,16 @@ const DAY_OPTIONS: { value: Day; label: string }[] = [
   { value: Day.Saturday, label: 'Sat' },
   { value: Day.Sunday, label: 'Sun' },
 ];
+
+const DAY_LABEL: Record<Day, string> = {
+  [Day.Monday]: 'Mon',
+  [Day.Tuesday]: 'Tue',
+  [Day.Wednesday]: 'Wed',
+  [Day.Thursday]: 'Thu',
+  [Day.Friday]: 'Fri',
+  [Day.Saturday]: 'Sat',
+  [Day.Sunday]: 'Sun',
+};
 
 export default function CareTeamsPage() {
   const {
@@ -47,16 +57,30 @@ export default function CareTeamsPage() {
       setSearchMode,
       toggleDay,
       toggleDepartment,
-      clearDays,
-      clearDepartments,
+      clearFilters,
     },
-    departmentStore: { getDepartmentsByFlag },
+    departmentStore: { getDepartmentsByFlag, getDepartmentByTypeCode },
   } = useStores();
 
   const departments = getDepartmentsByFlag({ isClinical: true });
   const departmentCodes = useMemo(() => departments.map((d) => d.typeCode), [departments]);
 
+  const availableDayOptions = useMemo(
+    () => DAY_OPTIONS.filter((d) => !selectedDays.includes(d.value)),
+    [selectedDays]
+  );
+  const availableDepartmentCodes = useMemo(
+    () => departmentCodes.filter((c) => !selectedDepartments.includes(c)),
+    [departmentCodes, selectedDepartments]
+  );
+
   const filtered = useCareTeams();
+
+  const hasNameTag = query.trim().length > 0;
+  const hasRoleTag = filter !== 'all';
+  const roleTagLabel = FILTERS.find((f) => f.value === filter)?.label ?? '';
+  const hasAnyFilter =
+    hasNameTag || hasRoleTag || selectedDays.length > 0 || selectedDepartments.length > 0;
 
   return (
     <div className={styles.page}>
@@ -66,7 +90,8 @@ export default function CareTeamsPage() {
           <span className={styles.eyebrow}>Care Teams</span>
           <h1 className={styles.heading}>Meet the people behind your care</h1>
           <p className={styles.subtitle}>
-            Browse the full roster — by name, schedule, or department.
+            Browse the full roster and get to know the dedicated professionals who support your
+            health journey.
           </p>
         </header>
 
@@ -87,19 +112,17 @@ export default function CareTeamsPage() {
               </div>
             ) : searchMode === 'days' ? (
               <ChipPicker
-                options={DAY_OPTIONS}
-                selected={selectedDays}
+                options={availableDayOptions}
+                selected={[]}
                 onToggle={toggleDay}
-                onClear={clearDays}
-                ariaLabel='Filter by day'
+                ariaLabel='Pick days'
               />
             ) : (
               <ChipPicker
-                options={departmentCodes}
-                selected={selectedDepartments}
+                options={availableDepartmentCodes}
+                selected={[]}
                 onToggle={toggleDepartment}
-                onClear={clearDepartments}
-                ariaLabel='Filter by department'
+                ariaLabel='Pick departments'
               />
             )}
 
@@ -138,6 +161,56 @@ export default function CareTeamsPage() {
             ))}
           </div>
         </div>
+
+        {hasAnyFilter && (
+          <div className={styles.activeFilters} aria-label='Active filters'>
+            {hasNameTag && (
+              <Tag label='Name:' onRemove={() => setQuery('')} removeAriaLabel='Clear name filter'>
+                {query.trim()}
+              </Tag>
+            )}
+
+            {hasRoleTag && (
+              <Tag
+                label='Role:'
+                onRemove={() => setFilter('all')}
+                removeAriaLabel='Clear role filter'
+              >
+                {roleTagLabel}
+              </Tag>
+            )}
+
+            {selectedDepartments.map((code) => {
+              const dept = getDepartmentByTypeCode(code);
+              const name = dept?.displayName ?? code;
+              return (
+                <Tag
+                  key={`dept-${code}`}
+                  label='Dept:'
+                  onRemove={() => toggleDepartment(code)}
+                  removeAriaLabel={`Remove ${name} filter`}
+                >
+                  {name}
+                </Tag>
+              );
+            })}
+
+            {selectedDays.map((day) => (
+              <Tag
+                key={`day-${day}`}
+                label='Day:'
+                onRemove={() => toggleDay(day)}
+                removeAriaLabel={`Remove ${DAY_LABEL[day]} filter`}
+              >
+                {DAY_LABEL[day]}
+              </Tag>
+            ))}
+
+            <button type='button' className={styles.clearAllBtn} onClick={() => clearFilters()}>
+              Clear all
+            </button>
+          </div>
+        )}
 
         {filtered.length === 0 ? (
           <div className={styles.empty}>No team members match your search.</div>
