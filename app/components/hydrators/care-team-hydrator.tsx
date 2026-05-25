@@ -2,7 +2,10 @@
 
 import { nextApi } from '@/lib/api';
 import { stores } from '@/lib/stores';
-import { sanitizeDoctorResultToCareTeam } from '@/lib/utils/sanitizers';
+import {
+  sanitizeDoctorResultToCareTeam,
+  sanitizeNurseResultToCareTeam,
+} from '@/lib/utils/sanitizers';
 import { useEffect } from 'react';
 
 export const CareTeamHydrator = () => {
@@ -13,8 +16,14 @@ export const CareTeamHydrator = () => {
 
       setIsLoading(true);
       try {
-        const doctors = await nextApi.doctors.getDoctors();
-        setCareTeams(doctors.map(sanitizeDoctorResultToCareTeam));
+        const [doctors, nurses] = await Promise.all([
+          nextApi.doctors.getDoctors(),
+          nextApi.nurses.getNurses(),
+        ]);
+        setCareTeams([
+          ...doctors.map(sanitizeDoctorResultToCareTeam),
+          ...nurses.map(sanitizeNurseResultToCareTeam),
+        ]);
       } catch {
         reset();
       } finally {

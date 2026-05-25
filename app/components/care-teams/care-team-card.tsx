@@ -3,6 +3,7 @@
 import { Avatar } from '@/app/components/common';
 import { useStores } from '@/lib/stores';
 import { CareTeam, careTeamRoleToSegment } from '@/lib/types/care-teams';
+import { EmployeeRole } from '@/lib/types/employees';
 import { formatDay } from '@/lib/utils/formatters';
 import Link from 'next/link';
 import styles from './care-team-card.module.scss';
@@ -35,10 +36,16 @@ export const CareTeamCard = ({ careTeam, className }: CareTeamCardProps) => {
         />
         <div>
           <h2 className={styles.cardName}>{name}</h2>
-          <p className={styles.cardRole}>{careTeam.jobTitle ?? 'Doctor'}</p>
+          <p className={styles.cardRole}>{careTeam.jobTitle ?? careTeam.role}</p>
         </div>
       </div>
-      <span className={`${styles.roleBadge} ${styles.roleBadgeDoctor}`}>doctor</span>
+      <span
+        className={`${styles.roleBadge} ${
+          careTeam.role === EmployeeRole.Nurse ? styles.roleBadgeNurse : styles.roleBadgeDoctor
+        }`}
+      >
+        {careTeam.role}
+      </span>
       <div className={styles.cardMeta}>
         <span>
           Department: <strong>{departmentName}</strong>
