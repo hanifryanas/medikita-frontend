@@ -1,7 +1,9 @@
+import { Schedule } from '../common';
 import { CareTeam } from './care-team';
 
 export interface DetailedCareTeam extends Omit<CareTeam, 'scheduleDays'> {
-  age: number;
   employmentDuration: string;
-  patientCount: number;
+  schedules: Schedule[];
+  age?: number;
+  patientCount?: number;
 }

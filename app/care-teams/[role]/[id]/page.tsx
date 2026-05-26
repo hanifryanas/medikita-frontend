@@ -68,9 +68,8 @@ export default function CareTeamDetailPage() {
       ? segmentToCareTeamRole(roleSegment)
       : undefined;
 
-  const careTeam = useCareTeam(role, id);
+  const { careTeam, isLoading, isLoaded } = useCareTeam(role, id);
   const {
-    careTeamsStore: { isLoading, isLoaded },
     departmentStore: { getDepartmentByTypeCode },
   } = useStores();
 

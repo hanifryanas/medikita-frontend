@@ -1,4 +1,4 @@
-import { Day } from '@/lib/types/common';
+import { Day, Schedule } from '@/lib/types/common';
 
 export interface NurseResult {
   nurseId: string;
@@ -20,4 +20,5 @@ export interface NurseResult {
   title?: string;
   jobTitle?: string;
   scheduleDays?: Day[];
+  schedules?: Schedule[];
 }
