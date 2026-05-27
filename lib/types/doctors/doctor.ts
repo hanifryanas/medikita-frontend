@@ -1,7 +1,9 @@
 import { CareTeam } from '../care-teams';
-import type { Employee } from '../employees';
+import { Schedule } from '../common';
 
-export interface Doctor extends Omit<CareTeam, 'careTeamId' | 'role' | 'departmentTypeCode'> {
+export interface Doctor extends Omit<CareTeam, 'careTeamId' | 'role' | 'scheduleDays'> {
   doctorId: string;
-  employee?: Employee;
+  age?: number;
+  patientCount?: number;
+  schedules: Schedule[];
 }
