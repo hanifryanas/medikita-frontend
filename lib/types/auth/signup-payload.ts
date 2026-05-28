@@ -7,7 +7,7 @@ export interface SignupPayload {
   email: string;
   userName: string;
   gender: UserGenderType;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   phoneNumber: string;
   address: string;
   password: string;

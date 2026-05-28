@@ -407,6 +407,16 @@
   color: var(--accent);
 }
 
+.slotPillDisabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  text-decoration: line-through;
+
+  &:hover {
+    border-color: var(--border-card);
+  }
+}
+
 // ─── Book CTA ────────────────────────────────────────────
 .bookCta {
   display: inline-flex;

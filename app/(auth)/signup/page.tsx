@@ -6,7 +6,7 @@ import { nextApi } from '@/lib/api/next';
 import type { SignupFormPayload, SignupPayload } from '@/lib/types/auth';
 import { UserGenderType } from '@/lib/types/users';
 import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
-import { digitStringFormatter, formatDate } from '@/lib/utils/formatters';
+import { digitStringFormatter } from '@/lib/utils/formatters';
 import { validateSignupForm } from '@/lib/validations/auth';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -26,7 +26,7 @@ export default function SignupPage() {
     email: '',
     userName: '',
     gender: UserGenderType.Female,
-    dateOfBirth: new Date('2000-01-01'),
+    dateOfBirth: '2000-01-01',
     phoneNumber: '',
     address: '',
     password: '',
@@ -70,7 +70,7 @@ export default function SignupPage() {
         email: fields.email,
         userName: fields.userName,
         gender: fields.gender,
-        dateOfBirth: new Date(fields.dateOfBirth),
+        dateOfBirth: fields.dateOfBirth,
         phoneNumber: fields.phoneNumber,
         address: fields.address,
         password: fields.password,
@@ -290,7 +290,7 @@ export default function SignupPage() {
               <input
                 id='dateOfBirth'
                 type='date'
-                value={formatDate(fields.dateOfBirth)}
+                value={fields.dateOfBirth}
                 onChange={(e) => setField('dateOfBirth', e.target.value)}
                 className={`${styles.input} ${errors.dateOfBirth ? styles.inputError : ''}`}
               />

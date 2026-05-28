@@ -2,16 +2,17 @@
 
 import { Avatar } from '@/app/components/common';
 import { PublicNav } from '@/app/components/navigation';
+import { nextApi } from '@/lib/api';
 import { useCareTeam } from '@/lib/hooks';
 import { useStores } from '@/lib/stores';
 import { isCareTeamRoleSegment, segmentToCareTeamRole } from '@/lib/types/care-teams';
 import { Day, Schedule } from '@/lib/types/common';
 import { EmployeeRole } from '@/lib/types/employees';
-import { format } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { CalendarPlus, ChevronLeft, ChevronRight, Stethoscope } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './page.module.scss';
 
 // ─── Helpers ─────────────────────────────────────────────
@@ -25,27 +26,23 @@ const DAY_INDEX: Record<Day, number> = {
   [Day.Saturday]: 6,
 };
 
-const INDEX_TO_DAY: Day[] = [
-  Day.Sunday,
-  Day.Monday,
-  Day.Tuesday,
-  Day.Wednesday,
-  Day.Thursday,
-  Day.Friday,
-  Day.Saturday,
-];
-
 const trimSeconds = (time: string) => time.slice(0, 5);
 
-/** Build hourly slots between start (inclusive) and end (exclusive). */
-const buildSlots = (start: string, end: string): string[] => {
-  const [sH, sM] = start.split(':').map(Number);
-  const [eH] = end.split(':').map(Number);
+const FALLBACK_SLOT_MINUTES = 20;
+
+const buildFallbackSlots = (start: string, end: string): string[] => {
+  if (!start || !end) return [];
+  const toMinutes = (t: string): number => {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + (m ?? 0);
+  };
+  const startMin = toMinutes(start);
+  const endMin = toMinutes(end);
   const slots: string[] = [];
-  let h = sH;
-  while (h < eH) {
-    slots.push(`${String(h).padStart(2, '0')}:${String(sM ?? 0).padStart(2, '0')}`);
-    h += 1;
+  for (let cur = startMin; cur + FALLBACK_SLOT_MINUTES <= endMin; cur += FALLBACK_SLOT_MINUTES) {
+    const h = String(Math.floor(cur / 60)).padStart(2, '0');
+    const m = String(cur % 60).padStart(2, '0');
+    slots.push(`${h}:${m}`);
   }
   return slots;
 };
@@ -116,23 +113,94 @@ export default function CareTeamDetailPage() {
     setSelectedTime(null);
   }
 
+  // ─── Fetch real availability + booked slots for doctors ─────────
+  const isDoctor = role === EmployeeRole.Doctor;
+  const doctorId = isDoctor ? careTeam?.careTeamId : undefined;
+  const rangeStart = useMemo(() => format(stripStart, 'yyyy-MM-dd'), [stripStart]);
+  const rangeEnd = useMemo(() => format(addDays(stripStart, 6), 'yyyy-MM-dd'), [stripStart]);
+
+  const [doctorSchedulesByDate, setDoctorSchedulesByDate] = useState<
+    Map<string, { timeSlots: string[]; bookedTimeSlots: Set<string> }>
+  >(new Map());
+
+  const doctorKey = doctorId ?? '';
+  const [lastDoctorKey, setLastDoctorKey] = useState(doctorKey);
+  if (lastDoctorKey !== doctorKey) {
+    setLastDoctorKey(doctorKey);
+    setDoctorSchedulesByDate(new Map());
+  }
+
+  useEffect(() => {
+    if (!doctorId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const results = await nextApi.doctors.getDoctorSchedules({
+          doctorId,
+          startDate: rangeStart,
+          endDate: rangeEnd,
+        });
+        if (cancelled) return;
+        const merged = new Map<string, { timeSlots: string[]; bookedTimeSlots: Set<string> }>();
+        for (const entry of results) {
+          if (!entry.date) continue;
+          const existing = merged.get(entry.date);
+          if (existing) {
+            const seen = new Set(existing.timeSlots);
+            for (const slot of entry.timeSlots) {
+              if (!seen.has(slot)) {
+                existing.timeSlots.push(slot);
+                seen.add(slot);
+              }
+            }
+            for (const slot of entry.bookedTimeSlots) existing.bookedTimeSlots.add(slot);
+          } else {
+            merged.set(entry.date, {
+              timeSlots: [...entry.timeSlots],
+              bookedTimeSlots: new Set(entry.bookedTimeSlots),
+            });
+          }
+        }
+        for (const value of merged.values()) value.timeSlots.sort();
+        setDoctorSchedulesByDate(merged);
+      } catch {
+        if (cancelled) return;
+        setDoctorSchedulesByDate(new Map());
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [doctorId, rangeStart, rangeEnd]);
+
   const selectedDate = useMemo(
     () => (selectedDateKey ? new Date(selectedDateKey) : null),
     [selectedDateKey]
   );
   const selectedSchedule = selectedDate ? scheduleByDayIndex.get(selectedDate.getDay()) : undefined;
-  const slots = useMemo(
-    () =>
-      selectedSchedule ? buildSlots(selectedSchedule.startTime, selectedSchedule.endTime) : [],
-    [selectedSchedule]
+  const selectedDateString = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null;
+  const selectedDoctorSchedule = selectedDateString
+    ? doctorSchedulesByDate.get(selectedDateString)
+    : undefined;
+
+  const slots = useMemo(() => {
+    if (selectedDoctorSchedule) return selectedDoctorSchedule.timeSlots;
+    if (!selectedSchedule) return [];
+    return buildFallbackSlots(selectedSchedule.startTime, selectedSchedule.endTime);
+  }, [selectedDoctorSchedule, selectedSchedule]);
+
+  const bookedSlots = useMemo(
+    () => selectedDoctorSchedule?.bookedTimeSlots ?? new Set<string>(),
+    [selectedDoctorSchedule]
   );
 
   // Reset selected time when slots change and current pick no longer valid
-  const slotsKey = slots.join(',');
+  const slotsKey = `${slots.join(',')}|${Array.from(bookedSlots).join(',')}`;
   const [lastSlotsKey, setLastSlotsKey] = useState(slotsKey);
   if (lastSlotsKey !== slotsKey) {
     setLastSlotsKey(slotsKey);
-    setSelectedTime(slots[0] ?? null);
+    const firstAvailable = slots.find((t) => !bookedSlots.has(t)) ?? null;
+    setSelectedTime(firstAvailable);
   }
 
   const monthLabel = useMemo(() => {
@@ -140,7 +208,12 @@ export default function CareTeamDetailPage() {
     return format(ref, 'MMMM yyyy');
   }, [selectedDate, dates]);
 
-  const canBook = Boolean(selectedDate && selectedSchedule && selectedTime);
+  const canBook = Boolean(
+    selectedDate &&
+    selectedSchedule &&
+    selectedTime &&
+    !(selectedTime && bookedSlots.has(selectedTime))
+  );
   const bookingHref =
     canBook && careTeam && selectedDate && selectedTime
       ? `/appointments?careTeam=${careTeam.careTeamId}&date=${format(selectedDate, 'yyyy-MM-dd')}&time=${selectedTime}`
@@ -302,14 +375,23 @@ export default function CareTeamDetailPage() {
                         ) : (
                           slots.map((t) => {
                             const isSelected = selectedTime === t;
+                            const isBooked = bookedSlots.has(t);
                             return (
                               <button
                                 key={t}
                                 type='button'
                                 role='radio'
                                 aria-checked={isSelected}
-                                onClick={() => setSelectedTime(t)}
-                                className={`${styles.slotPill} ${isSelected ? styles.slotPillSelected : ''}`}
+                                disabled={isBooked}
+                                aria-label={isBooked ? `${t} (booked)` : t}
+                                onClick={() => !isBooked && setSelectedTime(t)}
+                                className={[
+                                  styles.slotPill,
+                                  isSelected && !isBooked && styles.slotPillSelected,
+                                  isBooked && styles.slotPillDisabled,
+                                ]
+                                  .filter(Boolean)
+                                  .join(' ')}
                               >
                                 {t}
                               </button>

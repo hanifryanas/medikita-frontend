@@ -1,7 +1,6 @@
 import { SignupFormPayload } from '@/lib/types/auth';
 import { FormValidationResult } from '@/lib/types/validations';
-import { isDigit, isEmail } from '@/lib/utils/checkers';
-import { isValid } from 'date-fns';
+import { isDigit, isEmail, isStandardDateString } from '@/lib/utils/checkers';
 
 export const validateSignupForm = (
   signupPayload: Partial<SignupFormPayload>
@@ -40,8 +39,8 @@ export const validateSignupForm = (
 
   if (!signupPayload.dateOfBirth) {
     validationResult.errors.dateOfBirth = 'Date of birth is required.';
-  } else if (!isValid(new Date(signupPayload.dateOfBirth))) {
-    validationResult.errors.dateOfBirth = 'Enter a valid date of birth.';
+  } else if (!isStandardDateString(signupPayload.dateOfBirth)) {
+    validationResult.errors.dateOfBirth = 'Enter a valid date of birth (YYYY-MM-DD).';
   }
 
   if (!signupPayload.phoneNumber?.trim()) {
