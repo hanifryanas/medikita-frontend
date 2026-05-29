@@ -2,58 +2,22 @@
 
 import { Avatar } from '@/app/components/common';
 import { PublicNav } from '@/app/components/navigation';
-import { nextApi } from '@/lib/api';
-import { useCareTeam } from '@/lib/hooks';
+import { useCareTeam, useCareTeamSchedule } from '@/lib/hooks';
 import { useStores } from '@/lib/stores';
 import { isCareTeamRoleSegment, segmentToCareTeamRole } from '@/lib/types/care-teams';
-import { Day, Schedule } from '@/lib/types/common';
 import { EmployeeRole } from '@/lib/types/employees';
-import { addDays, format } from 'date-fns';
+import {
+  dayOfMonthFormat,
+  formatDate,
+  weekdayLongFormat,
+  weekdayShortFormat,
+} from '@/lib/utils/formatters';
 import { CalendarPlus, ChevronLeft, ChevronRight, Stethoscope } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
 import styles from './page.module.scss';
 
-// ─── Helpers ─────────────────────────────────────────────
-const DAY_INDEX: Record<Day, number> = {
-  [Day.Sunday]: 0,
-  [Day.Monday]: 1,
-  [Day.Tuesday]: 2,
-  [Day.Wednesday]: 3,
-  [Day.Thursday]: 4,
-  [Day.Friday]: 5,
-  [Day.Saturday]: 6,
-};
-
 const trimSeconds = (time: string) => time.slice(0, 5);
-
-const FALLBACK_SLOT_MINUTES = 20;
-
-const buildFallbackSlots = (start: string, end: string): string[] => {
-  if (!start || !end) return [];
-  const toMinutes = (t: string): number => {
-    const [h, m] = t.split(':').map(Number);
-    return h * 60 + (m ?? 0);
-  };
-  const startMin = toMinutes(start);
-  const endMin = toMinutes(end);
-  const slots: string[] = [];
-  for (let cur = startMin; cur + FALLBACK_SLOT_MINUTES <= endMin; cur += FALLBACK_SLOT_MINUTES) {
-    const h = String(Math.floor(cur / 60)).padStart(2, '0');
-    const m = String(cur % 60).padStart(2, '0');
-    slots.push(`${h}:${m}`);
-  }
-  return slots;
-};
-
-const buildDateStrip = (from: Date, length = 7): Date[] =>
-  Array.from({ length }, (_, i) => {
-    const d = new Date(from);
-    d.setDate(from.getDate() + i);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  });
 
 export default function CareTeamDetailPage() {
   const params = useParams<{ role: string; id: string }>();
@@ -73,158 +37,28 @@ export default function CareTeamDetailPage() {
   const department = careTeam ? getDepartmentByTypeCode(careTeam.departmentTypeCode) : undefined;
   const roleLabel = role === EmployeeRole.Nurse ? 'Nurse' : 'Doctor';
 
-  // ─── Date strip state (7 days starting from `stripStart`) ───────
-  const today = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }, []);
-  const [stripStart, setStripStart] = useState<Date>(today);
-  const dates = useMemo(() => buildDateStrip(stripStart), [stripStart]);
+  const {
+    today,
+    stripStart,
+    dates,
+    shiftStrip,
+    scheduleByDayIndex,
+    selectedDateKey,
+    setSelectedDateKey,
+    selectedDate,
+    selectedSchedule,
+    selectedTime,
+    setSelectedTime,
+    slots,
+    bookedSlots,
+    monthLabel,
+    canBook,
+  } = useCareTeamSchedule(careTeam, role);
 
-  // Map weekday-index → enabled schedule
-  const scheduleByDayIndex = useMemo(() => {
-    const map = new Map<number, Schedule>();
-    for (const s of careTeam?.schedules ?? []) {
-      if (!s.isDisabled) map.set(DAY_INDEX[s.day], s);
-    }
-    return map;
-  }, [careTeam]);
-
-  // First available date in the current strip, or `null` if none
-  const firstAvailableDate = useMemo(
-    () => dates.find((d) => scheduleByDayIndex.has(d.getDay())) ?? null,
-    [dates, scheduleByDayIndex]
-  );
-
-  // ─── Selection state with derived-default reset pattern ─────────
-  const [selectedDateKey, setSelectedDateKey] = useState<string | null>(
-    firstAvailableDate ? firstAvailableDate.toISOString() : null
-  );
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
-
-  // Reset selected date when strip changes and current selection isn't in range
-  const stripKey = `${stripStart.toISOString()}|${careTeam?.careTeamId ?? ''}`;
-  const [lastStripKey, setLastStripKey] = useState(stripKey);
-  if (lastStripKey !== stripKey) {
-    setLastStripKey(stripKey);
-    const fallback = firstAvailableDate ? firstAvailableDate.toISOString() : null;
-    setSelectedDateKey(fallback);
-    setSelectedTime(null);
-  }
-
-  // ─── Fetch real availability + booked slots for doctors ─────────
-  const isDoctor = role === EmployeeRole.Doctor;
-  const doctorId = isDoctor ? careTeam?.careTeamId : undefined;
-  const rangeStart = useMemo(() => format(stripStart, 'yyyy-MM-dd'), [stripStart]);
-  const rangeEnd = useMemo(() => format(addDays(stripStart, 6), 'yyyy-MM-dd'), [stripStart]);
-
-  const [doctorSchedulesByDate, setDoctorSchedulesByDate] = useState<
-    Map<string, { timeSlots: string[]; bookedTimeSlots: Set<string> }>
-  >(new Map());
-
-  const doctorKey = doctorId ?? '';
-  const [lastDoctorKey, setLastDoctorKey] = useState(doctorKey);
-  if (lastDoctorKey !== doctorKey) {
-    setLastDoctorKey(doctorKey);
-    setDoctorSchedulesByDate(new Map());
-  }
-
-  useEffect(() => {
-    if (!doctorId) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const results = await nextApi.doctors.getDoctorSchedules({
-          doctorId,
-          startDate: rangeStart,
-          endDate: rangeEnd,
-        });
-        if (cancelled) return;
-        const merged = new Map<string, { timeSlots: string[]; bookedTimeSlots: Set<string> }>();
-        for (const entry of results) {
-          if (!entry.date) continue;
-          const existing = merged.get(entry.date);
-          if (existing) {
-            const seen = new Set(existing.timeSlots);
-            for (const slot of entry.timeSlots) {
-              if (!seen.has(slot)) {
-                existing.timeSlots.push(slot);
-                seen.add(slot);
-              }
-            }
-            for (const slot of entry.bookedTimeSlots) existing.bookedTimeSlots.add(slot);
-          } else {
-            merged.set(entry.date, {
-              timeSlots: [...entry.timeSlots],
-              bookedTimeSlots: new Set(entry.bookedTimeSlots),
-            });
-          }
-        }
-        for (const value of merged.values()) value.timeSlots.sort();
-        setDoctorSchedulesByDate(merged);
-      } catch {
-        if (cancelled) return;
-        setDoctorSchedulesByDate(new Map());
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [doctorId, rangeStart, rangeEnd]);
-
-  const selectedDate = useMemo(
-    () => (selectedDateKey ? new Date(selectedDateKey) : null),
-    [selectedDateKey]
-  );
-  const selectedSchedule = selectedDate ? scheduleByDayIndex.get(selectedDate.getDay()) : undefined;
-  const selectedDateString = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null;
-  const selectedDoctorSchedule = selectedDateString
-    ? doctorSchedulesByDate.get(selectedDateString)
-    : undefined;
-
-  const slots = useMemo(() => {
-    if (selectedDoctorSchedule) return selectedDoctorSchedule.timeSlots;
-    if (!selectedSchedule) return [];
-    return buildFallbackSlots(selectedSchedule.startTime, selectedSchedule.endTime);
-  }, [selectedDoctorSchedule, selectedSchedule]);
-
-  const bookedSlots = useMemo(
-    () => selectedDoctorSchedule?.bookedTimeSlots ?? new Set<string>(),
-    [selectedDoctorSchedule]
-  );
-
-  // Reset selected time when slots change and current pick no longer valid
-  const slotsKey = `${slots.join(',')}|${Array.from(bookedSlots).join(',')}`;
-  const [lastSlotsKey, setLastSlotsKey] = useState(slotsKey);
-  if (lastSlotsKey !== slotsKey) {
-    setLastSlotsKey(slotsKey);
-    const firstAvailable = slots.find((t) => !bookedSlots.has(t)) ?? null;
-    setSelectedTime(firstAvailable);
-  }
-
-  const monthLabel = useMemo(() => {
-    const ref = selectedDate ?? dates[0];
-    return format(ref, 'MMMM yyyy');
-  }, [selectedDate, dates]);
-
-  const canBook = Boolean(
-    selectedDate &&
-    selectedSchedule &&
-    selectedTime &&
-    !(selectedTime && bookedSlots.has(selectedTime))
-  );
   const bookingHref =
     canBook && careTeam && selectedDate && selectedTime
-      ? `/appointments?careTeam=${careTeam.careTeamId}&date=${format(selectedDate, 'yyyy-MM-dd')}&time=${selectedTime}`
+      ? `/appointments?careTeam=${careTeam.careTeamId}&date=${formatDate(selectedDate)}&time=${selectedTime}`
       : '#';
-
-  const shiftStrip = (deltaDays: number) => {
-    const next = new Date(stripStart);
-    next.setDate(stripStart.getDate() + deltaDays);
-    if (next < today) return; // don't go before today
-    setStripStart(next);
-  };
 
   return (
     <div className={styles.page}>
@@ -332,8 +166,7 @@ export default function CareTeamDetailPage() {
                 <>
                   <div className={styles.dateStrip} role='radiogroup' aria-label='Available dates'>
                     {dates.map((d) => {
-                      const idx = d.getDay();
-                      const isAvailable = scheduleByDayIndex.has(idx);
+                      const isAvailable = scheduleByDayIndex.has(d.getDay());
                       const isSelected = selectedDateKey === d.toISOString();
                       const isToday = d.getTime() === today.getTime();
                       return (
@@ -352,8 +185,12 @@ export default function CareTeamDetailPage() {
                             .filter(Boolean)
                             .join(' ')}
                         >
-                          <span className={styles.datePillDay}>{format(d, 'EEE')}</span>
-                          <span className={styles.datePillNumber}>{format(d, 'd')}</span>
+                          <span className={styles.datePillDay}>
+                            {formatDate(d, weekdayShortFormat)}
+                          </span>
+                          <span className={styles.datePillNumber}>
+                            {formatDate(d, dayOfMonthFormat)}
+                          </span>
                           {isToday && <span className={styles.todayDot} aria-hidden />}
                         </button>
                       );
@@ -416,7 +253,7 @@ export default function CareTeamDetailPage() {
                   ) : (
                     <p className={styles.slotsEmpty}>
                       {selectedDate
-                        ? `${roleLabel} not available on ${format(selectedDate, 'EEEE')}.`
+                        ? `${roleLabel} not available on ${formatDate(selectedDate, weekdayLongFormat)}.`
                         : 'No available days in this week.'}
                     </p>
                   )}
