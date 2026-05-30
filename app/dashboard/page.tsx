@@ -2,7 +2,7 @@
 
 import { AccountShell } from '@/app/components/layout';
 import { useRequireAuth } from '@/lib/hooks';
-import { AuthStatus } from '@/lib/stores';
+import { AuthStatus } from '@/lib/types/auth';
 import styles from './page.module.scss';
 
 export default function DashboardPage() {
