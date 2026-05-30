@@ -43,6 +43,7 @@ export default function CareTeamDetailPage() {
     dates,
     shiftStrip,
     scheduleByDayIndex,
+    hasSchedule,
     selectedDateKey,
     setSelectedDateKey,
     selectedDate,
@@ -160,7 +161,7 @@ export default function CareTeamDetailPage() {
                 </div>
               </header>
 
-              {careTeam.schedules.length === 0 ? (
+              {!hasSchedule ? (
                 <p className={styles.empty}>No schedule available.</p>
               ) : (
                 <>

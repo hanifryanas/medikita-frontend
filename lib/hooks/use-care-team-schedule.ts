@@ -1,6 +1,7 @@
 'use client';
 
 import { nextApi } from '@/lib/api';
+import { DoctorScheduleResult } from '@/lib/api/next/doctors/types/doctor-schedule-result';
 import { CareTeamRole, DetailedCareTeam } from '@/lib/types/care-teams';
 import { Day, Schedule } from '@/lib/types/common';
 import { EmployeeRole } from '@/lib/types/employees';
@@ -43,6 +44,40 @@ const buildFallbackSlots = (start: string, end: string): string[] => {
 const buildDateStrip = (from: Date, length = STRIP_LENGTH): Date[] =>
   Array.from({ length }, (_, i) => startOfDay(addDays(from, i)));
 
+const fetchDoctorMonth = async (
+  doctorId: string,
+  monthKey: string
+): Promise<readonly [string, DoctorScheduleResult[]]> => {
+  const firstOfMonth = parse(monthKey, monthKeyFormat, new Date());
+  const results = await nextApi.doctors.getDoctorSchedules({
+    doctorId,
+    startDate: formatDate(startOfMonth(firstOfMonth)),
+    endDate: formatDate(endOfMonth(firstOfMonth)),
+  });
+  return [monthKey, results] as const;
+};
+
+const loadDoctorMonths = async (
+  doctorId: string,
+  monthKeys: string[],
+  signal: { cancelled: boolean },
+  setMap: (
+    updater: (prev: Map<string, DoctorScheduleResult[]>) => Map<string, DoctorScheduleResult[]>
+  ) => void
+) => {
+  try {
+    const entries = await Promise.all(monthKeys.map((k) => fetchDoctorMonth(doctorId, k)));
+    if (signal.cancelled) return;
+    setMap((prev) => {
+      const next = new Map(prev);
+      for (const [key, results] of entries) next.set(key, results);
+      return next;
+    });
+  } catch {
+    // Leave existing entries intact on error.
+  }
+};
+
 export interface DoctorDaySchedule {
   timeSlots: string[];
   bookedTimeSlots: Set<string>;
@@ -55,6 +90,7 @@ export interface UseCareTeamScheduleResult {
   shiftStrip: (deltaDays: number) => void;
 
   scheduleByDayIndex: Map<number, Schedule>;
+  hasSchedule: boolean;
 
   selectedDateKey: string | null;
   setSelectedDateKey: (key: string | null) => void;
@@ -79,13 +115,67 @@ export function useCareTeamSchedule(
   const [stripStart, setStripStart] = useState<Date>(today);
   const dates = useMemo(() => buildDateStrip(stripStart), [stripStart]);
 
-  const scheduleByDayIndex = useMemo(() => {
+  const careTeamWeekdays = useMemo(() => {
     const map = new Map<number, Schedule>();
     for (const s of careTeam?.schedules ?? []) {
       if (!s.isDisabled) map.set(DAY_INDEX[s.day], s);
     }
     return map;
   }, [careTeam]);
+
+  const isDoctor = role === EmployeeRole.Doctor;
+  const doctorId = isDoctor ? careTeam?.careTeamId : undefined;
+
+  const [doctorMonthMap, setDoctorMonthMap] = useState<Map<string, DoctorScheduleResult[]>>(
+    new Map()
+  );
+
+  const doctorKey = doctorId ?? '';
+  const [lastDoctorKey, setLastDoctorKey] = useState(doctorKey);
+  if (lastDoctorKey !== doctorKey) {
+    setLastDoctorKey(doctorKey);
+    setDoctorMonthMap(new Map());
+  }
+
+  const { doctorSchedulesByDate, doctorWeekdays } = useMemo(() => {
+    const byDate = new Map<string, DoctorDaySchedule>();
+    const weekdays = new Map<number, Schedule>();
+    for (const results of doctorMonthMap.values()) {
+      for (const entry of results) {
+        const dayIdx = DAY_INDEX[entry.day];
+        if (dayIdx !== undefined && !weekdays.has(dayIdx)) {
+          weekdays.set(dayIdx, {
+            day: entry.day,
+            startTime: entry.timeSlots[0] ?? '',
+            endTime: entry.timeSlots[entry.timeSlots.length - 1] ?? '',
+            isDisabled: false,
+          } as Schedule);
+        }
+        if (!entry.date) continue;
+        const existing = byDate.get(entry.date);
+        if (existing) {
+          const seen = new Set(existing.timeSlots);
+          for (const slot of entry.timeSlots) {
+            if (!seen.has(slot)) {
+              existing.timeSlots.push(slot);
+              seen.add(slot);
+            }
+          }
+          for (const slot of entry.bookedTimeSlots) existing.bookedTimeSlots.add(slot);
+        } else {
+          byDate.set(entry.date, {
+            timeSlots: [...entry.timeSlots],
+            bookedTimeSlots: new Set(entry.bookedTimeSlots),
+          });
+        }
+      }
+    }
+    for (const value of byDate.values()) value.timeSlots.sort();
+    return { doctorSchedulesByDate: byDate, doctorWeekdays: weekdays };
+  }, [doctorMonthMap]);
+
+  const scheduleByDayIndex = role === EmployeeRole.Doctor ? doctorWeekdays : careTeamWeekdays;
+  const hasSchedule = scheduleByDayIndex.size > 0;
 
   const firstAvailableDate = useMemo(
     () => dates.find((d) => scheduleByDayIndex.has(d.getDay())) ?? null,
@@ -97,7 +187,6 @@ export function useCareTeamSchedule(
   );
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  // Reset selected date when strip or care team changes
   const stripKey = `${stripStart.toISOString()}|${careTeam?.careTeamId ?? ''}`;
   const [lastStripKey, setLastStripKey] = useState(stripKey);
   if (lastStripKey !== stripKey) {
@@ -106,71 +195,23 @@ export function useCareTeamSchedule(
     setSelectedTime(null);
   }
 
-  // Fetch real availability for doctors, month-by-month
-  const isDoctor = role === EmployeeRole.Doctor;
-  const doctorId = isDoctor ? careTeam?.careTeamId : undefined;
-  const monthKey = formatDate(stripStart, monthKeyFormat);
-  const { rangeStart, rangeEnd } = useMemo(() => {
-    const firstOfMonth = parse(monthKey, monthKeyFormat, new Date());
-    return {
-      rangeStart: formatDate(startOfMonth(firstOfMonth)),
-      rangeEnd: formatDate(endOfMonth(firstOfMonth)),
-    };
-  }, [monthKey]);
-
-  const [doctorSchedulesByDate, setDoctorSchedulesByDate] = useState<
-    Map<string, DoctorDaySchedule>
-  >(new Map());
-
-  const doctorKey = doctorId ?? '';
-  const [lastDoctorKey, setLastDoctorKey] = useState(doctorKey);
-  if (lastDoctorKey !== doctorKey) {
-    setLastDoctorKey(doctorKey);
-    setDoctorSchedulesByDate(new Map());
-  }
+  const stripEnd = dates[dates.length - 1] ?? stripStart;
+  const startMonthKey = formatDate(startOfMonth(stripStart), monthKeyFormat);
+  const endMonthKey = formatDate(startOfMonth(stripEnd), monthKeyFormat);
 
   useEffect(() => {
     if (!doctorId) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const results = await nextApi.doctors.getDoctorSchedules({
-          doctorId,
-          startDate: rangeStart,
-          endDate: rangeEnd,
-        });
-        if (cancelled) return;
-        const merged = new Map<string, DoctorDaySchedule>();
-        for (const entry of results) {
-          if (!entry.date) continue;
-          const existing = merged.get(entry.date);
-          if (existing) {
-            const seen = new Set(existing.timeSlots);
-            for (const slot of entry.timeSlots) {
-              if (!seen.has(slot)) {
-                existing.timeSlots.push(slot);
-                seen.add(slot);
-              }
-            }
-            for (const slot of entry.bookedTimeSlots) existing.bookedTimeSlots.add(slot);
-          } else {
-            merged.set(entry.date, {
-              timeSlots: [...entry.timeSlots],
-              bookedTimeSlots: new Set(entry.bookedTimeSlots),
-            });
-          }
-        }
-        for (const value of merged.values()) value.timeSlots.sort();
-        setDoctorSchedulesByDate(merged);
-      } catch {
-        if (cancelled) return;
-        setDoctorSchedulesByDate(new Map());
-      }
-    })();
+    const monthKeys =
+      startMonthKey === endMonthKey ? [startMonthKey] : [startMonthKey, endMonthKey];
+    const missing = monthKeys.filter((k) => !doctorMonthMap.has(k));
+    if (missing.length === 0) return;
+
+    const signal = { cancelled: false };
+    loadDoctorMonths(doctorId, missing, signal, setDoctorMonthMap);
     return () => {
-      cancelled = true;
+      signal.cancelled = true;
     };
-  }, [doctorId, rangeStart, rangeEnd]);
+  }, [doctorId, startMonthKey, endMonthKey, doctorMonthMap]);
 
   const selectedDate = useMemo(
     () => (selectedDateKey ? new Date(selectedDateKey) : null),
@@ -193,7 +234,6 @@ export function useCareTeamSchedule(
     [selectedDoctorSchedule]
   );
 
-  // Reset selected time when slots change and current pick is no longer valid
   const slotsKey = `${slots.join(',')}|${Array.from(bookedSlots).join(',')}`;
   const [lastSlotsKey, setLastSlotsKey] = useState(slotsKey);
   if (lastSlotsKey !== slotsKey) {
@@ -222,6 +262,7 @@ export function useCareTeamSchedule(
     dates,
     shiftStrip,
     scheduleByDayIndex,
+    hasSchedule,
     selectedDateKey,
     setSelectedDateKey,
     selectedDate,
