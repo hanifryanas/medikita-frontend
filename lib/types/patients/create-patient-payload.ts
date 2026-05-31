@@ -4,7 +4,7 @@ export interface CreatePatientPayload {
   relationship: UserRelationship;
   identityNumber: string;
   firstName: string;
-  lastName: string;
+  lastName?: string;
   gender: UserGenderType;
   phoneNumber: string;
   dateOfBirth: string;

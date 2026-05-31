@@ -27,6 +27,12 @@
   color: $white;
 }
 
+.labelHint {
+  margin-left: 0.25rem;
+  font-weight: 500;
+  color: $muted;
+}
+
 .input {
   height: 40px;
   padding: 0 0.75rem;

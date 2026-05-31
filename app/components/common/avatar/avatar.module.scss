@@ -23,4 +23,7 @@
   font-weight: 600;
   text-transform: uppercase;
   line-height: 1;
+  background: var(--accent-soft);
+  color: var(--text-strong);
+  border: 1px solid var(--border-card);
 }

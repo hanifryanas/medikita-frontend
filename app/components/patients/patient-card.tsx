@@ -57,7 +57,9 @@ export const PatientCard = ({ patient }: PatientCardProps) => {
         {patient.address && (
           <div className={styles.detailFull}>
             <dt>Address</dt>
-            <dd>{patient.address}</dd>
+            <dd className={styles.addressValue} title={patient.address}>
+              {patient.address}
+            </dd>
           </div>
         )}
       </dl>

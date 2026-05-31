@@ -78,7 +78,7 @@ export default function PatientsPage() {
           relationship: formValues.relationship,
           identityNumber: formValues.identityNumber,
           firstName: formValues.firstName,
-          lastName: formValues.lastName,
+          lastName: formValues.lastName?.trim() ?? '',
           gender: formValues.gender,
           phoneNumber: formValues.phoneNumber,
           dateOfBirth: formValues.dateOfBirth,

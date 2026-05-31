@@ -125,7 +125,7 @@ export const PatientForm = ({
 
       <div className={styles.field}>
         <label htmlFor='lastName' className={styles.label}>
-          Last name
+          Last name <span className={styles.labelHint}>(optional)</span>
         </label>
         <input
           id='lastName'

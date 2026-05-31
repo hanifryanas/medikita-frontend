@@ -21,10 +21,6 @@ export const validateCreatePatientForm = (
     result.errors.firstName = 'First name is required.';
   }
 
-  if (!payload.lastName?.trim()) {
-    result.errors.lastName = 'Last name is required.';
-  }
-
   if (!payload.gender) {
     result.errors.gender = 'Gender is required.';
   }
