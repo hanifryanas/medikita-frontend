@@ -124,6 +124,7 @@ export default function PatientsPage() {
               type='button'
               className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
               onClick={() => setFormMode('add-self')}
+              disabled={formMode !== 'closed'}
             >
               Add me as a patient
             </button>
@@ -132,6 +133,7 @@ export default function PatientsPage() {
             type='button'
             className={styles.actionBtn}
             onClick={() => setFormMode('add-other')}
+            disabled={formMode !== 'closed'}
           >
             Add new patient
           </button>

@@ -65,6 +65,16 @@
     background: var(--surface-translucent-hover);
     border-color: var(--border-card-hover);
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:disabled:hover {
+    background: var(--glass-bg);
+    border-color: var(--border-card);
+  }
 }
 
 .actionBtnPrimary {

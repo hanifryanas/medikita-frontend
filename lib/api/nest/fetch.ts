@@ -19,5 +19,9 @@ export const nestFetch = async <T>(path: string, options: FetchOptions): Promise
     throw new Error(error?.message ?? `API error ${res.status}`);
   }
 
-  return res.json() as Promise<T>;
+  const contentType = res.headers.get('content-type') ?? '';
+  if (contentType.includes('application/json')) {
+    return res.json() as Promise<T>;
+  }
+  return res.text() as Promise<T>;
 };
