@@ -1,4 +1,4 @@
-import type { CreatePatientPayload, Patient } from '@/lib/types/patients';
+import type { CreatePatientPayload } from '@/lib/types/patients';
 
 interface CreatePatientArgs {
   payload: CreatePatientPayload;
@@ -8,8 +8,8 @@ interface CreatePatientArgs {
 export const createPatient = async ({
   payload,
   accessToken,
-}: CreatePatientArgs): Promise<Patient> => {
-  const res = await fetch('/api/patients', {
+}: CreatePatientArgs): Promise<string> => {
+  const res = await fetch('/api/patients/me', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -23,5 +23,5 @@ export const createPatient = async ({
     throw new Error(err?.message ?? 'Failed to create patient.');
   }
 
-  return (await res.json()).patient as Patient;
+  return (await res.json()).patientId as string;
 };

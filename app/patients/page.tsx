@@ -72,10 +72,9 @@ export default function PatientsPage() {
     setIsSubmitting(true);
     setSubmitError(null);
     try {
-      const created = await nextApi.patients.createPatient({
+      await nextApi.patients.createPatient({
         accessToken,
         payload: {
-          userId: currentUser.userId,
           relationship: formValues.relationship,
           identityNumber: formValues.identityNumber,
           firstName: formValues.firstName,
@@ -86,7 +85,8 @@ export default function PatientsPage() {
           ...(formValues.address.trim() ? { address: formValues.address.trim() } : {}),
         },
       });
-      setPatients((prev) => [...prev, { ...created, relationship: formValues.relationship }]);
+      const refreshed = await nextApi.patients.getMyPatients(accessToken);
+      setPatients(refreshed);
       setFormMode('closed');
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Failed to create patient.');
