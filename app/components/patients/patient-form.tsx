@@ -1,6 +1,7 @@
 'use client';
 
 import { SubmitButton } from '@/app/components/common';
+import { DatePicker } from '@/app/components/common/pickers';
 import type { CreatePatientFormPayload } from '@/lib/types/patients';
 import { UserGenderType, UserRelationship } from '@/lib/types/users';
 import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
@@ -189,12 +190,11 @@ export const PatientForm = ({
         <label htmlFor='dateOfBirth' className={styles.label}>
           Date of birth
         </label>
-        <input
+        <DatePicker
           id='dateOfBirth'
-          type='date'
           value={fields.dateOfBirth}
-          onChange={(e) => setField('dateOfBirth', e.target.value)}
-          className={`${styles.input} ${errors.dateOfBirth ? styles.inputError : ''}`}
+          onChange={(value) => setField('dateOfBirth', value)}
+          hasError={Boolean(errors.dateOfBirth)}
         />
         {errors.dateOfBirth && <span className={styles.errorMsg}>{errors.dateOfBirth}</span>}
       </div>

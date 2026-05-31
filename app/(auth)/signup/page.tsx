@@ -1,6 +1,7 @@
 'use client';
 
 import { SubmitButton } from '@/app/components/common';
+import { DatePicker } from '@/app/components/common/pickers';
 import { ImageUploader } from '@/app/components/images';
 import { nextApi } from '@/lib/api/next';
 import type { SignupFormPayload, SignupPayload } from '@/lib/types/auth';
@@ -287,12 +288,11 @@ export default function SignupPage() {
               <label htmlFor='dateOfBirth' className={styles.label}>
                 Date of birth
               </label>
-              <input
+              <DatePicker
                 id='dateOfBirth'
-                type='date'
                 value={fields.dateOfBirth}
-                onChange={(e) => setField('dateOfBirth', e.target.value)}
-                className={`${styles.input} ${errors.dateOfBirth ? styles.inputError : ''}`}
+                onChange={(value) => setField('dateOfBirth', value)}
+                hasError={Boolean(errors.dateOfBirth)}
               />
               {errors.dateOfBirth && <span className={styles.errorMsg}>{errors.dateOfBirth}</span>}
             </div>
