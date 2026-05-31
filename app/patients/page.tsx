@@ -11,7 +11,7 @@ import { UserRelationship } from '@/lib/types/users';
 import { useEffect, useMemo, useState } from 'react';
 import styles from './page.module.scss';
 
-type FormMode = 'closed' | 'add-self' | 'add-other';
+type EditMode = 'closed' | 'add-self' | 'add-other' | 'reorder';
 
 export default function PatientsPage() {
   const status = useRequireAuth();
@@ -22,9 +22,12 @@ export default function PatientsPage() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [formMode, setFormMode] = useState<FormMode>('closed');
+  const [editMode, setEditMode] = useState<EditMode>('closed');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [reorderDraft, setReorderDraft] = useState<Patient[]>([]);
+  const [isSavingOrder, setIsSavingOrder] = useState(false);
+  const [reorderError, setReorderError] = useState<string | null>(null);
 
   useEffect(() => {
     if (status !== AuthStatus.Authenticated || !accessToken) return;
@@ -55,17 +58,32 @@ export default function PatientsPage() {
     [patients]
   );
 
-  const sortedPatients = useMemo(
-    () =>
-      [...patients].sort((a, b) => {
-        if (a.relationship === UserRelationship.Self) return -1;
-        if (b.relationship === UserRelationship.Self) return 1;
-        return (a.ordinal ?? 0) - (b.ordinal ?? 0);
-      }),
+  const selfPatient = useMemo(
+    () => patients.find((p) => p.relationship === UserRelationship.Self) ?? null,
     [patients]
   );
 
+  const otherPatients = useMemo(
+    () =>
+      patients
+        .filter((p) => p.relationship !== UserRelationship.Self)
+        .sort((a, b) => (a.ordinal ?? 0) - (b.ordinal ?? 0)),
+    [patients]
+  );
+
+  const isReordering = editMode === 'reorder';
+  const isAddingPatient = editMode === 'add-self' || editMode === 'add-other';
+  const isIdle = editMode === 'closed';
+  const displayedOthers = isReordering ? reorderDraft : otherPatients;
+
   if (status !== AuthStatus.Authenticated || !currentUser) return null;
+
+  const closeEdit = () => {
+    setEditMode('closed');
+    setSubmitError(null);
+    setReorderError(null);
+    setReorderDraft([]);
+  };
 
   const handleSubmit = async (formValues: CreatePatientFormPayload) => {
     if (!accessToken) return;
@@ -87,11 +105,49 @@ export default function PatientsPage() {
       });
       const refreshed = await nextApi.patients.getMyPatients(accessToken);
       setPatients(refreshed);
-      setFormMode('closed');
+      closeEdit();
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Failed to create patient.');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const startReorder = () => {
+    setReorderDraft(otherPatients);
+    setReorderError(null);
+    setEditMode('reorder');
+  };
+
+  const moveDraft = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= reorderDraft.length) return;
+    setReorderDraft((prev) => {
+      const next = [...prev];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+  };
+
+  const saveReorder = async () => {
+    if (!accessToken) return;
+    setIsSavingOrder(true);
+    setReorderError(null);
+    try {
+      await nextApi.patients.reorderMyPatients({
+        accessToken,
+        patientIds: [
+          ...(selfPatient ? [selfPatient.patientId] : []),
+          ...reorderDraft.map((p) => p.patientId),
+        ],
+      });
+      const refreshed = await nextApi.patients.getMyPatients(accessToken);
+      setPatients(refreshed);
+      closeEdit();
+    } catch (err) {
+      setReorderError(err instanceof Error ? err.message : 'Failed to save new order.');
+    } finally {
+      setIsSavingOrder(false);
     }
   };
 
@@ -107,6 +163,7 @@ export default function PatientsPage() {
   };
 
   const disabledRelationships = hasSelfPatient ? [UserRelationship.Self] : [];
+  const canReorder = otherPatients.length >= 2;
 
   return (
     <AccountShell>
@@ -119,52 +176,82 @@ export default function PatientsPage() {
           </p>
         </div>
         <div className={styles.headerActions}>
-          {!hasSelfPatient && (
-            <button
-              type='button'
-              className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
-              onClick={() => setFormMode('add-self')}
-              disabled={formMode !== 'closed'}
-            >
-              Add me as a patient
-            </button>
+          {isReordering ? (
+            <>
+              <button
+                type='button'
+                className={styles.actionBtn}
+                onClick={closeEdit}
+                disabled={isSavingOrder}
+              >
+                Cancel
+              </button>
+              <button
+                type='button'
+                className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
+                onClick={saveReorder}
+                disabled={isSavingOrder}
+              >
+                {isSavingOrder ? 'Saving…' : 'Save order'}
+              </button>
+            </>
+          ) : (
+            <>
+              {canReorder && (
+                <button
+                  type='button'
+                  className={styles.actionBtn}
+                  onClick={startReorder}
+                  disabled={!isIdle}
+                >
+                  Reorder
+                </button>
+              )}
+              {!hasSelfPatient && (
+                <button
+                  type='button'
+                  className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
+                  onClick={() => setEditMode('add-self')}
+                  disabled={!isIdle}
+                >
+                  Add me as a patient
+                </button>
+              )}
+              <button
+                type='button'
+                className={styles.actionBtn}
+                onClick={() => setEditMode('add-other')}
+                disabled={!isIdle}
+              >
+                Add new patient
+              </button>
+            </>
           )}
-          <button
-            type='button'
-            className={styles.actionBtn}
-            onClick={() => setFormMode('add-other')}
-            disabled={formMode !== 'closed'}
-          >
-            Add new patient
-          </button>
         </div>
       </header>
 
-      {formMode !== 'closed' && (
+      {isAddingPatient && (
         <section className={styles.formPanel} aria-label='Add patient form'>
           <div className={styles.formPanelHeader}>
             <h2 className={styles.formTitle}>
-              {formMode === 'add-self' ? 'Add yourself as a patient' : 'Add a new patient'}
+              {editMode === 'add-self' ? 'Add yourself as a patient' : 'Add a new patient'}
             </h2>
             <p className={styles.formHint}>
-              {formMode === 'add-self'
+              {editMode === 'add-self'
                 ? 'Your account details have been prefilled — review and submit.'
                 : 'Fill in the details of the person you want to add.'}
             </p>
           </div>
           {submitError && <div className={styles.errorBox}>{submitError}</div>}
           <PatientForm
-            key={formMode}
-            initialValues={formMode === 'add-self' ? selfInitialValues : undefined}
-            lockRelationshipToSelf={formMode === 'add-self'}
-            disabledRelationships={formMode === 'add-other' ? disabledRelationships : []}
+            key={editMode}
+            initialValues={editMode === 'add-self' ? selfInitialValues : undefined}
+            lockRelationshipToSelf={editMode === 'add-self'}
+            disabledRelationships={editMode === 'add-other' ? disabledRelationships : []}
             isSubmitting={isSubmitting}
-            submitLabel={formMode === 'add-self' ? 'Confirm and add' : 'Add patient'}
+            submitLabel={editMode === 'add-self' ? 'Confirm and add' : 'Add patient'}
             onSubmit={handleSubmit}
-            onCancel={() => {
-              setFormMode('closed');
-              setSubmitError(null);
-            }}
+            onCancel={closeEdit}
           />
         </section>
       )}
@@ -174,17 +261,40 @@ export default function PatientsPage() {
           <div className={styles.placeholder}>Loading patients…</div>
         ) : loadError ? (
           <div className={styles.errorBox}>{loadError}</div>
-        ) : sortedPatients.length === 0 ? (
+        ) : patients.length === 0 ? (
           <div className={styles.placeholder}>
             You don&apos;t have any patient profiles yet. Add yourself or a family member to get
             started.
           </div>
         ) : (
-          <div className={styles.grid}>
-            {sortedPatients.map((patient) => (
-              <PatientCard key={patient.patientId} patient={patient} />
-            ))}
-          </div>
+          <>
+            {isReordering && (
+              <p className={styles.reorderHint}>
+                Use the arrows to rearrange your patients. &ldquo;Self&rdquo; stays pinned to the
+                top.
+              </p>
+            )}
+            {reorderError && <div className={styles.errorBox}>{reorderError}</div>}
+            <div className={styles.grid}>
+              {selfPatient && <PatientCard key={selfPatient.patientId} patient={selfPatient} />}
+              {displayedOthers.map((patient, index) => (
+                <PatientCard
+                  key={patient.patientId}
+                  patient={patient}
+                  reorderControls={
+                    isReordering
+                      ? {
+                          canMoveUp: index > 0,
+                          canMoveDown: index < displayedOthers.length - 1,
+                          onMoveUp: () => moveDraft(index, -1),
+                          onMoveDown: () => moveDraft(index, 1),
+                        }
+                      : undefined
+                  }
+                />
+              ))}
+            </div>
+          </>
         )}
       </section>
     </AccountShell>
