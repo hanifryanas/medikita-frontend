@@ -3,7 +3,7 @@
 import { Avatar } from '@/app/components/common';
 import { nextApi } from '@/lib/api/next';
 import { getAccountRoleLabel } from '@/lib/navigation';
-import { useStores, stores } from '@/lib/stores';
+import { stores, useStores } from '@/lib/stores';
 import { AuthStatus } from '@/lib/types/auth';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
