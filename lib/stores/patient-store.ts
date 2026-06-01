@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 import { nextApi } from '../api/next';
 import type { Patient } from '../types/patients';
 import { UserRelationship } from '../types/users';
@@ -20,6 +21,7 @@ export interface PatientStore {
   isLoaded: boolean;
   isLoading: boolean;
   loadError: string | null;
+  lastFetchedAt: number | null;
 
   setPatients: (patients: Patient[]) => void;
   upsertPatient: (patient: Patient) => void;
@@ -43,6 +45,7 @@ const initialState = {
   isLoaded: false,
   isLoading: false,
   loadError: null,
+  lastFetchedAt: null,
   _loadId: 0,
 };
 
@@ -76,13 +79,13 @@ export const usePatientStore = create<PatientStore & InternalState>()((set, get)
     const loadId = get()._loadId + 1;
     set({ _loadId: loadId, isLoading: true, loadError: null });
     try {
-      const data = await nextApi.patients.getMyPatients(accessToken);
-      // Drop stale response: another fetch (or reset) started after this one.
+      const patients = await nextApi.patients.getMyPatients(accessToken);
       if (get()._loadId !== loadId) return;
       set({
-        patientMap: new Map(data.map((p) => [p.patientId, p])),
+        patientMap: new Map(patients.map((p) => [p.patientId, p])),
         isLoaded: true,
         isLoading: false,
+        lastFetchedAt: Date.now(),
       });
     } catch (err) {
       if (get()._loadId !== loadId) return;
@@ -106,3 +109,38 @@ export const usePatientStore = create<PatientStore & InternalState>()((set, get)
 
   reset: () => set((s) => ({ ...initialState, _loadId: s._loadId + 1 })),
 }));
+
+/* -------------------------------------------------------------------------
+ * Reactive selectors
+ *
+ * These hooks subscribe the calling component to the slice of the store
+ * they read, so the consumer doesn't need to remember to also call
+ * `usePatientStore(...)` to opt into reactivity. Prefer these in render
+ * over `stores.patient.getSelfPatient()` etc. (which are non-reactive
+ * snapshots intended for event handlers / effects).
+ * ------------------------------------------------------------------------- */
+
+const pickSelfPatient = (s: PatientStore): Patient | null => {
+  for (const p of s.patientMap.values()) {
+    if (p.relationship === UserRelationship.Self) return p;
+  }
+  return null;
+};
+
+const pickOtherPatients = (s: PatientStore): Patient[] =>
+  Array.from(s.patientMap.values())
+    .filter((p) => p.relationship !== UserRelationship.Self)
+    .sort((a, b) => (a.ordinal ?? 0) - (b.ordinal ?? 0));
+
+// `pickSelfPatient` returns a stable map entry → default Object.is is fine.
+export const useSelfPatient = () => usePatientStore(pickSelfPatient);
+// `pickOtherPatients` builds a fresh array each call → must use shallow
+// equality so a re-render doesn't tear `useSyncExternalStore`.
+export const useOtherPatients = () => usePatientStore(useShallow(pickOtherPatients));
+export const useHasSelfPatient = () =>
+  usePatientStore((s) => {
+    for (const p of s.patientMap.values()) {
+      if (p.relationship === UserRelationship.Self) return true;
+    }
+    return false;
+  });

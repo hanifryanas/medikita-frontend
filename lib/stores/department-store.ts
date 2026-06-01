@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { nextApi } from '../api/next';
 import type { Department } from '../types/departments';
 import { FeaturedDepartment } from '../types/departments/featured-department';
 import { EmployeeRole } from '../types/employees';
@@ -14,16 +15,22 @@ export interface DepartmentStore {
   departmentStaffEmployeeMap: Map<string, DepartmentEmployee[]>;
   isLoaded: boolean;
   isLoading: boolean;
-  reset: () => void;
-  setIsLoading: (isLoading: boolean) => void;
-  setDepartments: (departments: Department[]) => void;
-  setFeaturedDepartments: (featuredDepartments: FeaturedDepartment[]) => void;
+  loadError: string | null;
+  lastFetchedAt: number | null;
+
+  fetchDepartments: () => Promise<void>;
   getDepartmentByTypeCode: (typeCode: string) => Department | undefined;
   getDepartmentsByFlag: (flags: {
     isClinical?: boolean;
     isClinic?: boolean;
     isFeatured?: boolean;
   }) => Department[];
+
+  reset: () => void;
+}
+
+interface InternalState {
+  _loadId: number;
 }
 
 const initialState = {
@@ -34,58 +41,69 @@ const initialState = {
   departmentStaffEmployeeMap: new Map<string, DepartmentEmployee[]>(),
   isLoaded: false,
   isLoading: false,
+  loadError: null,
+  lastFetchedAt: null,
+  _loadId: 0,
 };
 
-export const useDepartmentStore = create<DepartmentStore>()((set, get) => ({
+/**
+ * Group a department's employees into role-bucketed maps keyed by typeCode.
+ * Done at ingest time so render paths don't re-filter on every read.
+ */
+const groupEmployeesByRole = (departments: Department[]) => {
+  const doctors = new Map<string, DepartmentEmployee[]>();
+  const nurses = new Map<string, DepartmentEmployee[]>();
+  const staff = new Map<string, DepartmentEmployee[]>();
+
+  departments.forEach((department) => {
+    const doc: DepartmentEmployee[] = [];
+    const nur: DepartmentEmployee[] = [];
+    const stf: DepartmentEmployee[] = [];
+
+    (department.employees ?? []).forEach((employee) => {
+      if (employee.role === EmployeeRole.Doctor) doc.push(employee);
+      else if (employee.role === EmployeeRole.Nurse) nur.push(employee);
+      else stf.push(employee);
+    });
+
+    doctors.set(department.typeCode, doc);
+    nurses.set(department.typeCode, nur);
+    staff.set(department.typeCode, stf);
+  });
+
+  return { doctors, nurses, staff };
+};
+
+export const useDepartmentStore = create<DepartmentStore & InternalState>()((set, get) => ({
   ...initialState,
 
-  reset: () => set(initialState),
+  fetchDepartments: async () => {
+    const loadId = get()._loadId + 1;
+    set({ _loadId: loadId, isLoading: true, loadError: null });
+    try {
+      const { departments, featuredDepartments } = await nextApi.departments.getDepartments();
+      // Drop stale response: another fetch (or reset) started after this one.
+      if (get()._loadId !== loadId) return;
 
-  setIsLoading: (isLoading) => set({ isLoading }),
-
-  setDepartments: (departments) => {
-    const departmentDoctorEmployeeMap = new Map<string, DepartmentEmployee[]>();
-    const departmentNurseEmployeeMap = new Map<string, DepartmentEmployee[]>();
-    const departmentStaffEmployeeMap = new Map<string, DepartmentEmployee[]>();
-
-    departments.forEach((department) => {
-      const doctors: DepartmentEmployee[] = [];
-      const nurses: DepartmentEmployee[] = [];
-      const staff: DepartmentEmployee[] = [];
-
-      (department.employees ?? []).forEach((employee) => {
-        if (employee.role === EmployeeRole.Doctor) {
-          doctors.push(employee);
-        } else if (employee.role === EmployeeRole.Nurse) {
-          nurses.push(employee);
-        } else {
-          staff.push(employee);
-        }
+      const { doctors, nurses, staff } = groupEmployeesByRole(departments);
+      set({
+        departmentMap: new Map(departments.map((d) => [d.typeCode, d])),
+        featuredDepartmentMap: new Map(featuredDepartments.map((d) => [d.typeCode, d])),
+        departmentDoctorEmployeeMap: doctors,
+        departmentNurseEmployeeMap: nurses,
+        departmentStaffEmployeeMap: staff,
+        isLoaded: true,
+        isLoading: false,
+        lastFetchedAt: Date.now(),
       });
-
-      departmentDoctorEmployeeMap.set(department.typeCode, doctors);
-      departmentNurseEmployeeMap.set(department.typeCode, nurses);
-      departmentStaffEmployeeMap.set(department.typeCode, staff);
-    });
-
-    set({
-      departmentMap: new Map(departments.map((department) => [department.typeCode, department])),
-      departmentDoctorEmployeeMap,
-      departmentNurseEmployeeMap,
-      departmentStaffEmployeeMap,
-      isLoaded: true,
-      isLoading: false,
-    });
+    } catch (err) {
+      if (get()._loadId !== loadId) return;
+      set({
+        isLoading: false,
+        loadError: err instanceof Error ? err.message : 'Failed to load departments.',
+      });
+    }
   },
-
-  setFeaturedDepartments: (featuredDepartments) =>
-    set({
-      featuredDepartmentMap: new Map(
-        featuredDepartments.map((department) => [department.typeCode, department])
-      ),
-      isLoaded: true,
-      isLoading: false,
-    }),
 
   getDepartmentByTypeCode: (typeCode) => get().departmentMap.get(typeCode),
 
@@ -99,4 +117,6 @@ export const useDepartmentStore = create<DepartmentStore>()((set, get) => ({
       }
       return true;
     }),
+
+  reset: () => set((s) => ({ ...initialState, _loadId: s._loadId + 1 })),
 }));

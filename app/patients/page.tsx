@@ -15,7 +15,8 @@ import {
   useRequireAuth,
   useUnlinkPatient,
 } from '@/lib/hooks';
-import { stores, useStores } from '@/lib/stores';
+import { useStores } from '@/lib/stores';
+import { useHasSelfPatient, useOtherPatients, useSelfPatient } from '@/lib/stores/patient-store';
 import { AuthStatus } from '@/lib/types/auth';
 import type { CreatePatientFormPayload, Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
@@ -28,12 +29,10 @@ export default function PatientsPage() {
     patientStore: { isLoaded, loadError, fetchPatients },
   } = useStores();
 
-  // The `useStores()` destructure subscribes this component to patientStore
-  // updates, so the selectors below return fresh data on every render.
-  // Selectors live on the store so other views (dashboard, etc.) can reuse them.
-  const selfPatient = stores.patient.getSelfPatient();
-  const otherPatients = stores.patient.getOtherPatients();
-  const hasSelfPatient = stores.patient.hasSelfPatient();
+  // Reactive selectors — each hook subscribes to just the slice it needs.
+  const selfPatient = useSelfPatient();
+  const otherPatients = useOtherPatients();
+  const hasSelfPatient = useHasSelfPatient();
   const patientCount = (selfPatient ? 1 : 0) + otherPatients.length;
 
   const refresh = () => (accessToken ? fetchPatients(accessToken) : Promise.resolve());
