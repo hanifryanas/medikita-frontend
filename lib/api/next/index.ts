@@ -2,6 +2,7 @@ import { authNextApi } from './auth';
 import { departmentsNextApi } from './departments';
 import { doctorsNextApi } from './doctors';
 import { nursesNextApi } from './nurses';
+import { patientInsurancesNextApi } from './patient-insurances';
 import { patientsNextApi } from './patients';
 
 export const nextApi = {
@@ -10,4 +11,5 @@ export const nextApi = {
   doctors: doctorsNextApi,
   nurses: nursesNextApi,
   patients: patientsNextApi,
+  patientInsurances: patientInsurancesNextApi,
 };

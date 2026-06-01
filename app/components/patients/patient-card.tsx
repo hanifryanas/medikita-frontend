@@ -4,6 +4,7 @@ import { Avatar, CardMenu, type CardMenuItem } from '@/app/components/common';
 import type { Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import type { ReactNode } from 'react';
 import styles from './patient-card.module.scss';
 
 const RELATIONSHIP_LABELS: Record<UserRelationship, string> = {
@@ -24,9 +25,17 @@ interface PatientCardProps {
     onMoveDown: () => void;
   };
   menuItems?: CardMenuItem[];
+  /**
+   * Optional footer slot rendered below the patient details. Used by the
+   * patients page to mount `<PatientInsuranceSection />`; kept as a slot so
+   * `PatientCard` stays reusable in non-authenticated previews (e.g. the
+   * link-existing-patient lookup result) where insurance editing must not
+   * be exposed.
+   */
+  footer?: ReactNode;
 }
 
-export const PatientCard = ({ patient, reorderControls, menuItems }: PatientCardProps) => {
+export const PatientCard = ({ patient, reorderControls, menuItems, footer }: PatientCardProps) => {
   const fullName = `${patient.firstName} ${patient.lastName}`.trim();
   const relationship = patient.relationship ?? UserRelationship.Other;
   const isSelf = relationship === UserRelationship.Self;
@@ -97,6 +106,7 @@ export const PatientCard = ({ patient, reorderControls, menuItems }: PatientCard
             </div>
           )}
         </dl>
+        {footer}
       </div>
     </article>
   );

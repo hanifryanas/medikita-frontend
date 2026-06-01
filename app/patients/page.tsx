@@ -7,6 +7,7 @@ import {
   type AddPatientMenuItem,
   PatientCard,
   PatientFormPanel,
+  PatientInsuranceSection,
 } from '@/app/components/patients';
 import {
   useLinkExistingPatient,
@@ -213,6 +214,15 @@ export default function PatientsPage() {
                   key={selfPatient.patientId}
                   patient={selfPatient}
                   menuItems={reorder.isActive ? undefined : buildMenuItems(selfPatient)}
+                  footer={
+                    reorder.isActive ? undefined : (
+                      <PatientInsuranceSection
+                        patientId={selfPatient.patientId}
+                        accessToken={accessToken}
+                        disabled={!isIdle}
+                      />
+                    )
+                  }
                 />
               )}
               {displayedOthers.map((patient, index) => (
@@ -230,6 +240,15 @@ export default function PatientsPage() {
                       : undefined
                   }
                   menuItems={reorder.isActive ? undefined : buildMenuItems(patient)}
+                  footer={
+                    reorder.isActive ? undefined : (
+                      <PatientInsuranceSection
+                        patientId={patient.patientId}
+                        accessToken={accessToken}
+                        disabled={!isIdle}
+                      />
+                    )
+                  }
                 />
               ))}
             </div>

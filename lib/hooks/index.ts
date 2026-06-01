@@ -4,6 +4,7 @@ export * from './use-care-teams';
 export * from './use-dismiss';
 export * from './use-link-existing-patient';
 export * from './use-patient-form';
+export * from './use-patient-insurance-form';
 export * from './use-reorder-patients';
 export * from './use-require-auth';
 export * from './use-unlink-patient';
