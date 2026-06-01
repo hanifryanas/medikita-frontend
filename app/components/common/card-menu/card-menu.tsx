@@ -2,7 +2,7 @@
 
 import { useDismiss } from '@/lib/hooks';
 import { MoreVertical } from 'lucide-react';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import styles from './card-menu.module.scss';
 
 export interface CardMenuItem {
@@ -21,11 +21,7 @@ export const CardMenu = ({ items, ariaLabel = 'Open menu' }: CardMenuProps) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useDismiss(
-    ref,
-    open,
-    useCallback(() => setOpen(false), [])
-  );
+  useDismiss(ref, open, setOpen);
 
   return (
     <div className={styles.wrapper} ref={ref}>

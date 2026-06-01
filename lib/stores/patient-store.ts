@@ -29,6 +29,7 @@ export interface PatientStore {
   getPatients: () => Patient[];
   getSelfPatient: () => Patient | null;
   getOtherPatients: () => Patient[];
+  hasSelfPatient: () => boolean;
 
   reset: () => void;
 }
@@ -100,6 +101,8 @@ export const usePatientStore = create<PatientStore & InternalState>()((set, get)
     Array.from(get().patientMap.values())
       .filter((p) => p.relationship !== UserRelationship.Self)
       .sort((a, b) => (a.ordinal ?? 0) - (b.ordinal ?? 0)),
+  hasSelfPatient: () =>
+    Array.from(get().patientMap.values()).some((p) => p.relationship === UserRelationship.Self),
 
   reset: () => set((s) => ({ ...initialState, _loadId: s._loadId + 1 })),
 }));

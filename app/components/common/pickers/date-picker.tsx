@@ -3,7 +3,7 @@
 import { useDismiss } from '@/lib/hooks';
 import { format, isValid, parse } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
-import { useCallback, useId, useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
 import styles from './date-picker.module.scss';
@@ -49,11 +49,7 @@ export const DatePicker = ({
 
   const selected = parseISO(value);
 
-  useDismiss(
-    wrapperRef,
-    open,
-    useCallback(() => setOpen(false), [])
-  );
+  useDismiss(wrapperRef, open, setOpen);
 
   return (
     <div ref={wrapperRef} className={`${styles.wrapper} ${className ?? ''}`}>

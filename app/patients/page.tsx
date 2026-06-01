@@ -15,37 +15,26 @@ import {
   useRequireAuth,
   useUnlinkPatient,
 } from '@/lib/hooks';
-import { useStores } from '@/lib/stores';
+import { stores, useStores } from '@/lib/stores';
 import { AuthStatus } from '@/lib/types/auth';
 import type { CreatePatientFormPayload, Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
-import { useMemo } from 'react';
 import styles from './page.module.scss';
 
 export default function PatientsPage() {
   const status = useRequireAuth();
   const {
     authStore: { accessToken, currentUser },
-    patientStore: { patientMap, isLoaded, isLoading, loadError, fetchPatients },
+    patientStore: { isLoaded, loadError, fetchPatients },
   } = useStores();
 
-  const hasSelfPatient = useMemo(
-    () => Array.from(patientMap.values()).some((p) => p.relationship === UserRelationship.Self),
-    [patientMap]
-  );
-  const selfPatient = useMemo(
-    () =>
-      Array.from(patientMap.values()).find((p) => p.relationship === UserRelationship.Self) ?? null,
-    [patientMap]
-  );
-  const otherPatients = useMemo(
-    () =>
-      Array.from(patientMap.values())
-        .filter((p) => p.relationship !== UserRelationship.Self)
-        .sort((a, b) => (a.ordinal ?? 0) - (b.ordinal ?? 0)),
-    [patientMap]
-  );
-  const patientCount = patientMap.size;
+  // The `useStores()` destructure subscribes this component to patientStore
+  // updates, so the selectors below return fresh data on every render.
+  // Selectors live on the store so other views (dashboard, etc.) can reuse them.
+  const selfPatient = stores.patient.getSelfPatient();
+  const otherPatients = stores.patient.getOtherPatients();
+  const hasSelfPatient = stores.patient.hasSelfPatient();
+  const patientCount = (selfPatient ? 1 : 0) + otherPatients.length;
 
   const refresh = () => (accessToken ? fetchPatients(accessToken) : Promise.resolve());
 
@@ -191,14 +180,24 @@ export default function PatientsPage() {
       />
 
       <section className={styles.listSection} aria-label='Patient list'>
-        {isLoading || !isLoaded ? (
+        {!isLoaded ? (
           <div className={styles.placeholder}>Loading patients…</div>
         ) : loadError ? (
           <div className={styles.errorBox}>{loadError}</div>
         ) : patientCount === 0 ? (
-          <div className={styles.placeholder}>
-            You don&apos;t have any patient profiles yet. Add yourself or a family member to get
-            started.
+          <div className={styles.emptyState}>
+            <p className={styles.emptyText}>
+              You don&apos;t have any patient profiles yet. Add yourself or a family member to get
+              started.
+            </p>
+            <button
+              type='button'
+              className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
+              onClick={() => form.openAdd(hasSelfPatient ? 'new' : 'self')}
+              disabled={!isIdle}
+            >
+              {hasSelfPatient ? 'Add a patient' : 'Add yourself as a patient'}
+            </button>
           </div>
         ) : (
           <>

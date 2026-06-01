@@ -3,6 +3,7 @@
 import { nextApi } from '@/lib/api/next';
 import { stores } from '@/lib/stores';
 import type { Patient } from '@/lib/types/patients';
+import { formatFullName } from '@/lib/utils/formatters';
 import { useState } from 'react';
 
 interface UseUnlinkPatientArgs {
@@ -15,10 +16,10 @@ export const useUnlinkPatient = ({ accessToken }: UseUnlinkPatientArgs) => {
 
   const unlink = async (patient: Patient) => {
     if (!accessToken) return;
-    const fullName = [patient.firstName, patient.lastName].filter(Boolean).join(' ').trim();
+    const fullName = formatFullName(patient, 'this patient');
     const confirmed = await stores.confirm.ask({
       title: 'Remove patient?',
-      message: `Remove ${fullName || 'this patient'} from your patients? You can re-link them later by identity number.`,
+      message: `Remove ${fullName} from your patients? You can re-link them later by identity number.`,
       confirmLabel: 'Remove',
       destructive: true,
     });
@@ -29,7 +30,7 @@ export const useUnlinkPatient = ({ accessToken }: UseUnlinkPatientArgs) => {
     try {
       await nextApi.patients.unlinkPatient({ accessToken, patientId: patient.patientId });
       stores.patient.removePatient(patient.patientId);
-      stores.toast.push('success', `${fullName || 'Patient'} removed from your list.`);
+      stores.toast.push('success', `${fullName} removed from your list.`);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to remove patient.';
       setError(message);

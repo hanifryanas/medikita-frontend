@@ -1,7 +1,7 @@
 'use client';
 
 import { useDismiss } from '@/lib/hooks';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import styles from './add-patient-menu.module.scss';
 
 export interface AddPatientMenuItem {
@@ -21,11 +21,7 @@ export const AddPatientMenu = ({ items, disabled, label = 'Add patient' }: AddPa
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useDismiss(
-    ref,
-    isOpen,
-    useCallback(() => setIsOpen(false), [])
-  );
+  useDismiss(ref, isOpen, setIsOpen);
 
   return (
     <div className={styles.wrapper} ref={ref}>
