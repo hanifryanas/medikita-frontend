@@ -1,0 +1,87 @@
+@use '../../styles/color' as *;
+
+.wrapper {
+  position: relative;
+}
+
+.trigger {
+  height: 40px;
+  padding: 0 1rem;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  border: 1px solid transparent;
+  color: $white;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.caret {
+  margin-left: 0.4rem;
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 40;
+  min-width: 240px;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.55rem 0.75rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: $white;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--surface-translucent-hover);
+    outline: none;
+  }
+}
+
+.itemTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.itemHint {
+  font-size: 0.72rem;
+  color: $muted;
+}

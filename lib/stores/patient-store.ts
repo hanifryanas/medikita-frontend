@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { nextApi } from '../api/next';
 import type { Patient } from '../types/patients';
 import { UserRelationship } from '../types/users';
 
@@ -15,6 +16,7 @@ export interface PatientStore {
   setPatients: (patients: Patient[]) => void;
   upsertPatient: (patient: Patient) => void;
   removePatient: (patientId: string) => void;
+  fetchPatients: (accessToken: string) => Promise<void>;
 
   getPatients: () => Patient[];
   getSelfPatient: () => Patient | null;
@@ -58,6 +60,23 @@ export const usePatientStore = create<PatientStore>()((set, get) => ({
       next.delete(patientId);
       return { patientMap: next };
     }),
+
+  fetchPatients: async (accessToken) => {
+    set({ isLoading: true, loadError: null });
+    try {
+      const data = await nextApi.patients.getMyPatients(accessToken);
+      set({
+        patientMap: new Map(data.map((p) => [p.patientId, p])),
+        isLoaded: true,
+        isLoading: false,
+      });
+    } catch (err) {
+      set({
+        isLoading: false,
+        loadError: err instanceof Error ? err.message : 'Failed to load patients.',
+      });
+    }
+  },
 
   getPatients: () => Array.from(get().patientMap.values()),
   getSelfPatient: () =>
