@@ -3,7 +3,7 @@
 import { Avatar } from '@/app/components/common';
 import { nextApi } from '@/lib/api/next';
 import { getAccountRoleLabel } from '@/lib/navigation';
-import { useStores } from '@/lib/stores';
+import { useStores, stores } from '@/lib/stores';
 import { AuthStatus } from '@/lib/types/auth';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -43,7 +43,7 @@ export const NavAuthSection = () => {
       await nextApi.auth.signout();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign out failed.';
-      alert(message);
+      stores.toast.push('error', message);
     }
     signout();
   };
