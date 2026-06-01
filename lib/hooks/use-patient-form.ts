@@ -2,6 +2,7 @@
 
 import type { PatientEditPayload } from '@/app/components/patients/patient-edit-form';
 import { nextApi } from '@/lib/api/next';
+import { stores } from '@/lib/stores';
 import type { CreatePatientFormPayload, Patient } from '@/lib/types/patients';
 import { useState } from 'react';
 
@@ -53,10 +54,15 @@ export const usePatientForm = ({ accessToken, onChanged }: UsePatientFormArgs) =
           ...(formValues.address.trim() ? { address: formValues.address.trim() } : {}),
         },
       });
+      // createPatient only returns `{patientId}`, not the full Patient entity,
+      // so we refetch to pick up server-assigned fields (mrn, ordinal, age).
       await onChanged();
+      stores.toast.push('success', 'Patient added.');
       close();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save patient.');
+      const message = err instanceof Error ? err.message : 'Failed to save patient.';
+      setError(message);
+      stores.toast.push('error', message);
     } finally {
       setIsSubmitting(false);
     }
@@ -64,21 +70,31 @@ export const usePatientForm = ({ accessToken, onChanged }: UsePatientFormArgs) =
 
   const submitEdit = async (payload: PatientEditPayload) => {
     if (!accessToken || state.kind !== 'edit') return;
+    const target = state.patient;
     setIsSubmitting(true);
     setError(null);
     try {
       await nextApi.patients.updatePatient({
         accessToken,
-        patientId: state.patient.patientId,
+        patientId: target.patientId,
         payload: {
           phoneNumber: payload.phoneNumber,
           address: payload.address,
         },
       });
-      await onChanged();
+      // We know exactly which fields changed; patch the store directly
+      // instead of re-fetching the whole list.
+      stores.patient.upsertPatient({
+        ...target,
+        phoneNumber: payload.phoneNumber,
+        address: payload.address,
+      });
+      stores.toast.push('success', 'Patient updated.');
       close();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update patient.');
+      const message = err instanceof Error ? err.message : 'Failed to update patient.';
+      setError(message);
+      stores.toast.push('error', message);
     } finally {
       setIsSubmitting(false);
     }

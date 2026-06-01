@@ -2,6 +2,7 @@ import { ThemeProvider } from '@/lib/theme';
 import { getServerTheme } from '@/lib/theme/server';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { ConfirmDialogHost, ToastViewport } from './components/common';
 import { Hydrator } from './components/hydrators';
 import { PageLoader } from './components/loading';
 import './globals.scss';
@@ -38,6 +39,8 @@ export default async function RootLayout({
         <ThemeProvider initial={theme}>
           <Hydrator />
           {children}
+          <ConfirmDialogHost />
+          <ToastViewport />
         </ThemeProvider>
       </body>
     </html>

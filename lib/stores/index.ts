@@ -1,7 +1,9 @@
 import { useAuthStore } from './auth-store';
 import { useCareTeamsStore } from './care-teams-store';
+import { useConfirmStore } from './confirm-store';
 import { useDepartmentStore } from './department-store';
 import { usePatientStore } from './patient-store';
+import { useToastStore } from './toast-store';
 
 /**
  * Reactive store access — call inside the render body of a client component.
@@ -37,5 +39,11 @@ export const stores = {
   },
   get patient() {
     return usePatientStore.getState();
+  },
+  get toast() {
+    return useToastStore.getState();
+  },
+  get confirm() {
+    return useConfirmStore.getState();
   },
 };

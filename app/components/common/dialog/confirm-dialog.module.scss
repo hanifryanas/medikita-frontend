@@ -1,0 +1,97 @@
+@use '../../../styles/color' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.12s ease-out;
+}
+
+.panel {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $white;
+  margin: 0;
+}
+
+.message {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: $muted;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.btn {
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-card);
+  background: transparent;
+  color: $white;
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
+
+  &:hover {
+    background: var(--surface-translucent-hover);
+  }
+}
+
+.btnPrimary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: $white;
+
+  &:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent-soft);
+  }
+}
+
+.btnDestructive {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: $white;
+
+  &:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

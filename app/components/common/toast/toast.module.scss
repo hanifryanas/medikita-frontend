@@ -1,0 +1,77 @@
+@use '../../../styles/color' as *;
+
+.viewport {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: min(360px, calc(100vw - 2.5rem));
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.65rem 0.75rem 0.65rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-card);
+  background: var(--surface);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+  color: $white;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  animation: slideIn 0.18s ease-out;
+}
+
+.message {
+  flex: 1;
+}
+
+.close {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: $muted;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    color: $white;
+    background: var(--surface-translucent-hover);
+  }
+}
+
+.success {
+  border-left: 3px solid #22c55e;
+}
+
+.error {
+  border-left: 3px solid #ef4444;
+}
+
+.info {
+  border-left: 3px solid var(--accent);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

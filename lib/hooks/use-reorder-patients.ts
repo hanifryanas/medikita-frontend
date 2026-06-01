@@ -1,6 +1,7 @@
 'use client';
 
 import { nextApi } from '@/lib/api/next';
+import { stores } from '@/lib/stores';
 import type { Patient } from '@/lib/types/patients';
 import { useState } from 'react';
 
@@ -11,6 +12,14 @@ interface UseReorderPatientsArgs {
   onSaved: () => void | Promise<void>;
 }
 
+/**
+ * Drag-and-drop ordering for the user's non-self patients.
+ *
+ * Ordinal invariant (see `patient-store.ts`): ordinal 0 is reserved for the
+ * Self patient. We enforce this by always sending the Self patientId first
+ * in the reorder payload — the backend assigns ordinals 0..n in array order,
+ * so Self lands on 0 and the rest on 1..n.
+ */
 export const useReorderPatients = ({
   accessToken,
   selfPatientId,
@@ -54,9 +63,12 @@ export const useReorderPatients = ({
         patientIds: [...(selfPatientId ? [selfPatientId] : []), ...draft.map((p) => p.patientId)],
       });
       await onSaved();
+      stores.toast.push('success', 'Patient order saved.');
       cancel();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save new order.');
+      const message = err instanceof Error ? err.message : 'Failed to save new order.';
+      setError(message);
+      stores.toast.push('error', message);
     } finally {
       setIsSaving(false);
     }
