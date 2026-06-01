@@ -26,11 +26,18 @@ export default function PatientsPage() {
   const status = useRequireAuth();
   const {
     authStore: { accessToken, currentUser },
+    patientStore: {
+      patientMap,
+      isLoaded,
+      isLoading,
+      loadError,
+      setIsLoading,
+      setLoadError,
+      setPatients,
+      removePatient,
+    },
   } = useStores();
 
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<EditMode>('closed');
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,10 +55,9 @@ export default function PatientsPage() {
       setPatients(data);
     } catch (err) {
       setLoadError(err instanceof Error ? err.message : 'Failed to load patients.');
-    } finally {
       setIsLoading(false);
     }
-  }, [accessToken]);
+  }, [accessToken, setIsLoading, setLoadError, setPatients]);
 
   useEffect(() => {
     if (status !== AuthStatus.Authenticated || !accessToken) return;
@@ -65,20 +71,22 @@ export default function PatientsPage() {
   );
 
   const hasSelfPatient = useMemo(
-    () => patients.some((p) => p.relationship === UserRelationship.Self),
-    [patients]
+    () => Array.from(patientMap.values()).some((p) => p.relationship === UserRelationship.Self),
+    [patientMap]
   );
   const selfPatient = useMemo(
-    () => patients.find((p) => p.relationship === UserRelationship.Self) ?? null,
-    [patients]
+    () =>
+      Array.from(patientMap.values()).find((p) => p.relationship === UserRelationship.Self) ?? null,
+    [patientMap]
   );
   const otherPatients = useMemo(
     () =>
-      patients
+      Array.from(patientMap.values())
         .filter((p) => p.relationship !== UserRelationship.Self)
         .sort((a, b) => (a.ordinal ?? 0) - (b.ordinal ?? 0)),
-    [patients]
+    [patientMap]
   );
+  const patientCount = patientMap.size;
 
   const reorder = useReorderPatients({
     accessToken,
@@ -176,7 +184,7 @@ export default function PatientsPage() {
         accessToken,
         patientId: patient.patientId,
       });
-      await loadPatients();
+      removePatient(patient.patientId);
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to remove patient.');
     } finally {
@@ -462,11 +470,11 @@ export default function PatientsPage() {
       )}
 
       <section className={styles.listSection} aria-label='Patient list'>
-        {isLoading ? (
+        {isLoading || !isLoaded ? (
           <div className={styles.placeholder}>Loading patients…</div>
         ) : loadError ? (
           <div className={styles.errorBox}>{loadError}</div>
-        ) : patients.length === 0 ? (
+        ) : patientCount === 0 ? (
           <div className={styles.placeholder}>
             You don&apos;t have any patient profiles yet. Add yourself or a family member to get
             started.
