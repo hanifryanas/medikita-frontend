@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar } from '@/app/components/common';
+import { Avatar, CardMenu, type CardMenuItem } from '@/app/components/common';
 import type { Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
 import { ChevronDown, ChevronUp } from 'lucide-react';
@@ -23,9 +23,10 @@ interface PatientCardProps {
     onMoveUp: () => void;
     onMoveDown: () => void;
   };
+  menuItems?: CardMenuItem[];
 }
 
-export const PatientCard = ({ patient, reorderControls }: PatientCardProps) => {
+export const PatientCard = ({ patient, reorderControls, menuItems }: PatientCardProps) => {
   const fullName = `${patient.firstName} ${patient.lastName}`.trim();
   const relationship = patient.relationship ?? UserRelationship.Other;
   const isSelf = relationship === UserRelationship.Self;
@@ -73,6 +74,9 @@ export const PatientCard = ({ patient, reorderControls }: PatientCardProps) => {
           <span className={`${styles.relationshipBadge} ${isSelf ? styles.relationshipSelf : ''}`}>
             {RELATIONSHIP_LABELS[relationship]}
           </span>
+          {menuItems && menuItems.length > 0 && (
+            <CardMenu items={menuItems} ariaLabel={`Actions for ${fullName}`} />
+          )}
         </div>
 
         <dl className={styles.details}>

@@ -1,0 +1,82 @@
+@use '../../../styles/color' as *;
+
+.wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.trigger {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: $muted;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+
+  &:hover,
+  &[aria-expanded='true'] {
+    background: var(--surface-translucent-hover);
+    border-color: var(--border-card);
+    color: $white;
+  }
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 30;
+  min-width: 160px;
+  margin: 0;
+  padding: 0.3rem;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.item {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: $white;
+  font-family: inherit;
+  font-size: 0.82rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: var(--surface-translucent-hover);
+    outline: none;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.itemDestructive {
+  color: #fca5a5;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: rgba(239, 68, 68, 0.12);
+  }
+}

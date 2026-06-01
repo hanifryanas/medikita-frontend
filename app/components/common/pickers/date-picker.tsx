@@ -1,8 +1,9 @@
 'use client';
 
+import { useDismiss } from '@/lib/hooks';
 import { format, isValid, parse } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useId, useRef, useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
 import styles from './date-picker.module.scss';
@@ -48,21 +49,11 @@ export const DatePicker = ({
 
   const selected = parseISO(value);
 
-  useEffect(() => {
-    if (!open) return;
-    const onClick = (e: MouseEvent) => {
-      if (!wrapperRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('mousedown', onClick);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onClick);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [open]);
+  useDismiss(
+    wrapperRef,
+    open,
+    useCallback(() => setOpen(false), [])
+  );
 
   return (
     <div ref={wrapperRef} className={`${styles.wrapper} ${className ?? ''}`}>
