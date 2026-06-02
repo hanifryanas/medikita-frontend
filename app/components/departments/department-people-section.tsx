@@ -46,7 +46,7 @@ export const DepartmentPeopleSection = ({
               key={emp.employeeId}
               employee={emp}
               variant={variant}
-              href={buildCareTeamLink(emp.role, emp.employeeId)}
+              href={buildCareTeamLink(emp.role, emp.doctor?.doctorId ?? emp.nurse?.nurseId)}
             />
           ))}
         </div>

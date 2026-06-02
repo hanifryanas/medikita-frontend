@@ -23,9 +23,10 @@ export const segmentToCareTeamRole = (segment: CareTeamRoleSegment): CareTeamRol
 export const careTeamRoleToSegment = (role: CareTeamRole): CareTeamRoleSegment =>
   ROLE_TO_SEGMENT[role];
 
-export const buildCareTeamLink = (role: EmployeeRole, id: string): string | undefined => {
+export const buildCareTeamLink = (role: EmployeeRole, careTeamId?: string): string | undefined => {
+  if (!careTeamId) return undefined;
   if (role === EmployeeRole.Doctor || role === EmployeeRole.Nurse) {
-    return `/care-teams/${ROLE_TO_SEGMENT[role]}/${id}`;
+    return `/care-teams/${ROLE_TO_SEGMENT[role]}/${careTeamId}`;
   }
   return undefined;
 };

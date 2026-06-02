@@ -39,7 +39,7 @@ export const FeaturedDepartmentCard = ({ department }: FeaturedDepartmentCardPro
               <EmployeeCard
                 key={emp.employeeId}
                 employee={emp}
-                href={buildCareTeamLink(emp.role, emp.employeeId)}
+                href={buildCareTeamLink(emp.role, emp.doctor?.doctorId ?? emp.nurse?.nurseId)}
               />
             ))}
           </div>

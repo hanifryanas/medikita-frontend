@@ -14,12 +14,13 @@ import {
 } from '@/lib/utils/formatters';
 import { CalendarPlus, ChevronLeft, ChevronRight, Stethoscope } from 'lucide-react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import styles from './page.module.scss';
 
 const trimSeconds = (time: string) => time.slice(0, 5);
 
 export default function CareTeamDetailPage() {
+  const router = useRouter();
   const params = useParams<{ role: string; id: string }>();
   const roleSegment = params?.role;
   const id = params?.id;
@@ -65,9 +66,18 @@ export default function CareTeamDetailPage() {
     <div className={styles.page}>
       <PublicNav />
       <main className={styles.content}>
-        <Link href='/care-teams' className={styles.back}>
+        <Link
+          href='/care-teams'
+          className={styles.back}
+          onClick={(e) => {
+            if (window.history.length > 1) {
+              e.preventDefault();
+              router.back();
+            }
+          }}
+        >
           <ChevronLeft size={16} />
-          Back to care teams
+          Back
         </Link>
 
         {!role && (

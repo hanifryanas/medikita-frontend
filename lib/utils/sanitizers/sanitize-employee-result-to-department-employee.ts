@@ -17,4 +17,6 @@ export const sanitizeEmployeeResultToDepartmentEmployee = (
   jobTitle: employee.doctor?.jobTitle || employee.jobTitle,
   employmentDuration: employee.employmentDuration,
   departmentTypeCode,
+  doctor: employee.doctor ? { doctorId: employee.doctor.doctorId } : undefined,
+  nurse: employee.nurse ? { nurseId: employee.nurse.nurseId } : undefined,
 });

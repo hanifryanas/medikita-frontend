@@ -17,7 +17,13 @@ export const sanitizeGroupedDepartmentResult = (
       ) || [],
   }));
 
-  const featuredDepartments = groupedDepartment.featuredDepartments;
+  const featuredDepartments = groupedDepartment.featuredDepartments.map((dept) => ({
+    ...dept,
+    employees:
+      dept.employees?.map((emp) =>
+        sanitizeEmployeeResultToDepartmentEmployee(dept.typeCode, emp)
+      ) || [],
+  }));
 
   return { departments, featuredDepartments };
 };
