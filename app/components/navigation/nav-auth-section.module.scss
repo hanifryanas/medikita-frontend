@@ -60,6 +60,32 @@
   display: inline-flex;
 }
 
+.navDashboardCta {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 0.875rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--surface);
+  background: var(--hero-text);
+  border: 1px solid var(--hero-text);
+  white-space: nowrap;
+  transition:
+    opacity 0.2s,
+    background 0.2s,
+    border-color 0.2s;
+
+  &:hover {
+    opacity: 0.88;
+  }
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
 .navAvatarTrigger {
   display: inline-flex;
   align-items: center;

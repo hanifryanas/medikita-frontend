@@ -6,13 +6,17 @@ import { getAccountRoleLabel } from '@/lib/navigation';
 import { stores, useStores } from '@/lib/stores';
 import { AuthStatus } from '@/lib/types/auth';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import styles from './nav-auth-section.module.scss';
+
+const APP_PATH_PREFIXES = ['/dashboard', '/patients', '/appointments', '/schedule', '/employees'];
 
 export const NavAuthSection = () => {
   const {
     authStore: { status, currentUser: user, signout },
   } = useStores();
+  const pathname = usePathname();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -63,71 +67,71 @@ export const NavAuthSection = () => {
 
   const fullName = `${user.firstName} ${user.lastName}`.trim();
   const roleLabel = getAccountRoleLabel(user);
+  const isInApp = APP_PATH_PREFIXES.some((p) => pathname.startsWith(p));
 
   return (
-    <div className={styles.navAvatarWrapper} ref={menuRef}>
-      <button
-        type='button'
-        className={styles.navAvatarTrigger}
-        onClick={() => setIsMenuOpen((open) => !open)}
-        aria-label='Open account menu'
-        aria-haspopup='menu'
-        aria-expanded={isMenuOpen}
-      >
-        <span className={styles.navUserInfo}>
-          <span className={styles.navUserName}>{fullName}</span>
-          <span className={styles.navUserHandle}>@{user.userName}</span>
-        </span>
-        <Avatar
-          photoUrl={user.photoUrl}
-          name={{ firstName: user.firstName, lastName: user.lastName }}
-          size={40}
-          className={styles.navAvatarBtn}
-          imageClassName={styles.navAvatarImg}
-          initialClassName={styles.navAvatarInitial}
-        />
-      </button>
-
-      {isMenuOpen && (
-        <div className={styles.menu} role='menu'>
-          {roleLabel && (
-            <>
-              <div className={styles.menuHeader}>
-                <span className={styles.menuBadge}>{roleLabel}</span>
-              </div>
-              <div className={styles.menuDivider} />
-            </>
-          )}
-
-          <Link
-            href='/dashboard'
-            className={styles.menuItem}
-            role='menuitem'
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Dashboard
-          </Link>
-          <Link
-            href='/profile'
-            className={styles.menuItem}
-            role='menuitem'
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Profile
-          </Link>
-
-          <div className={styles.menuDivider} />
-
-          <button
-            type='button'
-            className={`${styles.menuItem} ${styles.menuItemDanger}`}
-            role='menuitem'
-            onClick={handleSignout}
-          >
-            Sign out
-          </button>
-        </div>
+    <div className={styles.navAuthGroup}>
+      {!isInApp && (
+        <Link href='/dashboard' className={styles.navDashboardCta}>
+          Dashboard
+        </Link>
       )}
+      <div className={styles.navAvatarWrapper} ref={menuRef}>
+        <button
+          type='button'
+          className={styles.navAvatarTrigger}
+          onClick={() => setIsMenuOpen((open) => !open)}
+          aria-label='Open account menu'
+          aria-haspopup='menu'
+          aria-expanded={isMenuOpen}
+        >
+          <span className={styles.navUserInfo}>
+            <span className={styles.navUserName}>{fullName}</span>
+            <span className={styles.navUserHandle}>@{user.userName}</span>
+          </span>
+          <Avatar
+            photoUrl={user.photoUrl}
+            name={{ firstName: user.firstName, lastName: user.lastName }}
+            size={40}
+            className={styles.navAvatarBtn}
+            imageClassName={styles.navAvatarImg}
+            initialClassName={styles.navAvatarInitial}
+          />
+        </button>
+
+        {isMenuOpen && (
+          <div className={styles.menu} role='menu'>
+            {roleLabel && (
+              <>
+                <div className={styles.menuHeader}>
+                  <span className={styles.menuBadge}>{roleLabel}</span>
+                </div>
+                <div className={styles.menuDivider} />
+              </>
+            )}
+
+            <Link
+              href='/profile'
+              className={styles.menuItem}
+              role='menuitem'
+              onClick={() => setIsMenuOpen(false)}
+            >
+              My Profile
+            </Link>
+
+            <div className={styles.menuDivider} />
+
+            <button
+              type='button'
+              className={`${styles.menuItem} ${styles.menuItemDanger}`}
+              role='menuitem'
+              onClick={handleSignout}
+            >
+              Sign out
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
