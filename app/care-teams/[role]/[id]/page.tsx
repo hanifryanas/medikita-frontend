@@ -4,6 +4,7 @@ import { Avatar } from '@/app/components/common';
 import { PublicNav } from '@/app/components/navigation';
 import { useCareTeam, useCareTeamSchedule } from '@/lib/hooks';
 import { useStores } from '@/lib/stores';
+import { useOtherPatients, useSelfPatient } from '@/lib/stores/patient-store';
 import { AuthStatus } from '@/lib/types/auth';
 import { isCareTeamRoleSegment, segmentToCareTeamRole } from '@/lib/types/care-teams';
 import { EmployeeRole } from '@/lib/types/employees';
@@ -16,6 +17,8 @@ import {
 import { CalendarPlus, ChevronLeft, ChevronRight, Stethoscope } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
+import { PatientPickerDialog } from './_components';
 import styles from './page.module.scss';
 
 const trimSeconds = (time: string) => time.slice(0, 5);
@@ -35,7 +38,15 @@ export default function CareTeamDetailPage() {
   const {
     departmentStore: { getDepartmentByTypeCode },
     authStore: { status: authStatus },
+    patientStore: { isLoading: isPatientsLoading },
   } = useStores();
+  const selfPatient = useSelfPatient();
+  const otherPatients = useOtherPatients();
+  const patients = useMemo(
+    () => (selfPatient ? [selfPatient, ...otherPatients] : otherPatients),
+    [selfPatient, otherPatients]
+  );
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const department = careTeam ? getDepartmentByTypeCode(careTeam.departmentTypeCode) : undefined;
   const roleLabel = role === EmployeeRole.Nurse ? 'Nurse' : 'Doctor';
@@ -60,9 +71,9 @@ export default function CareTeamDetailPage() {
     canBook,
   } = useCareTeamSchedule(careTeam, role);
 
-  const bookingHref =
-    canBook && careTeam && selectedDate && selectedTime
-      ? `/appointments?careTeam=${careTeam.careTeamId}&date=${formatDate(selectedDate)}&time=${selectedTime}`
+  const buildBookingHref = (patientId: string) =>
+    careTeam && selectedDate && selectedTime
+      ? `/appointments?careTeam=${careTeam.careTeamId}&date=${formatDate(selectedDate)}&time=${selectedTime}&patient=${patientId}`
       : '#';
 
   const handleBookingClick = () => {
@@ -72,7 +83,12 @@ export default function CareTeamDetailPage() {
       router.push(`/signin?next=${encodeURIComponent(next)}`);
       return;
     }
-    router.push(bookingHref);
+    setIsPickerOpen(true);
+  };
+
+  const handlePatientConfirm = (patientId: string) => {
+    setIsPickerOpen(false);
+    router.push(buildBookingHref(patientId));
   };
 
   return (
@@ -287,6 +303,14 @@ export default function CareTeamDetailPage() {
           </>
         )}
       </main>
+
+      <PatientPickerDialog
+        open={isPickerOpen}
+        patients={patients}
+        isLoading={isPatientsLoading}
+        onClose={() => setIsPickerOpen(false)}
+        onConfirm={handlePatientConfirm}
+      />
     </div>
   );
 }
