@@ -1,6 +1,5 @@
 'use client';
 
-import { CareTeamCard } from '@/app/components/care-teams';
 import { ChipPicker, Tag } from '@/app/components/common';
 import { PublicNav } from '@/app/components/navigation';
 import { SearchIcon } from '@/app/icons';
@@ -10,6 +9,7 @@ import { CareTeamsRoleFilter } from '@/lib/stores/care-teams-store';
 import { Day } from '@/lib/types/common';
 import { EmployeeRole } from '@/lib/types/employees';
 import { useMemo } from 'react';
+import { CareTeamCard } from './_components';
 import styles from './page.module.scss';
 
 const FILTERS: { label: string; value: CareTeamsRoleFilter }[] = [

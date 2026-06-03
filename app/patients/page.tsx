@@ -3,13 +3,6 @@
 import type { CardMenuItem } from '@/app/components/common';
 import { AccountShell } from '@/app/components/layout';
 import {
-  AddPatientMenu,
-  type AddPatientMenuItem,
-  PatientCard,
-  PatientFormPanel,
-  PatientInsuranceSection,
-} from '@/app/components/patients';
-import {
   useLinkExistingPatient,
   usePatientForm,
   useReorderPatients,
@@ -21,6 +14,13 @@ import { useHasSelfPatient, useOtherPatients, useSelfPatient } from '@/lib/store
 import { AuthStatus } from '@/lib/types/auth';
 import type { CreatePatientFormPayload, Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
+import {
+  AddPatientMenu,
+  type AddPatientMenuItem,
+  PatientCard,
+  PatientFormPanel,
+  PatientInsuranceSection,
+} from './_components';
 import styles from './page.module.scss';
 
 export default function PatientsPage() {
