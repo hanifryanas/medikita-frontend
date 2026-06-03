@@ -4,18 +4,30 @@ import { SubmitButton } from '@/app/components/common';
 import { nextApi } from '@/lib/api/next';
 import { useStores } from '@/lib/stores';
 import type { SigninPayload } from '@/lib/types/auth';
+import { AuthStatus } from '@/lib/types/auth';
 import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
+import { isSafeRedirectPath } from '@/lib/utils/checkers';
 import { validateSignin } from '@/lib/validations/auth';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import styles from '../auth.module.scss';
 
 export default function SigninPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextParam = searchParams.get('next');
+  const safeNext = isSafeRedirectPath(nextParam) ? nextParam : null;
+  const redirectTarget = safeNext ?? '/';
   const {
-    authStore: { signin },
+    authStore: { signin, status },
   } = useStores();
+
+  useEffect(() => {
+    if (status === AuthStatus.Authenticated) {
+      router.replace(redirectTarget);
+    }
+  }, [status, redirectTarget, router]);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fields, setFields] = useState<SigninPayload>({
@@ -46,7 +58,7 @@ export default function SigninPage() {
     try {
       const data = await nextApi.auth.signin(fields);
       signin(data.user, data.accessToken);
-      router.push('/');
+      router.replace(redirectTarget);
     } catch (err) {
       setErrors({ identifier: err instanceof Error ? err.message : 'Sign in failed.' });
       setIsSubmitting(false);
@@ -158,7 +170,10 @@ export default function SigninPage() {
               Sign in
             </SubmitButton>
             <p className={styles.footerText}>
-              Don&apos;t have an account? <Link href='/signup'>Create one free</Link>
+              Don&apos;t have an account?{' '}
+              <Link href={safeNext ? `/signup?next=${encodeURIComponent(safeNext)}` : '/signup'}>
+                Create one free
+              </Link>
             </p>
           </form>
         </div>

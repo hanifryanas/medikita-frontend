@@ -6,17 +6,25 @@ import { getAccountRoleLabel } from '@/lib/navigation';
 import { stores, useStores } from '@/lib/stores';
 import { AuthStatus } from '@/lib/types/auth';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import styles from './nav-auth-section.module.scss';
 
-const APP_PATH_PREFIXES = ['/dashboard', '/patients', '/appointments', '/schedule', '/employees'];
+const APP_PATH_PREFIXES = [
+  '/dashboard',
+  '/patients',
+  '/appointments',
+  '/schedule',
+  '/employees',
+  '/profile',
+];
 
 export const NavAuthSection = () => {
   const {
     authStore: { status, currentUser: user, signout },
   } = useStores();
   const pathname = usePathname();
+  const router = useRouter();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -43,6 +51,7 @@ export const NavAuthSection = () => {
 
   const handleSignout = async () => {
     setIsMenuOpen(false);
+    const isOnPrivatePage = APP_PATH_PREFIXES.some((p) => pathname.startsWith(p));
     try {
       await nextApi.auth.signout();
     } catch (err) {
@@ -50,6 +59,9 @@ export const NavAuthSection = () => {
       stores.toast.push('error', message);
     }
     signout();
+    if (isOnPrivatePage) {
+      router.replace('/');
+    }
   };
 
   if (status !== AuthStatus.Authenticated || !user) {

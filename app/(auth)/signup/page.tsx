@@ -4,19 +4,35 @@ import { SubmitButton } from '@/app/components/common';
 import { DatePicker } from '@/app/components/common/pickers';
 import { ImageUploader } from '@/app/components/images';
 import { nextApi } from '@/lib/api/next';
+import { useStores } from '@/lib/stores';
 import type { SignupFormPayload, SignupPayload } from '@/lib/types/auth';
+import { AuthStatus } from '@/lib/types/auth';
 import { UserGenderType } from '@/lib/types/users';
 import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
+import { isSafeRedirectPath } from '@/lib/utils/checkers';
 import { digitStringFormatter } from '@/lib/utils/formatters';
 import { validateSignupForm } from '@/lib/validations/auth';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import styles from '../auth.module.scss';
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextParam = searchParams.get('next');
+  const safeNext = isSafeRedirectPath(nextParam) ? nextParam : null;
+  const signinHref = safeNext ? `/signin?next=${encodeURIComponent(safeNext)}` : '/signin';
+  const {
+    authStore: { status },
+  } = useStores();
+
+  useEffect(() => {
+    if (status === AuthStatus.Authenticated) {
+      router.replace(safeNext ?? '/');
+    }
+  }, [status, safeNext, router]);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -78,7 +94,7 @@ export default function SignupPage() {
         ...(fields.photoUrl && { photoUrl: fields.photoUrl }),
       };
       await nextApi.auth.signup(payload);
-      router.push('/signin');
+      router.push(signinHref);
     } catch (err) {
       setErrors({
         email: err instanceof Error ? err.message : 'Sign up failed.',
@@ -401,7 +417,7 @@ export default function SignupPage() {
               Create account
             </SubmitButton>
             <p className={`${styles.footerText} ${styles.fieldFull}`}>
-              Already have an account? <Link href='/signin'>Sign in</Link>
+              Already have an account? <Link href={signinHref}>Sign in</Link>
             </p>
           </form>
         </div>

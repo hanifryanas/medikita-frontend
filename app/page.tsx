@@ -1,5 +1,4 @@
 import { nestApi } from '@/lib/api';
-import { stores } from '@/lib/stores';
 import { HomeStatsResult } from '@/lib/types/home';
 import { hoursToSeconds } from 'date-fns';
 import Link from 'next/link';
@@ -25,8 +24,7 @@ async function getLandingStats(): Promise<Stat[]> {
     stats.push({ num: String(homeStats.doctorCount), label: 'Trusted doctors' });
     stats.push({ num: String(homeStats.clinicDepartmentCount), label: 'Specialties covered' });
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Failed to load landing page stats.';
-    stores.toast.push('error', message);
+    console.error('Failed to load landing page stats:', err);
   }
 
   stats.push({ num: '< 2 min', label: 'To book a visit' });
