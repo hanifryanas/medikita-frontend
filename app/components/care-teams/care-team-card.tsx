@@ -4,6 +4,7 @@ import { Avatar } from '@/app/components/common';
 import { useStores } from '@/lib/stores';
 import { CareTeam, careTeamRoleToSegment } from '@/lib/types/care-teams';
 import { EmployeeRole } from '@/lib/types/employees';
+import { joinClassNames } from '@/lib/utils/class-names';
 import { formatDay } from '@/lib/utils/formatters';
 import Link from 'next/link';
 import styles from './care-team-card.module.scss';
@@ -22,7 +23,7 @@ export const CareTeamCard = ({ careTeam, className }: CareTeamCardProps) => {
   const departmentName = getDepartmentByTypeCode(careTeam.departmentTypeCode)?.displayName ?? '—';
   const days = careTeam.scheduleDays ?? [];
 
-  const rootClass = [styles.card, className].filter(Boolean).join(' ');
+  const rootClass = joinClassNames(styles.card, className);
   const href = `/care-teams/${careTeamRoleToSegment(careTeam.role)}/${careTeam.careTeamId}`;
 
   return (

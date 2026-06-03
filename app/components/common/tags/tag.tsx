@@ -1,5 +1,6 @@
 'use client';
 
+import { joinClassNames } from '@/lib/utils/class-names';
 import { X } from 'lucide-react';
 import { ReactNode } from 'react';
 import styles from './tag.module.scss';
@@ -26,7 +27,7 @@ export const Tag = ({
   removeAriaLabel,
   className,
 }: TagProps) => {
-  const classes = [styles.tag, active && styles.tagActive, className].filter(Boolean).join(' ');
+  const classes = joinClassNames(styles.tag, active && styles.tagActive, className);
 
   const content = (
     <>

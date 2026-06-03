@@ -4,6 +4,7 @@ import { Avatar } from '@/app/components/common';
 import { PublicNav } from '@/app/components/navigation';
 import { useCareTeam, useCareTeamSchedule } from '@/lib/hooks';
 import { useStores } from '@/lib/stores';
+import { AuthStatus } from '@/lib/types/auth';
 import { isCareTeamRoleSegment, segmentToCareTeamRole } from '@/lib/types/care-teams';
 import { EmployeeRole } from '@/lib/types/employees';
 import {
@@ -33,10 +34,12 @@ export default function CareTeamDetailPage() {
   const { careTeam, isLoading, isLoaded } = useCareTeam(role, id);
   const {
     departmentStore: { getDepartmentByTypeCode },
+    authStore: { status: authStatus },
   } = useStores();
 
   const department = careTeam ? getDepartmentByTypeCode(careTeam.departmentTypeCode) : undefined;
   const roleLabel = role === EmployeeRole.Nurse ? 'Nurse' : 'Doctor';
+  const isDoctor = role === EmployeeRole.Doctor;
 
   const {
     today,
@@ -61,6 +64,16 @@ export default function CareTeamDetailPage() {
     canBook && careTeam && selectedDate && selectedTime
       ? `/appointments?careTeam=${careTeam.careTeamId}&date=${formatDate(selectedDate)}&time=${selectedTime}`
       : '#';
+
+  const handleBookingClick = () => {
+    if (!canBook) return;
+    if (authStatus !== AuthStatus.Authenticated) {
+      const next = `${window.location.pathname}${window.location.search}`;
+      router.push(`/signin?next=${encodeURIComponent(next)}`);
+      return;
+    }
+    router.push(bookingHref);
+  };
 
   return (
     <div className={styles.page}>
@@ -209,58 +222,58 @@ export default function CareTeamDetailPage() {
                   </div>
 
                   {selectedSchedule ? (
-                    <>
-                      <div
-                        className={styles.slotsRow}
-                        role='radiogroup'
-                        aria-label='Available times'
-                      >
-                        {slots.length === 0 ? (
-                          <span className={styles.slotsEmpty}>
-                            Window: {trimSeconds(selectedSchedule.startTime)} –{' '}
-                            {trimSeconds(selectedSchedule.endTime)}
-                          </span>
-                        ) : (
-                          slots.map((t) => {
-                            const isSelected = selectedTime === t;
-                            const isBooked = bookedSlots.has(t);
-                            return (
-                              <button
-                                key={t}
-                                type='button'
-                                role='radio'
-                                aria-checked={isSelected}
-                                disabled={isBooked}
-                                aria-label={isBooked ? `${t} (booked)` : t}
-                                onClick={() => !isBooked && setSelectedTime(t)}
-                                className={[
-                                  styles.slotPill,
-                                  isSelected && !isBooked && styles.slotPillSelected,
-                                  isBooked && styles.slotPillDisabled,
-                                ]
-                                  .filter(Boolean)
-                                  .join(' ')}
-                              >
-                                {t}
-                              </button>
-                            );
-                          })
-                        )}
-                      </div>
+                    isDoctor ? (
+                      <>
+                        <div
+                          className={styles.slotsRow}
+                          role='radiogroup'
+                          aria-label='Available times'
+                        >
+                          {slots.length === 0 ? (
+                            <span className={styles.slotsEmpty}>
+                              Window: {trimSeconds(selectedSchedule.startTime)} –{' '}
+                              {trimSeconds(selectedSchedule.endTime)}
+                            </span>
+                          ) : (
+                            slots.map((t) => {
+                              const isSelected = selectedTime === t;
+                              const isBooked = bookedSlots.has(t);
+                              return (
+                                <button
+                                  key={t}
+                                  type='button'
+                                  role='radio'
+                                  aria-checked={isSelected}
+                                  disabled={isBooked}
+                                  aria-label={isBooked ? `${t} (booked)` : t}
+                                  onClick={() => !isBooked && setSelectedTime(t)}
+                                  className={[
+                                    styles.slotPill,
+                                    isSelected && !isBooked && styles.slotPillSelected,
+                                    isBooked && styles.slotPillDisabled,
+                                  ]
+                                    .filter(Boolean)
+                                    .join(' ')}
+                                >
+                                  {t}
+                                </button>
+                              );
+                            })
+                          )}
+                        </div>
 
-                      <Link
-                        href={bookingHref}
-                        aria-disabled={!canBook}
-                        tabIndex={canBook ? 0 : -1}
-                        className={`${styles.bookCta} ${!canBook ? styles.bookCtaDisabled : ''}`}
-                        onClick={(e) => {
-                          if (!canBook) e.preventDefault();
-                        }}
-                      >
-                        <CalendarPlus size={16} />
-                        Book Appointment
-                      </Link>
-                    </>
+                        <button
+                          type='button'
+                          disabled={!canBook}
+                          aria-disabled={!canBook}
+                          onClick={handleBookingClick}
+                          className={`${styles.bookCta} ${!canBook ? styles.bookCtaDisabled : ''}`}
+                        >
+                          <CalendarPlus size={16} />
+                          Book Appointment
+                        </button>
+                      </>
+                    ) : null
                   ) : (
                     <p className={styles.slotsEmpty}>
                       {selectedDate

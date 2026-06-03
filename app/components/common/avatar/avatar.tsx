@@ -1,5 +1,6 @@
 'use client';
 
+import { joinClassNames } from '@/lib/utils/class-names';
 import { getUserInitial } from '@/lib/utils/formatters';
 import Image from 'next/image';
 import type { CSSProperties } from 'react';
@@ -28,9 +29,9 @@ export const Avatar = ({
   initialClassName,
   style,
 }: AvatarProps) => {
-  const rootClass = [styles.root, className].filter(Boolean).join(' ');
-  const imgClass = [styles.image, imageClassName].filter(Boolean).join(' ');
-  const initialClass = [styles.initial, initialClassName].filter(Boolean).join(' ');
+  const rootClass = joinClassNames(styles.root, className);
+  const imgClass = joinClassNames(styles.image, imageClassName);
+  const initialClass = joinClassNames(styles.initial, initialClassName);
 
   return (
     <span

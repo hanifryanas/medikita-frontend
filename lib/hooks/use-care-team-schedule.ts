@@ -195,6 +195,11 @@ export function useCareTeamSchedule(
     setSelectedTime(null);
   }
 
+  const firstAvailableKey = firstAvailableDate ? firstAvailableDate.toISOString() : null;
+  if (selectedDateKey === null && firstAvailableKey !== null) {
+    setSelectedDateKey(firstAvailableKey);
+  }
+
   const stripEnd = dates[dates.length - 1] ?? stripStart;
   const startMonthKey = formatDate(startOfMonth(stripStart), monthKeyFormat);
   const endMonthKey = formatDate(startOfMonth(stripEnd), monthKeyFormat);

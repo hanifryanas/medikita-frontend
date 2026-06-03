@@ -1,5 +1,6 @@
 'use client';
 
+import { joinClassNames } from '@/lib/utils/class-names';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
@@ -72,7 +73,7 @@ export const Carousel = ({
   };
 
   return (
-    <div className={[styles.carousel, className].filter(Boolean).join(' ')} style={cssVars}>
+    <div className={joinClassNames(styles.carousel, className)} style={cssVars}>
       <button
         type='button'
         className={styles.carouselBtn}

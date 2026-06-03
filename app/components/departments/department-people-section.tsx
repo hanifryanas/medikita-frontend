@@ -2,6 +2,7 @@
 
 import { buildCareTeamLink } from '@/lib/types/care-teams';
 import { DepartmentEmployee } from '@/lib/types/employees/department-employee';
+import { joinClassNames } from '@/lib/utils/class-names';
 import { EmployeeCard, type EmployeeCardVariant } from '../employees';
 import styles from './department-people-section.module.scss';
 
@@ -29,7 +30,7 @@ export const DepartmentPeopleSection = ({
   if (employees.length === 0 && !emptyMessage) return null;
 
   const headingId = titleId ?? `${slugify(title)}-title`;
-  const gridClass = [styles.grid, styles[`grid_${variant}`]].filter(Boolean).join(' ');
+  const gridClass = joinClassNames(styles.grid, styles[`grid_${variant}`]);
 
   return (
     <section className={styles.section} aria-labelledby={headingId}>
