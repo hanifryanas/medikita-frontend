@@ -28,7 +28,7 @@ export const useUnlinkPatient = ({ accessToken }: UseUnlinkPatientArgs) => {
     setUnlinkingId(patient.patientId);
     setError(null);
     try {
-      await nextApi.patients.unlinkPatient({ accessToken, patientId: patient.patientId });
+      await nextApi.patients.unlinkPatient(patient.patientId);
       stores.patient.removePatient(patient.patientId);
       stores.toast.push('success', `${fullName} removed from your list.`);
     } catch (err) {

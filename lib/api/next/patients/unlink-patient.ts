@@ -1,21 +1,7 @@
-interface UnlinkPatientArgs {
-  accessToken: string;
-  patientId: string;
-}
+import { nextFetch } from '@/lib/api/next/fetch';
 
-export const unlinkPatient = async ({
-  accessToken,
-  patientId,
-}: UnlinkPatientArgs): Promise<void> => {
-  const res = await fetch(`/api/patients/me/link/${patientId}`, {
+export const unlinkPatient = (patientId: string): Promise<void> =>
+  nextFetch<void>(`/api/patients/me/link/${patientId}`, {
     method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
+    errorMessage: 'Failed to remove patient.',
   });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: 'Failed to remove patient.' }));
-    throw new Error(err?.message ?? 'Failed to remove patient.');
-  }
-};

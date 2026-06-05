@@ -22,6 +22,7 @@ interface PatientPickerDialogProps {
   open: boolean;
   patients: Patient[];
   isLoading: boolean;
+  isSubmitting?: boolean;
   onClose: () => void;
   onConfirm: (patientId: string, concern: string | null) => void;
 }
@@ -32,6 +33,7 @@ export const PatientPickerDialog = ({
   open,
   patients,
   isLoading,
+  isSubmitting = false,
   onClose,
   onConfirm,
 }: PatientPickerDialogProps) => {
@@ -55,7 +57,7 @@ export const PatientPickerDialog = ({
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        onClose();
+        if (!isSubmitting) onClose();
       }
     };
     window.addEventListener('keydown', onKey);
@@ -63,7 +65,7 @@ export const PatientPickerDialog = ({
       window.removeEventListener('keydown', onKey);
       if (previouslyFocused && document.contains(previouslyFocused)) previouslyFocused.focus();
     };
-  }, [open, onClose]);
+  }, [open, onClose, isSubmitting]);
 
   if (!open) return null;
 
@@ -77,7 +79,7 @@ export const PatientPickerDialog = ({
       aria-modal='true'
       aria-labelledby='patient-picker-title'
       onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget && !isSubmitting) onClose();
       }}
     >
       <div className={styles.panel} ref={panelRef} tabIndex={-1}>
@@ -92,6 +94,7 @@ export const PatientPickerDialog = ({
             type='button'
             className={styles.closeBtn}
             onClick={onClose}
+            disabled={isSubmitting}
             aria-label='Close dialog'
           >
             <CloseIcon size={16} />
@@ -160,6 +163,7 @@ export const PatientPickerDialog = ({
                 maxLength={CONCERN_MAX_LENGTH}
                 value={concern}
                 onChange={(e) => setConcern(e.target.value)}
+                disabled={isSubmitting}
                 placeholder='Briefly describe symptoms or what you’d like to discuss'
               />
               <span className={styles.concernCount} aria-live='polite'>
@@ -170,20 +174,20 @@ export const PatientPickerDialog = ({
         </div>
 
         <footer className={styles.actions}>
-          <button type='button' className={styles.btn} onClick={onClose}>
+          <button type='button' className={styles.btn} onClick={onClose} disabled={isSubmitting}>
             Cancel
           </button>
           <button
             type='button'
             className={joinClassNames(styles.btn, styles.btnPrimary)}
-            disabled={!canConfirm}
+            disabled={!canConfirm || isSubmitting}
             onClick={() => {
               if (!selectedId) return;
               const trimmed = concern.trim();
               onConfirm(selectedId, trimmed.length > 0 ? trimmed : null);
             }}
           >
-            Continue
+            {isSubmitting ? 'Booking…' : 'Continue'}
           </button>
         </footer>
       </div>

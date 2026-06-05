@@ -1,12 +1,11 @@
+import { nextFetch } from '@/lib/api/next/fetch';
 import { NurseResult } from './types/nurse-result';
 
 export const getNurseById = async (id: string): Promise<NurseResult> => {
-  const res = await fetch(`/api/nurses/${id}`, { method: 'GET' });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: 'Failed to fetch nurse.' }));
-    throw new Error(err?.message ?? 'Failed to fetch nurse.');
-  }
-
-  return (await res.json()).nurse as NurseResult;
+  const { nurse } = await nextFetch<{ nurse: NurseResult }>(`/api/nurses/${id}`, {
+    method: 'GET',
+    isPublic: true,
+    errorMessage: 'Failed to fetch nurse.',
+  });
+  return nurse;
 };

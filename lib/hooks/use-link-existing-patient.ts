@@ -44,7 +44,6 @@ export const useLinkExistingPatient = ({ accessToken, onLinked }: UseLinkExistin
     setError(null);
     try {
       const patient = await nextApi.patients.lookupPatient({
-        accessToken,
         type,
         value: trimmed,
         dateOfBirth,
@@ -62,7 +61,7 @@ export const useLinkExistingPatient = ({ accessToken, onLinked }: UseLinkExistin
     setIsLinking(true);
     setError(null);
     try {
-      await nextApi.patients.linkExistingPatient({ accessToken, patientId: result.patientId });
+      await nextApi.patients.linkExistingPatient(result.patientId);
       await onLinked();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to link patient.');

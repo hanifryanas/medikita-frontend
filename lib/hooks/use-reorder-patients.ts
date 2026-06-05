@@ -58,10 +58,10 @@ export const useReorderPatients = ({
     setIsSaving(true);
     setError(null);
     try {
-      await nextApi.patients.reorderMyPatients({
-        accessToken,
-        patientIds: [...(selfPatientId ? [selfPatientId] : []), ...draft.map((p) => p.patientId)],
-      });
+      await nextApi.patients.reorderMyPatients([
+        ...(selfPatientId ? [selfPatientId] : []),
+        ...draft.map((p) => p.patientId),
+      ]);
       await onSaved();
       stores.toast.push('success', 'Patient order saved.');
       cancel();

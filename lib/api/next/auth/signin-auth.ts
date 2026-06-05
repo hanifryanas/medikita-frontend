@@ -1,17 +1,11 @@
+import { nextFetch } from '@/lib/api/next/fetch';
 import { SigninPayload } from '@/lib/types/auth/signin-payload';
 import { SigninResult } from './types';
 
-export const signinAuth = async (payload: SigninPayload): Promise<SigninResult> => {
-  const res = await fetch('/api/auth/signin', {
+export const signinAuth = (payload: SigninPayload): Promise<SigninResult> =>
+  nextFetch<SigninResult>('/api/auth/signin', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: payload,
+    isPublic: true,
+    errorMessage: 'Sign in failed.',
   });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: 'Sign in failed.' }));
-    throw new Error(err?.message ?? 'Sign in failed.');
-  }
-
-  return (await res.json()) as SigninResult;
-};

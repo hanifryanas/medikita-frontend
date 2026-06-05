@@ -5,6 +5,7 @@ import { PublicNav } from '@/app/components/navigation';
 import { useCareTeam, useCareTeamSchedule } from '@/lib/hooks';
 import { useStores } from '@/lib/stores';
 import { useOtherPatients, useSelfPatient } from '@/lib/stores/patient-store';
+import { useToastStore } from '@/lib/stores/toast-store';
 import { AuthStatus } from '@/lib/types/auth';
 import { isCareTeamRoleSegment, segmentToCareTeamRole } from '@/lib/types/care-teams';
 import { EmployeeRole } from '@/lib/types/employees';
@@ -36,10 +37,12 @@ export default function CareTeamDetailPage() {
 
   const { careTeam, isLoading, isLoaded } = useCareTeam(role, id);
   const {
+    appointmentStore: { isBooking, createAppointment },
     departmentStore: { getDepartmentByTypeCode },
     authStore: { status: authStatus },
     patientStore: { isLoading: isPatientsLoading },
   } = useStores();
+  const pushToast = useToastStore((s) => s.push);
   const selfPatient = useSelfPatient();
   const otherPatients = useOtherPatients();
   const patients = useMemo(
@@ -71,18 +74,6 @@ export default function CareTeamDetailPage() {
     canBook,
   } = useCareTeamSchedule(careTeam, role);
 
-  const buildBookingHref = (patientId: string, concern: string | null) => {
-    if (!careTeam || !selectedDate || !selectedTime) return '#';
-    const params = new URLSearchParams({
-      careTeam: careTeam.careTeamId,
-      date: formatDate(selectedDate),
-      time: selectedTime,
-      patient: patientId,
-    });
-    if (concern) params.set('concern', concern);
-    return `/appointments?${params.toString()}`;
-  };
-
   const handleBookingClick = () => {
     if (!canBook) return;
     if (authStatus !== AuthStatus.Authenticated) {
@@ -93,9 +84,23 @@ export default function CareTeamDetailPage() {
     setIsPickerOpen(true);
   };
 
-  const handlePatientConfirm = (patientId: string, concern: string | null) => {
-    setIsPickerOpen(false);
-    router.push(buildBookingHref(patientId, concern));
+  const handlePatientConfirm = async (patientId: string, concern: string | null) => {
+    if (!careTeam || !selectedDate || !selectedTime || isBooking) return;
+    try {
+      await createAppointment({
+        patientId,
+        doctorId: careTeam.careTeamId,
+        concern: concern ?? undefined,
+        date: formatDate(selectedDate),
+        timeSlot: selectedTime,
+      });
+      setIsPickerOpen(false);
+      pushToast('success', 'Appointment booked successfully.');
+      router.push('/appointments');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to book appointment.';
+      pushToast('error', message);
+    }
   };
 
   return (
@@ -315,7 +320,10 @@ export default function CareTeamDetailPage() {
         open={isPickerOpen}
         patients={patients}
         isLoading={isPatientsLoading}
-        onClose={() => setIsPickerOpen(false)}
+        isSubmitting={isBooking}
+        onClose={() => {
+          if (!isBooking) setIsPickerOpen(false);
+        }}
         onConfirm={handlePatientConfirm}
       />
     </div>

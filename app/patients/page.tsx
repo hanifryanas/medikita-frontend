@@ -30,7 +30,6 @@ export default function PatientsPage() {
     patientStore: { isLoaded, loadError, fetchPatients },
   } = useStores();
 
-  // Reactive selectors — each hook subscribes to just the slice it needs.
   const selfPatient = useSelfPatient();
   const otherPatients = useOtherPatients();
   const hasSelfPatient = useHasSelfPatient();

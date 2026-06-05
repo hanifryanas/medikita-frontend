@@ -1,3 +1,4 @@
+import { useAppointmentStore } from './appointment-store';
 import { useAuthStore } from './auth-store';
 import { useCareTeamsStore } from './care-teams-store';
 import { useConfirmStore } from './confirm-store';
@@ -10,6 +11,7 @@ import { useToastStore } from './toast-store';
  * Each property subscribes the component to that store's updates.
  */
 export const useStores = () => ({
+  appointmentStore: useAppointmentStore(),
   authStore: useAuthStore(),
   careTeamsStore: useCareTeamsStore(),
   departmentStore: useDepartmentStore(),
@@ -28,6 +30,9 @@ export const useStores = () => ({
  *   }, []);
  */
 export const stores = {
+  get appointment() {
+    return useAppointmentStore.getState();
+  },
   get auth() {
     return useAuthStore.getState();
   },

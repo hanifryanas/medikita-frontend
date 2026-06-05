@@ -34,7 +34,7 @@ export interface PatientStore {
   setPatients: (patients: Patient[]) => void;
   upsertPatient: (patient: Patient) => void;
   removePatient: (patientId: string) => void;
-  fetchPatients: (accessToken: string) => Promise<void>;
+  fetchPatients: () => Promise<void>;
 
   addPatientInsurance: (patientId: string, insurance: PatientInsurance) => void;
   removePatientInsurance: (patientId: string, patientInsuranceId: number) => void;
@@ -108,11 +108,11 @@ export const usePatientStore = create<PatientStore & InternalState>()((set, get)
       return { patientMap: nextPatients, insuranceMap: nextInsurances };
     }),
 
-  fetchPatients: async (accessToken) => {
+  fetchPatients: async () => {
     const loadId = get()._loadId + 1;
     set({ _loadId: loadId, isLoading: true, loadError: null });
     try {
-      const patients = await nextApi.patients.getMyPatients(accessToken);
+      const patients = await nextApi.patients.getMyPatients();
       if (get()._loadId !== loadId) return;
       set({
         patientMap: new Map(patients.map((p) => [p.patientId, p])),

@@ -1,25 +1,10 @@
-interface ReorderMyPatientsArgs {
-  accessToken: string;
-  patientIds: string[];
-}
+import { nextFetch } from '@/lib/api/next/fetch';
 
-export const reorderMyPatients = async ({
-  accessToken,
-  patientIds,
-}: ReorderMyPatientsArgs): Promise<void> => {
-  const res = await fetch('/api/patients/me/order', {
+export const reorderMyPatients = (patientIds: string[]): Promise<void> =>
+  nextFetch<void>('/api/patients/me/order', {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({
+    body: {
       items: patientIds.map((patientId, index) => ({ patientId, ordinal: index + 1 })),
-    }),
+    },
+    errorMessage: 'Failed to update patient order.',
   });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: 'Failed to update patient order.' }));
-    throw new Error(err?.message ?? 'Failed to update patient order.');
-  }
-};

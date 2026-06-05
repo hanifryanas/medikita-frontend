@@ -1,15 +1,10 @@
+import { nextFetch } from '@/lib/api/next/fetch';
 import type { Patient } from '@/lib/types/patients';
 
-export const getMyPatients = async (accessToken: string): Promise<Patient[]> => {
-  const res = await fetch('/api/patients/me', {
+export const getMyPatients = async (): Promise<Patient[]> => {
+  const { patients } = await nextFetch<{ patients: Patient[] }>('/api/patients/me', {
     method: 'GET',
-    headers: { Authorization: `Bearer ${accessToken}` },
+    errorMessage: 'Failed to fetch patients.',
   });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: 'Failed to fetch patients.' }));
-    throw new Error(err?.message ?? 'Failed to fetch patients.');
-  }
-
-  return (await res.json()).patients as Patient[];
+  return patients;
 };

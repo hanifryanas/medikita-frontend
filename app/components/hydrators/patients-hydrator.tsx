@@ -19,7 +19,7 @@ export const PatientHydrator = () => {
     }
 
     const { isLoaded, isLoading, fetchPatients } = usePatientStore.getState();
-    if (!isLoaded && !isLoading) void fetchPatients(accessToken);
+    if (!isLoaded && !isLoading) void fetchPatients();
 
     const onVisibility = () => {
       if (document.visibilityState !== 'visible') return;
@@ -27,7 +27,7 @@ export const PatientHydrator = () => {
       if (state.isLoading) return;
       const stale =
         state.lastFetchedAt === null || Date.now() - state.lastFetchedAt > STALE_AFTER_MS;
-      if (stale) void state.fetchPatients(accessToken);
+      if (stale) void state.fetchPatients();
     };
 
     document.addEventListener('visibilitychange', onVisibility);

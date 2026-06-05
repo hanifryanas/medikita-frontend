@@ -41,7 +41,6 @@ export const usePatientInsuranceForm = ({
     setError(null);
     try {
       const created = await nextApi.patientInsurances.createPatientInsurance({
-        accessToken,
         patientId,
         payload,
       });
@@ -70,7 +69,6 @@ export const usePatientInsuranceForm = ({
     setDeletingId(insurance.patientInsuranceId);
     try {
       await nextApi.patientInsurances.deletePatientInsurance({
-        accessToken,
         patientId,
         patientInsuranceId: insurance.patientInsuranceId,
       });

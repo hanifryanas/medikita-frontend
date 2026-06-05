@@ -1,3 +1,4 @@
+import { appointmentsNextApi } from './appointments';
 import { authNextApi } from './auth';
 import { departmentsNextApi } from './departments';
 import { doctorsNextApi } from './doctors';
@@ -7,6 +8,7 @@ import { patientsNextApi } from './patients';
 
 export const nextApi = {
   auth: authNextApi,
+  appointments: appointmentsNextApi,
   departments: departmentsNextApi,
   doctors: doctorsNextApi,
   nurses: nursesNextApi,

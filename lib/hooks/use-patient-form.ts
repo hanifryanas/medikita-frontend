@@ -42,17 +42,14 @@ export const usePatientForm = ({ accessToken, onChanged }: UsePatientFormArgs) =
     setError(null);
     try {
       await nextApi.patients.createPatient({
-        accessToken,
-        payload: {
-          relationship: formValues.relationship,
-          identityNumber: formValues.identityNumber,
-          firstName: formValues.firstName,
-          lastName: formValues.lastName?.trim() ?? '',
-          gender: formValues.gender,
-          phoneNumber: formValues.phoneNumber,
-          dateOfBirth: formValues.dateOfBirth,
-          ...(formValues.address.trim() ? { address: formValues.address.trim() } : {}),
-        },
+        relationship: formValues.relationship,
+        identityNumber: formValues.identityNumber,
+        firstName: formValues.firstName,
+        lastName: formValues.lastName?.trim() ?? '',
+        gender: formValues.gender,
+        phoneNumber: formValues.phoneNumber,
+        dateOfBirth: formValues.dateOfBirth,
+        ...(formValues.address.trim() ? { address: formValues.address.trim() } : {}),
       });
       // createPatient only returns `{patientId}`, not the full Patient entity,
       // so we refetch to pick up server-assigned fields (mrn, ordinal, age).
@@ -75,7 +72,6 @@ export const usePatientForm = ({ accessToken, onChanged }: UsePatientFormArgs) =
     setError(null);
     try {
       await nextApi.patients.updatePatient({
-        accessToken,
         patientId: target.patientId,
         payload: {
           phoneNumber: payload.phoneNumber,
