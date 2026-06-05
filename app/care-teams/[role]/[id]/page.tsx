@@ -70,6 +70,7 @@ export default function CareTeamDetailPage() {
     setSelectedTime,
     slots,
     bookedSlots,
+    pastSlots,
     monthLabel,
     canBook,
   } = useCareTeamSchedule(careTeam, role);
@@ -266,19 +267,23 @@ export default function CareTeamDetailPage() {
                             slots.map((t) => {
                               const isSelected = selectedTime === t;
                               const isBooked = bookedSlots.has(t);
+                              const isPast = pastSlots.has(t);
+                              const isDisabled = isBooked || isPast;
                               return (
                                 <button
                                   key={t}
                                   type='button'
                                   role='radio'
                                   aria-checked={isSelected}
-                                  disabled={isBooked}
-                                  aria-label={isBooked ? `${t} (booked)` : t}
-                                  onClick={() => !isBooked && setSelectedTime(t)}
+                                  disabled={isDisabled}
+                                  aria-label={
+                                    isBooked ? `${t} (booked)` : isPast ? `${t} (unavailable)` : t
+                                  }
+                                  onClick={() => !isDisabled && setSelectedTime(t)}
                                   className={[
                                     styles.slotPill,
-                                    isSelected && !isBooked && styles.slotPillSelected,
-                                    isBooked && styles.slotPillDisabled,
+                                    isSelected && !isDisabled && styles.slotPillSelected,
+                                    isDisabled && styles.slotPillDisabled,
                                   ]
                                     .filter(Boolean)
                                     .join(' ')}

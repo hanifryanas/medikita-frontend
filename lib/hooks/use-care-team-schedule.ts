@@ -20,6 +20,7 @@ const DAY_INDEX: Record<Day, number> = {
 };
 
 const FALLBACK_SLOT_MINUTES = 20;
+const MINIMUM_LEAD_MINUTES = 60;
 const TIME_FORMAT = 'HH:mm';
 const STRIP_LENGTH = 7;
 
@@ -102,6 +103,7 @@ export interface UseCareTeamScheduleResult {
 
   slots: string[];
   bookedSlots: Set<string>;
+  pastSlots: Set<string>;
 
   monthLabel: string;
   canBook: boolean;
@@ -239,11 +241,22 @@ export function useCareTeamSchedule(
     [selectedDoctorSchedule]
   );
 
-  const slotsKey = `${slots.join(',')}|${Array.from(bookedSlots).join(',')}`;
+  const pastSlots = useMemo(() => {
+    const result = new Set<string>();
+    if (!selectedDate || selectedDate.getTime() !== today.getTime()) return result;
+    const cutoff = addMinutes(new Date(), MINIMUM_LEAD_MINUTES);
+    for (const slot of slots) {
+      const slotAt = parse(slot, TIME_FORMAT, selectedDate);
+      if (slotAt < cutoff) result.add(slot);
+    }
+    return result;
+  }, [selectedDate, today, slots]);
+
+  const slotsKey = `${slots.join(',')}|${Array.from(bookedSlots).join(',')}|${Array.from(pastSlots).join(',')}`;
   const [lastSlotsKey, setLastSlotsKey] = useState(slotsKey);
   if (lastSlotsKey !== slotsKey) {
     setLastSlotsKey(slotsKey);
-    setSelectedTime(slots.find((t) => !bookedSlots.has(t)) ?? null);
+    setSelectedTime(slots.find((t) => !bookedSlots.has(t) && !pastSlots.has(t)) ?? null);
   }
 
   const monthLabel = useMemo(
@@ -252,7 +265,11 @@ export function useCareTeamSchedule(
   );
 
   const canBook = Boolean(
-    selectedDate && selectedSchedule && selectedTime && !bookedSlots.has(selectedTime)
+    selectedDate &&
+    selectedSchedule &&
+    selectedTime &&
+    !bookedSlots.has(selectedTime) &&
+    !pastSlots.has(selectedTime)
   );
 
   const shiftStrip = (deltaDays: number) => {
@@ -276,6 +293,7 @@ export function useCareTeamSchedule(
     setSelectedTime,
     slots,
     bookedSlots,
+    pastSlots,
     monthLabel,
     canBook,
   };
