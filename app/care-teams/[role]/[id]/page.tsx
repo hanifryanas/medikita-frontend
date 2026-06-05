@@ -71,10 +71,17 @@ export default function CareTeamDetailPage() {
     canBook,
   } = useCareTeamSchedule(careTeam, role);
 
-  const buildBookingHref = (patientId: string) =>
-    careTeam && selectedDate && selectedTime
-      ? `/appointments?careTeam=${careTeam.careTeamId}&date=${formatDate(selectedDate)}&time=${selectedTime}&patient=${patientId}`
-      : '#';
+  const buildBookingHref = (patientId: string, concern: string | null) => {
+    if (!careTeam || !selectedDate || !selectedTime) return '#';
+    const params = new URLSearchParams({
+      careTeam: careTeam.careTeamId,
+      date: formatDate(selectedDate),
+      time: selectedTime,
+      patient: patientId,
+    });
+    if (concern) params.set('concern', concern);
+    return `/appointments?${params.toString()}`;
+  };
 
   const handleBookingClick = () => {
     if (!canBook) return;
@@ -86,9 +93,9 @@ export default function CareTeamDetailPage() {
     setIsPickerOpen(true);
   };
 
-  const handlePatientConfirm = (patientId: string) => {
+  const handlePatientConfirm = (patientId: string, concern: string | null) => {
     setIsPickerOpen(false);
-    router.push(buildBookingHref(patientId));
+    router.push(buildBookingHref(patientId, concern));
   };
 
   return (

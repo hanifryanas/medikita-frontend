@@ -188,6 +188,57 @@
   }
 }
 
+.concernField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border-card);
+}
+
+.concernLabel {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: $white;
+}
+
+.concernOptional {
+  font-weight: 400;
+  color: $muted;
+}
+
+.concernInput {
+  width: 100%;
+  resize: vertical;
+  min-height: 72px;
+  max-height: 200px;
+  padding: 0.6rem 0.75rem;
+  background: var(--surface-translucent-hover);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  color: $white;
+  font-family: inherit;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  transition: border-color 0.12s;
+
+  &::placeholder {
+    color: $muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+}
+
+.concernCount {
+  align-self: flex-end;
+  font-size: 0.72rem;
+  color: $muted;
+}
+
 .actions {
   display: flex;
   justify-content: flex-end;

@@ -4,7 +4,7 @@ import { Avatar } from '@/app/components/common';
 import type { Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
 import { joinClassNames } from '@/lib/utils/class-names';
-import { X } from 'lucide-react';
+import { X as CloseIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import styles from './patient-picker-dialog.module.scss';
@@ -23,8 +23,10 @@ interface PatientPickerDialogProps {
   patients: Patient[];
   isLoading: boolean;
   onClose: () => void;
-  onConfirm: (patientId: string) => void;
+  onConfirm: (patientId: string, concern: string | null) => void;
 }
+
+const CONCERN_MAX_LENGTH = 500;
 
 export const PatientPickerDialog = ({
   open,
@@ -34,13 +36,16 @@ export const PatientPickerDialog = ({
   onConfirm,
 }: PatientPickerDialogProps) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [concern, setConcern] = useState('');
   const [lastOpen, setLastOpen] = useState(open);
   const panelRef = useRef<HTMLDivElement | null>(null);
 
-  // Reset selection each time the dialog opens.
   if (lastOpen !== open) {
     setLastOpen(open);
-    if (open) setSelectedId(patients[0]?.patientId ?? null);
+    if (open) {
+      setSelectedId(patients[0]?.patientId ?? null);
+      setConcern('');
+    }
   }
 
   useEffect(() => {
@@ -89,7 +94,7 @@ export const PatientPickerDialog = ({
             onClick={onClose}
             aria-label='Close dialog'
           >
-            <X size={16} />
+            <CloseIcon size={16} />
           </button>
         </header>
 
@@ -142,6 +147,26 @@ export const PatientPickerDialog = ({
               })}
             </ul>
           )}
+
+          {hasPatients && (
+            <div className={styles.concernField}>
+              <label htmlFor='patient-picker-concern' className={styles.concernLabel}>
+                Reason for visit <span className={styles.concernOptional}>(optional)</span>
+              </label>
+              <textarea
+                id='patient-picker-concern'
+                className={styles.concernInput}
+                rows={3}
+                maxLength={CONCERN_MAX_LENGTH}
+                value={concern}
+                onChange={(e) => setConcern(e.target.value)}
+                placeholder='Briefly describe symptoms or what you’d like to discuss'
+              />
+              <span className={styles.concernCount} aria-live='polite'>
+                {concern.length}/{CONCERN_MAX_LENGTH}
+              </span>
+            </div>
+          )}
         </div>
 
         <footer className={styles.actions}>
@@ -152,7 +177,11 @@ export const PatientPickerDialog = ({
             type='button'
             className={joinClassNames(styles.btn, styles.btnPrimary)}
             disabled={!canConfirm}
-            onClick={() => selectedId && onConfirm(selectedId)}
+            onClick={() => {
+              if (!selectedId) return;
+              const trimmed = concern.trim();
+              onConfirm(selectedId, trimmed.length > 0 ? trimmed : null);
+            }}
           >
             Continue
           </button>
