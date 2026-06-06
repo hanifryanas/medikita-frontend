@@ -1,0 +1,59 @@
+@use '../../styles/color' as *;
+
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-card);
+  background: var(--surface);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  font-size: 0.76rem;
+  color: $muted;
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.sep {
+  opacity: 0.5;
+}
+
+.badge {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--border-card);
+  color: $muted;
+  white-space: nowrap;
+}
+
+.badgeAccent {
+  background: rgba(96, 165, 250, 0.14);
+  border-color: rgba(96, 165, 250, 0.4);
+  color: #93c5fd;
+}
