@@ -204,4 +204,7 @@ export const useHasSelfPatient = () =>
 export const usePatientInsurances = (patientId: string): PatientInsurance[] =>
   usePatientStore((s) => s.insuranceMap.get(patientId) ?? EMPTY_INSURANCES);
 
+export const usePatient = (patientId: string | undefined) =>
+  usePatientStore((s) => (patientId ? s.patientMap.get(patientId) : undefined));
+
 const EMPTY_INSURANCES: PatientInsurance[] = [];

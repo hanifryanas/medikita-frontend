@@ -6,11 +6,13 @@ import { useRequireAuth } from '@/lib/hooks';
 import { useAppointment, useAppointmentStore } from '@/lib/stores/appointment-store';
 import { useCareTeamsStore } from '@/lib/stores/care-teams-store';
 import { AuthStatus } from '@/lib/types/auth';
+import { buildCareTeamLink } from '@/lib/types/care-teams';
 import { Status } from '@/lib/types/common';
+import { EmployeeRole } from '@/lib/types/employees';
 import { formatDate } from '@/lib/utils/formatters';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { CheckInPanel } from './_components';
 import styles from './page.module.scss';
 
@@ -30,6 +32,7 @@ const formatTimeSlot = (timeSlot: string) => timeSlot.slice(0, 5);
 
 export default function AppointmentDetailPage() {
   const authStatus = useRequireAuth();
+  const router = useRouter();
   const params = useParams<{ id: string }>();
   const appointmentId = params?.id;
   const appointment = useAppointment(appointmentId);
@@ -74,6 +77,22 @@ export default function AppointmentDetailPage() {
   const patientName = `${appointment.patient.firstName} ${appointment.patient.lastName}`.trim();
   const doctorName = careTeam?.displayName ?? appointment.doctor.displayName ?? 'Doctor';
   const doctorSubtitle = careTeam?.jobTitle;
+
+  const patientHref = `/patients/${appointment.patient.patientId}`;
+  const doctorHref = buildCareTeamLink(EmployeeRole.Doctor, appointment.doctor.doctorId);
+
+  const navigateTo = (href: string | undefined) => () => {
+    if (!href) return;
+    router.push(href);
+  };
+
+  const handleRowKey = (href: string | undefined) => (e: React.KeyboardEvent<HTMLElement>) => {
+    if (!href) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      router.push(href);
+    }
+  };
 
   return (
     <AccountShell>
@@ -130,7 +149,14 @@ export default function AppointmentDetailPage() {
           <section className={styles.card}>
             <h2 className={styles.cardTitle}>People</h2>
 
-            <div className={styles.partyRow}>
+            <div
+              className={`${styles.partyRow} ${styles.partyRowClickable}`}
+              role='button'
+              tabIndex={0}
+              aria-label={`Open patient ${patientName}`}
+              onClick={navigateTo(patientHref)}
+              onKeyDown={handleRowKey(patientHref)}
+            >
               <Avatar
                 name={{
                   firstName: appointment.patient.firstName,
@@ -147,7 +173,14 @@ export default function AppointmentDetailPage() {
               </div>
             </div>
 
-            <div className={styles.partyRow}>
+            <div
+              className={`${styles.partyRow} ${doctorHref ? styles.partyRowClickable : ''}`}
+              role={doctorHref ? 'button' : undefined}
+              tabIndex={doctorHref ? 0 : undefined}
+              aria-label={doctorHref ? `Open doctor ${doctorName}` : undefined}
+              onClick={doctorHref ? navigateTo(doctorHref) : undefined}
+              onKeyDown={doctorHref ? handleRowKey(doctorHref) : undefined}
+            >
               <Avatar
                 name={{
                   fullName: doctorName,
@@ -166,8 +199,17 @@ export default function AppointmentDetailPage() {
 
             {appointment.nurses?.map((nurse) => {
               const nurseName = nurse.employee?.fullName ?? 'Nurse';
+              const nurseHref = buildCareTeamLink(EmployeeRole.Nurse, nurse.nurseId);
               return (
-                <div key={nurse.nurseId} className={styles.partyRow}>
+                <div
+                  key={nurse.nurseId}
+                  className={`${styles.partyRow} ${nurseHref ? styles.partyRowClickable : ''}`}
+                  role={nurseHref ? 'button' : undefined}
+                  tabIndex={nurseHref ? 0 : undefined}
+                  aria-label={nurseHref ? `Open nurse ${nurseName}` : undefined}
+                  onClick={nurseHref ? navigateTo(nurseHref) : undefined}
+                  onKeyDown={nurseHref ? handleRowKey(nurseHref) : undefined}
+                >
                   <Avatar
                     name={{ fullName: nurseName, fallback: 'N' }}
                     photoUrl={nurse.employee?.photoUrl}

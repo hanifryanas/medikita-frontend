@@ -4,6 +4,7 @@ import { Avatar, CardMenu, type CardMenuItem } from '@/app/components/common';
 import type { Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import styles from './patient-card.module.scss';
 
@@ -36,12 +37,44 @@ interface PatientCardProps {
 }
 
 export const PatientCard = ({ patient, reorderControls, menuItems, footer }: PatientCardProps) => {
+  const router = useRouter();
   const fullName = `${patient.firstName} ${patient.lastName}`.trim();
   const relationship = patient.relationship ?? UserRelationship.Other;
   const isSelf = relationship === UserRelationship.Self;
+  const isClickable = !reorderControls;
+
+  const handleOpen = () => router.push(`/patients/${patient.patientId}`);
+
+  const isInteractiveTarget = (target: EventTarget | null) =>
+    target instanceof HTMLElement &&
+    !!target.closest('button, a, input, select, textarea, [data-no-card-nav]');
+
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    if (!isClickable) return;
+    if (isInteractiveTarget(e.target)) return;
+    handleOpen();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (!isClickable) return;
+    if (e.target !== e.currentTarget) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleOpen();
+    }
+  };
 
   return (
-    <article className={`${styles.card} ${reorderControls ? styles.cardReorder : ''}`}>
+    <article
+      className={`${styles.card} ${reorderControls ? styles.cardReorder : ''} ${
+        isClickable ? styles.cardClickable : ''
+      }`}
+      onClick={isClickable ? handleClick : undefined}
+      onKeyDown={isClickable ? handleKeyDown : undefined}
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      aria-label={isClickable ? `Open ${fullName} details` : undefined}
+    >
       {reorderControls && (
         <div className={styles.reorderRail} aria-label='Reorder controls'>
           <button
@@ -106,7 +139,7 @@ export const PatientCard = ({ patient, reorderControls, menuItems, footer }: Pat
             </div>
           )}
         </dl>
-        {footer}
+        {footer && <div data-no-card-nav>{footer}</div>}
       </div>
     </article>
   );
