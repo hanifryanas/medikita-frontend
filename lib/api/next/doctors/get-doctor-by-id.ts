@@ -1,8 +1,8 @@
 import { nextFetch } from '@/lib/api/next/fetch';
-import { DoctorResult } from './types/doctor-result';
+import { DetailDoctorResult } from './types/detail-doctor-result';
 
-export const getDoctorById = async (id: string): Promise<DoctorResult> => {
-  const { doctor } = await nextFetch<{ doctor: DoctorResult }>(`/api/doctors/${id}`, {
+export const getDoctorById = async (id: string): Promise<DetailDoctorResult> => {
+  const { doctor } = await nextFetch<{ doctor: DetailDoctorResult }>(`/api/doctors/${id}`, {
     method: 'GET',
     isPublic: true,
     errorMessage: 'Failed to fetch doctor.',

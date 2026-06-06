@@ -1,8 +1,10 @@
-import { DoctorResult } from '@/lib/api/next/doctors/types/doctor-result';
+import { DetailDoctorResult } from '@/lib/api/next/doctors/types/detail-doctor-result';
 import { DetailedCareTeam } from '@/lib/types/care-teams';
 import { EmployeeRole } from '@/lib/types/employees';
 
-export const sanitizeDoctorResultToDetailedCareTeam = (doctor: DoctorResult): DetailedCareTeam => {
+export const sanitizeDoctorResultToDetailedCareTeam = (
+  doctor: DetailDoctorResult
+): DetailedCareTeam => {
   return {
     careTeamId: doctor.doctorId,
     role: EmployeeRole.Doctor,
@@ -15,5 +17,7 @@ export const sanitizeDoctorResultToDetailedCareTeam = (doctor: DoctorResult): De
     jobTitle: doctor.jobTitle,
     employmentDuration: doctor.employee?.employmentDuration ?? '',
     schedules: doctor.schedules ?? [],
+    age: doctor.employee?.user?.age,
+    patientCount: doctor.patientCount,
   };
 };

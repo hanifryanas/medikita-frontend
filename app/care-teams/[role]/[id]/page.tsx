@@ -10,12 +10,12 @@ import { AuthStatus } from '@/lib/types/auth';
 import { isCareTeamRoleSegment, segmentToCareTeamRole } from '@/lib/types/care-teams';
 import { EmployeeRole } from '@/lib/types/employees';
 import {
-  dayOfMonthFormat,
-  formatDate,
-  weekdayLongFormat,
-  weekdayShortFormat,
+    dayOfMonthFormat,
+    formatDate,
+    weekdayLongFormat,
+    weekdayShortFormat,
 } from '@/lib/utils/formatters';
-import { CalendarPlus, ChevronLeft, ChevronRight, Stethoscope } from 'lucide-react';
+import { BriefcaseMedical, CalendarClock, CalendarPlus, ChevronLeft, ChevronRight, Stethoscope, UserRound, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useMemo, useState, ViewTransition } from 'react';
@@ -168,21 +168,53 @@ export default function CareTeamDetailPage() {
                 <dl className={styles.profileStats}>
                   {careTeam.employmentDuration && (
                     <div className={styles.statItem}>
-                      <dt className={styles.statLabel}>Experience</dt>
-                      <dd className={styles.statValue}>{careTeam.employmentDuration}</dd>
+                      <span className={styles.statIcon} aria-hidden>
+                        <CalendarClock size={16} />
+                      </span>
+                      <div className={styles.statBody}>
+                        <dt className={styles.statLabel}>Experience</dt>
+                        <dd className={styles.statValue}>{careTeam.employmentDuration}</dd>
+                      </div>
+                    </div>
+                  )}
+                  {typeof careTeam.age === 'number' && (
+                    <div className={styles.statItem}>
+                      <span className={styles.statIcon} aria-hidden>
+                        <UserRound size={16} />
+                      </span>
+                      <div className={styles.statBody}>
+                        <dt className={styles.statLabel}>Age</dt>
+                        <dd className={styles.statValue}>{careTeam.age} year(s)</dd>
+                      </div>
+                    </div>
+                  )}
+                  {typeof careTeam.patientCount === 'number' && (
+                    <div className={styles.statItem}>
+                      <span className={styles.statIcon} aria-hidden>
+                        <Users size={16} />
+                      </span>
+                      <div className={styles.statBody}>
+                        <dt className={styles.statLabel}>Patients</dt>
+                        <dd className={styles.statValue}>{careTeam.patientCount}</dd>
+                      </div>
                     </div>
                   )}
                   {department && (
                     <div className={styles.statItem}>
-                      <dt className={styles.statLabel}>Department</dt>
-                      <dd className={styles.statValue}>
-                        <Link
-                          href={`/specialties/${department.typeCode}`}
-                          className={styles.statLink}
-                        >
-                          {department.displayName}
-                        </Link>
-                      </dd>
+                      <span className={styles.statIcon} aria-hidden>
+                        <BriefcaseMedical size={16} />
+                      </span>
+                      <div className={styles.statBody}>
+                        <dt className={styles.statLabel}>Department</dt>
+                        <dd className={styles.statValue}>
+                          <Link
+                            href={`/specialties/${department.typeCode}`}
+                            className={styles.statLink}
+                          >
+                            {department.displayName}
+                          </Link>
+                        </dd>
+                      </div>
                     </div>
                   )}
                 </dl>

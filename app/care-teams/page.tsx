@@ -1,11 +1,12 @@
 import { PublicNav } from '@/app/components/navigation';
 import { nestApi } from '@/lib/api';
+import type { DepartmentResult } from '@/lib/api/next/departments/types/department-result';
 import type { DoctorResult } from '@/lib/api/next/doctors/types/doctor-result';
 import type { NurseResult } from '@/lib/api/next/nurses/types/nurse-result';
 import type { CareTeam } from '@/lib/types/care-teams';
 import {
-  sanitizeDoctorResultToCareTeam,
-  sanitizeNurseResultToCareTeam,
+    sanitizeDoctorResultToCareTeam,
+    sanitizeNurseResultToCareTeam,
 } from '@/lib/utils/sanitizers';
 import { cacheLife, cacheTag } from 'next/cache';
 import { Suspense } from 'react';
@@ -19,14 +20,19 @@ async function getCareTeams(): Promise<CareTeam[]> {
   cacheLife('hours');
   cacheTag('care-teams');
 
-  const [doctors, nurses] = await Promise.all([
+  const [doctors, nurses, departments] = await Promise.all([
     nestApi.get<DoctorResult[]>('doctors'),
     nestApi.get<NurseResult[]>('nurses'),
+    nestApi.get<DepartmentResult[]>('departments'),
   ]);
 
+  const departmentByCode = new Map(
+    departments.map((d) => [d.typeCode, { displayName: d.displayName, iconName: d.iconName }])
+  );
+
   return [
-    ...doctors.map(sanitizeDoctorResultToCareTeam),
-    ...nurses.map(sanitizeNurseResultToCareTeam),
+    ...doctors.map((d) => sanitizeDoctorResultToCareTeam(d, departmentByCode)),
+    ...nurses.map((n) => sanitizeNurseResultToCareTeam(n, departmentByCode)),
   ];
 }
 

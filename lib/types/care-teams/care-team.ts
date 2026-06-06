@@ -5,6 +5,8 @@ export interface CareTeam {
   careTeamId: string;
   role: EmployeeRole.Doctor | EmployeeRole.Nurse;
   departmentTypeCode: string;
+  departmentName?: string;
+  departmentIconName?: string;
   fullName: string;
   displayName: string;
   photoUrl?: string;
