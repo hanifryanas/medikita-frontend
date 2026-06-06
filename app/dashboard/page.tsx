@@ -1,5 +1,6 @@
 'use client';
 
+import { CheckInBadge } from '@/app/components/appointments';
 import { AccountShell } from '@/app/components/layout';
 import { useRequireAuth } from '@/lib/hooks';
 import { useAppointments } from '@/lib/stores/appointment-store';
@@ -50,8 +51,11 @@ export default function DashboardPage() {
     <AccountShell>
       <div className={styles.page}>
         <header className={styles.hero}>
-          <h1 className={styles.heading}>Welcome back, {firstName}</h1>
-          <p className={styles.subtitle}>{today}</p>
+          <div className={styles.heroText}>
+            <h1 className={styles.heading}>Welcome back, {firstName}</h1>
+            <p className={styles.subtitle}>{today}</p>
+          </div>
+          <CheckInBadge />
         </header>
 
         <div className={styles.stats}>

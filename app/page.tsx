@@ -2,6 +2,7 @@ import { nestApi } from '@/lib/api';
 import { HomeStatsResult } from '@/lib/types/home';
 import { hoursToSeconds } from 'date-fns';
 import Link from 'next/link';
+import { CheckInBadge } from './components/appointments';
 import { PublicNav } from './components/navigation';
 import { SearchIcon } from './icons';
 import styles from './page.module.scss';
@@ -77,6 +78,9 @@ export default async function Home() {
         <span className={styles.trustBadge} aria-hidden>
           ✓
         </span>
+      </div>
+      <div className={styles.checkInFloat}>
+        <CheckInBadge />
       </div>
       <div className={styles.statsBar}>
         {stats.map((s) => (

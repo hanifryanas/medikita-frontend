@@ -139,6 +139,22 @@
   }
 }
 
+.checkInFloat {
+  position: absolute;
+  top: 12rem;
+  right: 5rem;
+  z-index: 5;
+
+  @media (max-width: 900px) {
+    top: auto;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+}
+
 .trustBadge {
   display: inline-flex;
   align-items: center;
