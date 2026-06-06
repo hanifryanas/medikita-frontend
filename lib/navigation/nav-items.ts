@@ -9,7 +9,6 @@ export const PUBLIC_NAV_ITEMS: NavItem[] = [
   { label: 'Home', href: '/' },
   { label: 'Our Specialties', href: '/specialties' },
   { label: 'Care Teams', href: '/care-teams' },
-  { label: 'Blog', href: '/blog' },
   { label: 'About', href: '/about' },
 ];
 
