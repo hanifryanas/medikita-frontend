@@ -12,6 +12,8 @@ export interface Appointment {
   timeSlot: string;
   startTime: string | null;
   endTime: string | null;
+  /** ISO timestamp when the patient checked in at the clinic. */
+  checkedInAt: string | null;
   patient: Patient;
   doctor: Doctor;
   nurses?: Nurse[];

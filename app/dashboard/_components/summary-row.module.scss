@@ -11,6 +11,23 @@
   background: var(--surface);
 }
 
+.rowClickable {
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    border-color: $blue-500;
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $blue-500;
+    outline-offset: 2px;
+  }
+}
+
 .info {
   display: flex;
   flex-direction: column;
