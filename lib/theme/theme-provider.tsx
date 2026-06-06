@@ -1,7 +1,7 @@
 'use client';
 
-import { createContext, useContext, useState, type ReactNode } from 'react';
-import { writeThemeCookie, type Theme } from './shared';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { DEFAULT_THEME, THEME_COOKIE, writeThemeCookie, type Theme } from './shared';
 
 interface ThemeContextValue {
   theme: Theme;
@@ -11,20 +11,23 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-interface ThemeProviderProps {
-  initial: Theme;
-  children: ReactNode;
-}
+const readCookieTheme = (): Theme => {
+  if (typeof document === 'undefined') return DEFAULT_THEME;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${THEME_COOKIE}=([^;]*)`));
+  const value = match ? decodeURIComponent(match[1]) : null;
+  return value === 'light' || value === 'dark' ? value : DEFAULT_THEME;
+};
 
-export const ThemeProvider = ({ initial, children }: ThemeProviderProps) => {
-  const [theme, setThemeState] = useState<Theme>(initial);
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  const [theme, setThemeState] = useState<Theme>(readCookieTheme);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
 
   const setTheme = (next: Theme) => {
     setThemeState(next);
-    if (typeof document !== 'undefined') {
-      document.documentElement.dataset.theme = next;
-      writeThemeCookie(next);
-    }
+    writeThemeCookie(next);
   };
 
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -37,7 +40,7 @@ export const ThemeProvider = ({ initial, children }: ThemeProviderProps) => {
 };
 
 export const useTheme = (): ThemeContextValue => {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useTheme must be used within a ThemeProvider');
-  return ctx;
+  const context = useContext(ThemeContext);
+  if (!context) throw new Error('useTheme must be used within a ThemeProvider');
+  return context;
 };

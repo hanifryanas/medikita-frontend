@@ -265,3 +265,26 @@
   color: $muted;
   font-size: 0.95rem;
 }
+
+// ─── Skeleton (Suspense fallback) ───────────────────────
+.skeletonCard {
+  height: 180px;
+  border-radius: 14px;
+  background: linear-gradient(
+    100deg,
+    var(--glass-bg) 30%,
+    rgba(255, 255, 255, 0.06) 50%,
+    var(--glass-bg) 70%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

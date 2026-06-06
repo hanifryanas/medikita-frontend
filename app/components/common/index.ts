@@ -3,6 +3,7 @@ export * from './buttons';
 export * from './card-menu';
 export * from './carousel';
 export * from './dialog';
+export * from './links';
 export * from './pickers';
 export * from './tags';
 export * from './toast';

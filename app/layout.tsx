@@ -1,5 +1,4 @@
 import { ThemeProvider } from '@/lib/theme';
-import { getServerTheme } from '@/lib/theme/server';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ConfirmDialogHost, ToastViewport } from './components/common';
@@ -28,20 +27,22 @@ export const metadata: Metadata = {
   keywords: ['healthcare', 'doctor booking', 'clinic management', 'medical records', 'Indonesia'],
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const theme = await getServerTheme();
-
   return (
-    <html lang='en' data-theme={theme} className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang='en'
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <div id='__initial_splash' aria-hidden='true'>
           <PageLoader />
         </div>
-        <ThemeProvider initial={theme}>
+        <ThemeProvider>
           <Hydrator />
           {children}
           <ConfirmDialogHost />

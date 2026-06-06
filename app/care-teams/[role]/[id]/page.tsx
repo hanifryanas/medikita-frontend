@@ -18,7 +18,7 @@ import {
 import { CalendarPlus, ChevronLeft, ChevronRight, Stethoscope } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, ViewTransition } from 'react';
 import { PatientPickerDialog } from './_components';
 import styles from './page.module.scss';
 
@@ -143,14 +143,16 @@ export default function CareTeamDetailPage() {
             <section className={styles.profileCard} aria-label='Care team information'>
               <div className={styles.profileGlow} aria-hidden />
               <div className={styles.profilePhoto}>
-                <Avatar
-                  photoUrl={careTeam.photoUrl}
-                  name={{ fullName: careTeam.displayName, fallback: '?' }}
-                  size={240}
-                  className={styles.profileAvatar}
-                  imageClassName={styles.profileAvatarImage}
-                  initialClassName={styles.profileAvatarInitial}
-                />
+                <ViewTransition name={`care-team-avatar-${careTeam.careTeamId}`}>
+                  <Avatar
+                    photoUrl={careTeam.photoUrl}
+                    name={{ fullName: careTeam.displayName, fallback: '?' }}
+                    size={240}
+                    className={styles.profileAvatar}
+                    imageClassName={styles.profileAvatarImage}
+                    initialClassName={styles.profileAvatarInitial}
+                  />
+                </ViewTransition>
               </div>
 
               <div className={styles.profileBody}>
@@ -158,7 +160,9 @@ export default function CareTeamDetailPage() {
                   <Stethoscope size={12} />
                   {roleLabel}
                 </span>
-                <h1 className={styles.profileName}>{careTeam.displayName}</h1>
+                <ViewTransition name={`care-team-name-${careTeam.careTeamId}`}>
+                  <h1 className={styles.profileName}>{careTeam.displayName}</h1>
+                </ViewTransition>
                 {careTeam.jobTitle && <p className={styles.profileJob}>{careTeam.jobTitle}</p>}
 
                 <dl className={styles.profileStats}>

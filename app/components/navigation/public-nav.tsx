@@ -1,5 +1,6 @@
 'use client';
 
+import { HoverPrefetchLink } from '@/app/components/common';
 import { MenuIcon } from '@/app/icons';
 import { PUBLIC_NAV_ITEMS } from '@/lib/navigation';
 import { useStores } from '@/lib/stores';
@@ -64,13 +65,13 @@ export const PublicNav = ({ className }: PublicNavProps) => {
             const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
             return (
               <li key={item.href}>
-                <Link
+                <HoverPrefetchLink
                   href={item.href}
                   className={isActive ? styles.linkActive : undefined}
                   onClick={() => setIsOpen(false)}
                 >
                   {item.label}
-                </Link>
+                </HoverPrefetchLink>
               </li>
             );
           })}

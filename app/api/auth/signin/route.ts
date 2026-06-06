@@ -1,11 +1,14 @@
 import { nestApi } from '@/lib/api/nest';
 import { SigninResult } from '@/lib/api/next/auth/types';
+import { setAccessTokenCookie } from '@/lib/auth/server';
 import { appConfig } from '@/lib/config/app-config';
 import { SigninData } from '@/lib/types/auth';
 import { AccountUser } from '@/lib/types/users';
+import { hoursToSeconds } from 'date-fns';
 import { NextRequest, NextResponse } from 'next/server';
 
 const IS_PROD = appConfig.node.env === 'production';
+const REMEMBER_ME_MAX_AGE_SECONDS = hoursToSeconds(24) * 30;
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,8 +40,9 @@ export async function POST(req: NextRequest) {
       secure: IS_PROD,
       sameSite: 'lax',
       path: '/',
-      ...(isRemember ? { maxAge: 60 * 60 * 24 * 30 } : {}),
+      ...(isRemember ? { maxAge: REMEMBER_ME_MAX_AGE_SECONDS } : {}),
     });
+    setAccessTokenCookie(res, accessToken);
 
     return res;
   } catch (err) {

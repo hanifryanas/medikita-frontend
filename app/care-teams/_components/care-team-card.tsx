@@ -7,6 +7,7 @@ import { EmployeeRole } from '@/lib/types/employees';
 import { joinClassNames } from '@/lib/utils/class-names';
 import { formatDay } from '@/lib/utils/formatters';
 import Link from 'next/link';
+import { ViewTransition } from 'react';
 import styles from './care-team-card.module.scss';
 
 interface CareTeamCardProps {
@@ -29,14 +30,18 @@ export const CareTeamCard = ({ careTeam, className }: CareTeamCardProps) => {
   return (
     <Link href={href} className={rootClass}>
       <div className={styles.cardHeader}>
-        <Avatar
-          photoUrl={careTeam.photoUrl}
-          name={{ fullName: name, fallback: '?' }}
-          size={56}
-          className={styles.avatar}
-        />
+        <ViewTransition name={`care-team-avatar-${careTeam.careTeamId}`}>
+          <Avatar
+            photoUrl={careTeam.photoUrl}
+            name={{ fullName: name, fallback: '?' }}
+            size={56}
+            className={styles.avatar}
+          />
+        </ViewTransition>
         <div>
-          <h2 className={styles.cardName}>{name}</h2>
+          <ViewTransition name={`care-team-name-${careTeam.careTeamId}`}>
+            <h2 className={styles.cardName}>{name}</h2>
+          </ViewTransition>
           <p className={styles.cardRole}>{careTeam.jobTitle ?? careTeam.role}</p>
         </div>
       </div>

@@ -1,10 +1,12 @@
 import { nestApi } from '@/lib/api/nest';
 import { HydrateResult } from '@/lib/api/next/auth/types/hydrate-result';
+import { clearAccessTokenCookie, setAccessTokenCookie } from '@/lib/auth/server';
 import { AccountUser } from '@/lib/types/users';
 import { NextRequest, NextResponse } from 'next/server';
 
 const clearRefreshCookie = (res: NextResponse) => {
   res.cookies.set('refreshToken', '', { path: '/', maxAge: 0 });
+  clearAccessTokenCookie(res);
   return res;
 };
 
@@ -43,5 +45,7 @@ export async function POST(req: NextRequest) {
     return clearRefreshCookie(NextResponse.json({ message }, { status: 500 }));
   }
 
-  return NextResponse.json<HydrateResult>({ accessToken, user });
+  const res = NextResponse.json<HydrateResult>({ accessToken, user });
+  setAccessTokenCookie(res, accessToken);
+  return res;
 }

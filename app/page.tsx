@@ -1,13 +1,11 @@
 import { nestApi } from '@/lib/api';
 import { HomeStatsResult } from '@/lib/types/home';
-import { hoursToSeconds } from 'date-fns';
+import { cacheLife, cacheTag } from 'next/cache';
 import Link from 'next/link';
 import { CheckInBadge } from './components/appointments';
 import { PublicNav } from './components/navigation';
 import { SearchIcon } from './icons';
 import styles from './page.module.scss';
-
-export const revalidate = hoursToSeconds(4);
 
 const VIDEO_INTRO_URL =
   'https://res.cloudinary.com/dgkjmnir8/video/upload/v1780371070/mixkit-doctor-writing-prescription-17540-hd-ready_el5wh3.mp4';
@@ -18,6 +16,10 @@ interface Stat {
 }
 
 async function getLandingStats(): Promise<Stat[]> {
+  'use cache';
+  cacheLife('hours');
+  cacheTag('home-stats');
+
   const stats: Stat[] = [];
 
   try {

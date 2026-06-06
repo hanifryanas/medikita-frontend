@@ -1,6 +1,6 @@
 'use client';
 
-import { nextApi } from '@/lib/api/next';
+import { addPatientInsuranceAction, removePatientInsuranceAction } from '@/app/patients/actions';
 import { stores } from '@/lib/stores';
 import type { PatientInsurance, PatientInsurancePayload } from '@/lib/types/patients';
 import { InsuranceProviderType } from '@/lib/types/patients';
@@ -39,21 +39,18 @@ export const usePatientInsuranceForm = ({
     if (!accessToken || !isOpen) return;
     setIsSubmitting(true);
     setError(null);
-    try {
-      const created = await nextApi.patientInsurances.createPatientInsurance({
-        patientId,
-        payload,
-      });
-      stores.patient.addPatientInsurance(patientId, created);
-      stores.toast.push('success', 'Insurance added.');
-      close();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to save insurance.';
-      setError(message);
-      stores.toast.push('error', message);
-    } finally {
-      setIsSubmitting(false);
+    const result = await addPatientInsuranceAction(patientId, payload);
+    setIsSubmitting(false);
+
+    if (!result.ok) {
+      setError(result.error);
+      stores.toast.push('error', result.error);
+      return;
     }
+
+    stores.patient.addPatientInsurance(patientId, result.data);
+    stores.toast.push('success', 'Insurance added.');
+    close();
   };
 
   const remove = async (insurance: PatientInsurance) => {
@@ -67,19 +64,16 @@ export const usePatientInsuranceForm = ({
     if (!confirmed) return;
 
     setDeletingId(insurance.patientInsuranceId);
-    try {
-      await nextApi.patientInsurances.deletePatientInsurance({
-        patientId,
-        patientInsuranceId: insurance.patientInsuranceId,
-      });
-      stores.patient.removePatientInsurance(patientId, insurance.patientInsuranceId);
-      stores.toast.push('success', 'Insurance removed.');
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to remove insurance.';
-      stores.toast.push('error', message);
-    } finally {
-      setDeletingId(null);
+    const result = await removePatientInsuranceAction(patientId, insurance.patientInsuranceId);
+    setDeletingId(null);
+
+    if (!result.ok) {
+      stores.toast.push('error', result.error);
+      return;
     }
+
+    stores.patient.removePatientInsurance(patientId, insurance.patientInsuranceId);
+    stores.toast.push('success', 'Insurance removed.');
   };
 
   return {
