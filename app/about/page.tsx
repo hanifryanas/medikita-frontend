@@ -19,32 +19,42 @@ const HIGHLIGHTS: Highlight[] = [
   {
     tag: 'Architecture',
     title: 'BFF + App Router',
-    body: 'Next.js App Router with a dedicated `/api/*` BFF layer. Server components hit the upstream API directly; browser clients go through cookie-aware proxy routes.',
+    body: 'Next.js App Router with a dedicated `/api/*` BFF layer. Server components hit the NestJS API directly; browser clients go through cookie-aware proxy routes that forward auth without exposing tokens.',
+  },
+  {
+    tag: 'Backend',
+    title: 'NestJS, modular by domain',
+    body: 'Feature-scoped modules (auth, patients, appointments, care-teams) with DI, guards, and pipes. Validation lives at the controller edge so the service layer stays focused on business rules.',
   },
   {
     tag: 'Data',
-    title: 'Modeled for scale',
-    body: 'Access patterns favor partition-friendly reads and hierarchical keys — designed to drop onto Azure Cosmos DB or any horizontally scaled store without rewrites.',
+    title: 'Relational integrity, first',
+    body: 'PostgreSQL via TypeORM with explicit relations, FK constraints, and composite indexes on real query paths. Migrations are checked in — no schema drift between environments.',
   },
   {
-    tag: 'State',
-    title: 'Predictable client state',
-    body: 'Zustand stores grouped by domain (auth, patients, appointments, care-teams) keep client state small, typed, and easy to hydrate from server props.',
+    tag: 'Auth',
+    title: 'Short-lived JWTs + refresh',
+    body: 'Httponly refresh cookie, in-memory access token, silent rotation on 401, and a single round-trip signout that revokes both sides. Server-side guards mirror the client state machine.',
   },
   {
     tag: 'Caching',
     title: 'Tagged & revalidated',
-    body: '`use cache` with `cacheTag` / `cacheLife` for landing data; on-demand revalidation on writes so dashboards stay live without thrashing the origin.',
+    body: '`use cache` with `cacheTag` / `cacheLife` for landing data; on-demand revalidation on writes so dashboards stay live without thrashing the origin or stale-rendering protected views.',
+  },
+  {
+    tag: 'State',
+    title: 'Predictable client state',
+    body: 'Zustand stores grouped by domain keep client state small, typed, and easy to hydrate from server props — no global reducer, no provider pyramid.',
   },
   {
     tag: 'UX',
     title: 'Theme-aware design system',
-    body: 'CSS custom properties driven by a `[data-theme]` runtime switch. SCSS modules per route keep styles colocated and tree-shakable.',
+    body: 'CSS custom properties driven by a `[data-theme]` runtime switch. SCSS modules per route keep styles colocated and tree-shakable, with the same tokens reused everywhere.',
   },
   {
     tag: 'DX',
     title: 'Typed end-to-end',
-    body: 'Strict TypeScript across `lib/types/*`, named date-fns formatters, and lint rules wired into the editor — refactors propagate safely.',
+    body: 'Strict TypeScript across `lib/types/*`, named date-fns formatters, lint rules wired into the editor, and a `/memories/repo` of verified conventions so refactors propagate safely.',
   },
 ];
 
