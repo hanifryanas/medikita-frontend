@@ -9,8 +9,9 @@ import type { CareTeam } from '@/lib/types/care-teams';
 import { Day } from '@/lib/types/common';
 import { EmployeeRole } from '@/lib/types/employees';
 import { useMemo } from 'react';
-import styles from '../page.module.scss';
+import pageStyles from '../page.module.scss';
 import { CareTeamCard } from './care-team-card';
+import styles from './care-teams-page-client.module.scss';
 import { SeedCareTeams } from './seed-care-teams';
 
 const FILTERS: { label: string; value: CareTeamsRoleFilter }[] = [
@@ -209,7 +210,7 @@ export const CareTeamsPageClient = ({ initialCareTeams }: CareTeamsPageClientPro
       {filtered.length === 0 ? (
         <div className={styles.empty}>No team members match your search.</div>
       ) : (
-        <div className={styles.grid}>
+        <div className={pageStyles.grid}>
           {filtered.map((c) => (
             <CareTeamCard key={c.careTeamId} careTeam={c} />
           ))}

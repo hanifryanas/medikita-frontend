@@ -1,4 +1,4 @@
-@use '../../styles/color' as *;
+﻿@use '../../styles/color' as *;
 
 .page {
   display: flex;
@@ -171,64 +171,6 @@
   white-space: pre-wrap;
 }
 
-.checkIn {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  padding: 1.1rem 1.25rem;
-  border-radius: 14px;
-  border: 1px solid var(--border-card);
-  background: var(--glass-bg);
-}
-
-.checkInHead {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.checkInBody {
-  font-size: 0.85rem;
-  color: $muted;
-  margin: 0;
-}
-
-.checkInRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.checkInButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.55rem 1rem;
-  border-radius: 10px;
-  background: $blue-500;
-  color: $white;
-  font-weight: 600;
-  font-size: 0.88rem;
-  border: 1px solid $blue-500;
-  cursor: pointer;
-  transition:
-    opacity 0.15s ease,
-    transform 0.15s ease;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
 .checkedInBadge {
   display: inline-flex;
   align-items: center;
@@ -240,12 +182,6 @@
   background: rgba(74, 222, 128, 0.14);
   border: 1px solid rgba(74, 222, 128, 0.4);
   color: #86efac;
-}
-
-.checkInError {
-  font-size: 0.8rem;
-  color: #fca5a5;
-  margin: 0;
 }
 
 .message {

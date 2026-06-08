@@ -1,4 +1,4 @@
-@use '../styles/color' as *;
+﻿@use '../styles/color' as *;
 
 .page {
   position: relative;
@@ -25,7 +25,7 @@
   }
 }
 
-// ─── Page header ─────────────────────────────────────────
+// --- Page header ---
 .header {
   max-width: 720px;
   display: flex;
@@ -56,181 +56,7 @@
   margin: 0;
 }
 
-// ─── Toolbar (search + filters) ─────────────────────────
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-// Combined search input + mode switcher into a single pill
-.searchGroup {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  min-width: 320px;
-  background: var(--surface-translucent);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  border: 1px solid var(--border-card);
-  border-radius: 10px;
-  overflow: hidden;
-  transition:
-    border-color 0.15s,
-    background 0.15s;
-
-  &:focus-within {
-    border-color: var(--border-card-hover);
-    background: var(--surface-translucent-hover);
-  }
-}
-
-.search {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-}
-
-.searchIcon {
-  position: absolute;
-  top: 50%;
-  left: 0.75rem;
-  transform: translateY(-50%);
-  color: $muted;
-  display: inline-flex;
-  pointer-events: none;
-}
-
-.searchInput {
-  width: 100%;
-  height: 40px;
-  padding: 0 0.875rem 0 2.25rem;
-  background: transparent;
-  border: 0;
-  color: $white;
-  font-size: 0.9rem;
-
-  &::placeholder {
-    color: $muted;
-  }
-
-  &:focus {
-    outline: none;
-  }
-}
-
-.searchModes {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin: 0;
-  padding: 0.25rem;
-  background: var(--glass-bg);
-  border: 0;
-  border-left: 1px solid var(--border-card);
-  border-radius: 0;
-  flex-shrink: 0;
-  align-self: stretch;
-}
-
-.modeBtn {
-  padding: 0.4rem 0.75rem;
-  border-radius: 8px;
-  background: transparent;
-  border: 0;
-  color: $white;
-  font-size: 0.82rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    color 0.15s;
-
-  &:hover {
-    color: $white;
-    background: var(--surface-translucent-hover);
-  }
-}
-
-.modeBtnActive {
-  background: var(--accent-soft);
-  color: $white;
-
-  &:hover {
-    background: var(--accent-soft);
-  }
-}
-
-.filters {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  height: 40px;
-  padding: 0.25rem;
-  background: var(--glass-bg);
-  border: 1px solid var(--border-card);
-  border-radius: 10px;
-}
-
-.filterBtn {
-  padding: 0.4rem 0.75rem;
-  border-radius: 8px;
-  background: transparent;
-  border: 0;
-  color: $white;
-  font-size: 0.82rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    color 0.15s;
-
-  &:hover {
-    color: $white;
-    background: var(--surface-translucent-hover);
-  }
-}
-
-.filterBtnActive {
-  background: var(--accent-soft);
-  color: $white;
-
-  &:hover {
-    background: var(--accent-soft);
-  }
-}
-
-// ─── Active filter tags ─────────────────────────────────
-.activeFilters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.clearAllBtn {
-  padding: 0.35rem 0.75rem;
-  background: transparent;
-  border: 1px solid var(--border-card);
-  border-radius: 999px;
-  color: $muted;
-  font-size: 0.78rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    color 0.15s,
-    border-color 0.15s,
-    background 0.15s;
-
-  &:hover {
-    color: $white;
-    border-color: var(--border-card-hover);
-    background: var(--surface-translucent-hover);
-  }
-}
-
-// ─── Grid ───────────────────────────────────────────────
+// --- Grid (shared by page loading skeleton and client) ---
 .grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -253,20 +79,7 @@
   }
 }
 
-// ─── Empty state ────────────────────────────────────────
-.empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
-  border: 1px dashed var(--border-soft);
-  border-radius: 14px;
-  background: var(--glass-bg);
-  color: $muted;
-  font-size: 0.95rem;
-}
-
-// ─── Skeleton (Suspense fallback) ───────────────────────
+// --- Skeleton (Suspense fallback) ---
 .skeletonCard {
   height: 180px;
   border-radius: 14px;

@@ -8,7 +8,7 @@ import { formatDate } from '@/lib/utils/formatters';
 import { differenceInMinutes } from 'date-fns';
 import { CheckCircle2, LogIn } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import styles from '../page.module.scss';
+import styles from './check-in-panel.module.scss';
 
 const CHECK_IN_WINDOW_MINUTES = 120;
 
