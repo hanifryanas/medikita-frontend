@@ -6,7 +6,7 @@ import type { Department } from '@/lib/types/departments';
 import { BriefcaseMedical, CalendarClock, Stethoscope, UserRound, Users } from 'lucide-react';
 import Link from 'next/link';
 import { ViewTransition } from 'react';
-import styles from '../page.module.scss';
+import styles from './profile-card.module.scss';
 
 interface ProfileCardProps {
   careTeam: DetailedCareTeam;

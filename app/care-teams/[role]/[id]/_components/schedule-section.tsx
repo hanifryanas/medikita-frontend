@@ -9,7 +9,7 @@ import {
     weekdayShortFormat,
 } from '@/lib/utils/formatters';
 import { CalendarPlus, ChevronLeft, ChevronRight } from 'lucide-react';
-import styles from '../page.module.scss';
+import styles from './schedule-section.module.scss';
 
 const trimSeconds = (time: string) => time.slice(0, 5);
 
