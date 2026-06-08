@@ -16,7 +16,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { AuthBrandingPanel, AuthMobileLogo } from '../_components';
+import { AuthBrandingPanel, AuthMobileLogo, PasswordInput } from '../_components';
 import styles from '../auth.module.scss';
 
 export default function SignupPage() {
@@ -34,8 +34,6 @@ export default function SignupPage() {
       router.replace(safeNext ?? '/');
     }
   }, [status, safeNext, router]);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fields, setFields] = useState<SignupFormPayload>({
     identityNumber: '',
@@ -319,26 +317,14 @@ export default function SignupPage() {
               <label htmlFor='password' className={styles.label}>
                 Password
               </label>
-              <div className={styles.passwordField}>
-                <input
-                  id='password'
-                  type={isPasswordVisible ? 'text' : 'password'}
-                  autoComplete='new-password'
-                  placeholder='Min. 8 characters'
-                  value={fields.password}
-                  onChange={(e) => setField('password', e.target.value)}
-                  className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
-                />
-                <button
-                  type='button'
-                  className={styles.passwordToggle}
-                  onClick={() => setIsPasswordVisible((value) => !value)}
-                  aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
-                  aria-pressed={isPasswordVisible}
-                >
-                  {isPasswordVisible ? 'Hide' : 'Show'}
-                </button>
-              </div>
+              <PasswordInput
+                id='password'
+                autoComplete='new-password'
+                placeholder='Min. 8 characters'
+                value={fields.password}
+                onChange={(e) => setField('password', e.target.value)}
+                inputClassName={`${styles.input} ${errors.password ? styles.inputError : ''}`}
+              />
               {errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
             </div>
 
@@ -347,28 +333,15 @@ export default function SignupPage() {
               <label htmlFor='confirmPassword' className={styles.label}>
                 Confirm password
               </label>
-              <div className={styles.passwordField}>
-                <input
-                  id='confirmPassword'
-                  type={isConfirmPasswordVisible ? 'text' : 'password'}
-                  autoComplete='new-password'
-                  placeholder='Repeat password'
-                  value={fields.confirmPassword}
-                  onChange={(e) => setField('confirmPassword', e.target.value)}
-                  className={`${styles.input} ${errors.confirmPassword ? styles.inputError : ''}`}
-                />
-                <button
-                  type='button'
-                  className={styles.passwordToggle}
-                  onClick={() => setIsConfirmPasswordVisible((value) => !value)}
-                  aria-label={
-                    isConfirmPasswordVisible ? 'Hide confirm password' : 'Show confirm password'
-                  }
-                  aria-pressed={isConfirmPasswordVisible}
-                >
-                  {isConfirmPasswordVisible ? 'Hide' : 'Show'}
-                </button>
-              </div>
+              <PasswordInput
+                id='confirmPassword'
+                autoComplete='new-password'
+                placeholder='Repeat password'
+                value={fields.confirmPassword}
+                onChange={(e) => setField('confirmPassword', e.target.value)}
+                inputClassName={`${styles.input} ${errors.confirmPassword ? styles.inputError : ''}`}
+                toggleLabel='confirm password'
+              />
               {errors.confirmPassword && (
                 <span className={styles.errorMsg}>{errors.confirmPassword}</span>
               )}

@@ -11,7 +11,7 @@ import { validateSignin } from '@/lib/validations/auth';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { AuthBrandingPanel, AuthMobileLogo } from '../_components';
+import { AuthBrandingPanel, AuthMobileLogo, PasswordInput } from '../_components';
 import styles from '../auth.module.scss';
 
 export default function SigninPage() {
@@ -29,7 +29,6 @@ export default function SigninPage() {
       router.replace(redirectTarget);
     }
   }, [status, redirectTarget, router]);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fields, setFields] = useState<SigninPayload>({
     identifier: '',
@@ -113,26 +112,14 @@ export default function SigninPage() {
               <label htmlFor='password' className={styles.label}>
                 Password
               </label>
-              <div className={styles.passwordField}>
-                <input
-                  id='password'
-                  type={isPasswordVisible ? 'text' : 'password'}
-                  autoComplete='current-password'
-                  placeholder='••••••••'
-                  value={fields.password}
-                  onChange={(e) => setField('password', e.target.value)}
-                  className={`${styles.input} ${errors.password ? styles.inputError : ''}`}
-                />
-                <button
-                  type='button'
-                  className={styles.passwordToggle}
-                  onClick={() => setIsPasswordVisible((value) => !value)}
-                  aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
-                  aria-pressed={isPasswordVisible}
-                >
-                  {isPasswordVisible ? 'Hide' : 'Show'}
-                </button>
-              </div>
+              <PasswordInput
+                id='password'
+                autoComplete='current-password'
+                placeholder='••••••••'
+                value={fields.password}
+                onChange={(e) => setField('password', e.target.value)}
+                inputClassName={`${styles.input} ${errors.password ? styles.inputError : ''}`}
+              />
               {errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
             </div>
 

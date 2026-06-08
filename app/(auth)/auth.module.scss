@@ -209,14 +209,6 @@
   }
 }
 
-.passwordField {
-  position: relative;
-
-  .input {
-    padding-right: 3.9rem;
-  }
-}
-
 .label {
   font-size: 0.8rem;
   font-weight: 600;
@@ -247,27 +239,6 @@
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--input-focus-ring);
     background: var(--input-bg-focus);
-  }
-}
-
-.passwordToggle {
-  position: absolute;
-  top: 50%;
-  right: 0.875rem;
-  transform: translateY(-50%);
-  border: none;
-  background: transparent;
-  color: $blue-500;
-  font: inherit;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-
-  &:focus-visible {
-    outline: 2px solid rgba(58, 123, 213, 0.35);
-    outline-offset: 2px;
-    border-radius: 4px;
   }
 }
 
