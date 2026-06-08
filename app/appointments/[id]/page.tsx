@@ -1,19 +1,16 @@
-'use client';
+﻿'use client';
 
-import { Avatar } from '@/app/components/common';
 import { AccountShell } from '@/app/components/layout';
 import { useRequireAuth } from '@/lib/hooks';
 import { useAppointment, useAppointmentStore } from '@/lib/stores/appointment-store';
 import { useCareTeamsStore } from '@/lib/stores/care-teams-store';
 import { AuthStatus } from '@/lib/types/auth';
-import { buildCareTeamLink } from '@/lib/types/care-teams';
 import { Status } from '@/lib/types/common';
-import { EmployeeRole } from '@/lib/types/employees';
 import { formatDate } from '@/lib/utils/formatters';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
-import { CheckInPanel } from './_components';
+import { useParams } from 'next/navigation';
+import { CheckInPanel, PeopleSection, VisitDetailsSection } from './_components';
 import styles from './page.module.scss';
 
 const STATUS_LABEL: Record<Status, string> = {
@@ -32,7 +29,6 @@ const formatTimeSlot = (timeSlot: string) => timeSlot.slice(0, 5);
 
 export default function AppointmentDetailPage() {
   const authStatus = useRequireAuth();
-  const router = useRouter();
   const params = useParams<{ id: string }>();
   const appointmentId = params?.id;
   const appointment = useAppointment(appointmentId);
@@ -56,7 +52,7 @@ export default function AppointmentDetailPage() {
       <AccountShell>
         <div className={styles.page}>
           {backLink}
-          <div className={styles.message}>Loading appointment…</div>
+          <div className={styles.message}>Loading appointmentâ€¦</div>
         </div>
       </AccountShell>
     );
@@ -74,25 +70,7 @@ export default function AppointmentDetailPage() {
   }
 
   const start = new Date(`${appointment.date}T${appointment.timeSlot}`);
-  const patientName = `${appointment.patient.firstName} ${appointment.patient.lastName}`.trim();
   const doctorName = careTeam?.displayName ?? appointment.doctor.displayName ?? 'Doctor';
-  const doctorSubtitle = careTeam?.jobTitle;
-
-  const patientHref = `/patients/${appointment.patient.patientId}`;
-  const doctorHref = buildCareTeamLink(EmployeeRole.Doctor, appointment.doctor.doctorId);
-
-  const navigateTo = (href: string | undefined) => () => {
-    if (!href) return;
-    router.push(href);
-  };
-
-  const handleRowKey = (href: string | undefined) => (e: React.KeyboardEvent<HTMLElement>) => {
-    if (!href) return;
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      router.push(href);
-    }
-  };
 
   return (
     <AccountShell>
@@ -103,7 +81,7 @@ export default function AppointmentDetailPage() {
           <div>
             <h1 className={styles.heading}>{formatDate(start, 'EEEE, d MMMM yyyy')}</h1>
             <p className={styles.subtitle}>
-              {formatTimeSlot(appointment.timeSlot)} · with {doctorName}
+              {formatTimeSlot(appointment.timeSlot)} Â· with {doctorName}
             </p>
           </div>
           <span className={`${styles.statusPill} ${STATUS_CLASS[appointment.status]}`}>
@@ -114,115 +92,8 @@ export default function AppointmentDetailPage() {
         <CheckInPanel appointment={appointment} />
 
         <div className={styles.grid}>
-          <section className={styles.card}>
-            <h2 className={styles.cardTitle}>Visit details</h2>
-            <dl className={styles.detailList}>
-              <dt>Date</dt>
-              <dd>{formatDate(start, 'EEEE, d MMMM yyyy')}</dd>
-              <dt>Time</dt>
-              <dd>{formatTimeSlot(appointment.timeSlot)}</dd>
-              {appointment.room && (
-                <>
-                  <dt>Room</dt>
-                  <dd>{appointment.room}</dd>
-                </>
-              )}
-              <dt>Concern</dt>
-              <dd>{appointment.concern || '—'}</dd>
-              {appointment.diagnosis && (
-                <>
-                  <dt>Diagnosis</dt>
-                  <dd>{appointment.diagnosis}</dd>
-                </>
-              )}
-              {appointment.notes && (
-                <>
-                  <dt>Notes</dt>
-                  <dd>
-                    <p className={styles.note}>{appointment.notes}</p>
-                  </dd>
-                </>
-              )}
-            </dl>
-          </section>
-
-          <section className={styles.card}>
-            <h2 className={styles.cardTitle}>People</h2>
-
-            <div
-              className={`${styles.partyRow} ${styles.partyRowClickable}`}
-              role='button'
-              tabIndex={0}
-              aria-label={`Open patient ${patientName}`}
-              onClick={navigateTo(patientHref)}
-              onKeyDown={handleRowKey(patientHref)}
-            >
-              <Avatar
-                name={{
-                  firstName: appointment.patient.firstName,
-                  lastName: appointment.patient.lastName,
-                  fallback: '?',
-                }}
-                size={44}
-              />
-              <div className={styles.partyInfo}>
-                <h3 className={styles.partyName}>{patientName}</h3>
-                <span className={styles.partyMeta}>
-                  Patient · MRN {appointment.patient.medicalRecordNumber}
-                </span>
-              </div>
-            </div>
-
-            <div
-              className={`${styles.partyRow} ${doctorHref ? styles.partyRowClickable : ''}`}
-              role={doctorHref ? 'button' : undefined}
-              tabIndex={doctorHref ? 0 : undefined}
-              aria-label={doctorHref ? `Open doctor ${doctorName}` : undefined}
-              onClick={doctorHref ? navigateTo(doctorHref) : undefined}
-              onKeyDown={doctorHref ? handleRowKey(doctorHref) : undefined}
-            >
-              <Avatar
-                name={{
-                  fullName: doctorName,
-                  fallback: 'D',
-                }}
-                photoUrl={careTeam?.photoUrl}
-                size={44}
-              />
-              <div className={styles.partyInfo}>
-                <h3 className={styles.partyName}>{doctorName}</h3>
-                <span className={styles.partyMeta}>
-                  Doctor{doctorSubtitle ? ` · ${doctorSubtitle}` : ''}
-                </span>
-              </div>
-            </div>
-
-            {appointment.nurses?.map((nurse) => {
-              const nurseName = nurse.employee?.fullName ?? 'Nurse';
-              const nurseHref = buildCareTeamLink(EmployeeRole.Nurse, nurse.nurseId);
-              return (
-                <div
-                  key={nurse.nurseId}
-                  className={`${styles.partyRow} ${nurseHref ? styles.partyRowClickable : ''}`}
-                  role={nurseHref ? 'button' : undefined}
-                  tabIndex={nurseHref ? 0 : undefined}
-                  aria-label={nurseHref ? `Open nurse ${nurseName}` : undefined}
-                  onClick={nurseHref ? navigateTo(nurseHref) : undefined}
-                  onKeyDown={nurseHref ? handleRowKey(nurseHref) : undefined}
-                >
-                  <Avatar
-                    name={{ fullName: nurseName, fallback: 'N' }}
-                    photoUrl={nurse.employee?.photoUrl}
-                    size={44}
-                  />
-                  <div className={styles.partyInfo}>
-                    <h3 className={styles.partyName}>{nurseName}</h3>
-                    <span className={styles.partyMeta}>Nurse</span>
-                  </div>
-                </div>
-              );
-            })}
-          </section>
+          <VisitDetailsSection appointment={appointment} />
+          <PeopleSection appointment={appointment} doctorCareTeam={careTeam} />
         </div>
       </div>
     </AccountShell>

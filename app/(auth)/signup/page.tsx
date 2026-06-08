@@ -16,6 +16,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { AuthBrandingPanel, AuthMobileLogo } from '../_components';
 import styles from '../auth.module.scss';
 
 export default function SignupPage() {
@@ -105,37 +106,21 @@ export default function SignupPage() {
 
   return (
     <div className={styles.page}>
-      {/* ── Left branding panel ── */}
-      <aside className={styles.panel}>
-        <Link href='/' className={styles.panelLogo}>
-          <span className={styles.logoMark}>✚</span>
-          MediKita
-        </Link>
-
-        <div className={styles.panelBody}>
-          <div className={styles.panelBadge}>
-            <span>✚</span>
-            Join 150K+ patients worldwide
-          </div>
-          <h2 className={styles.panelTagline}>
+      <AuthBrandingPanel
+        badgeText='Join 150K+ patients worldwide'
+        tagline={
+          <>
             Compassionate care,
             <br />
             exceptional results.
-          </h2>
-          <p className={styles.panelSub}>
-            Create your free account and get access to expert consultations, appointment scheduling,
-            and your complete health history — all in one secure place.
-          </p>
-        </div>
-      </aside>
+          </>
+        }
+        sub='Create your free account and get access to expert consultations, appointment scheduling, and your complete health history — all in one secure place.'
+      />
 
       {/* ── Right form side ── */}
       <section className={`${styles.formSide} ${styles.formSideCompact}`}>
-        {/* Mobile logo */}
-        <Link href='/' className={styles.mobileLogo}>
-          <span className={styles.logoMark}>✚</span>
-          MediKita
-        </Link>
+        <AuthMobileLogo />
 
         <div className={`${styles.formCard} ${styles.formCardWide}`}>
           <div className={styles.formHeader}>

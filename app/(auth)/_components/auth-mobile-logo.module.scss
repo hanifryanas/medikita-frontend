@@ -1,0 +1,31 @@
+@use '../../styles/color' as *;
+
+// Mobile logo (shown only when branding panel is hidden)
+.mobileLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-on-card);
+  margin-bottom: 2.5rem;
+  align-self: flex-start;
+  cursor: pointer;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.logoMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--text-strong);
+  color: var(--surface);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 700;
+}

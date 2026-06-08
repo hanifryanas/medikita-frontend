@@ -11,6 +11,7 @@ import { validateSignin } from '@/lib/validations/auth';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { AuthBrandingPanel, AuthMobileLogo } from '../_components';
 import styles from '../auth.module.scss';
 
 export default function SigninPage() {
@@ -67,37 +68,21 @@ export default function SigninPage() {
 
   return (
     <div className={styles.page}>
-      {/* ── Left branding panel ── */}
-      <aside className={styles.panel}>
-        <Link href='/' className={styles.panelLogo}>
-          <span className={styles.logoMark}>✚</span>
-          MediKita
-        </Link>
-
-        <div className={styles.panelBody}>
-          <div className={styles.panelBadge}>
-            <span>✚</span>
-            Trusted by 150K+ patients worldwide
-          </div>
-          <h2 className={styles.panelTagline}>
+      <AuthBrandingPanel
+        badgeText='Trusted by 150K+ patients worldwide'
+        tagline={
+          <>
             Your health,
             <br />
             our priority.
-          </h2>
-          <p className={styles.panelSub}>
-            Sign in to manage your appointments, access medical records, and connect with our team
-            of specialists — all in one place.
-          </p>
-        </div>
-      </aside>
+          </>
+        }
+        sub='Sign in to manage your appointments, access medical records, and connect with our team of specialists — all in one place.'
+      />
 
       {/* ── Right form side ── */}
       <section className={styles.formSide}>
-        {/* Mobile logo */}
-        <Link href='/' className={styles.mobileLogo}>
-          <span className={styles.logoMark}>✚</span>
-          MediKita
-        </Link>
+        <AuthMobileLogo />
 
         <div className={styles.formCard}>
           <div className={styles.formHeader}>
