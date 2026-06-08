@@ -1,6 +1,5 @@
-'use client';
+﻿'use client';
 
-import { Avatar } from '@/app/components/common';
 import { PublicNav } from '@/app/components/navigation';
 import { useCareTeam, useCareTeamSchedule } from '@/lib/hooks';
 import { useStores } from '@/lib/stores';
@@ -9,20 +8,13 @@ import { useToastStore } from '@/lib/stores/toast-store';
 import { AuthStatus } from '@/lib/types/auth';
 import { isCareTeamRoleSegment, segmentToCareTeamRole } from '@/lib/types/care-teams';
 import { EmployeeRole } from '@/lib/types/employees';
-import {
-    dayOfMonthFormat,
-    formatDate,
-    weekdayLongFormat,
-    weekdayShortFormat,
-} from '@/lib/utils/formatters';
-import { BriefcaseMedical, CalendarClock, CalendarPlus, ChevronLeft, ChevronRight, Stethoscope, UserRound, Users } from 'lucide-react';
+import { formatDate } from '@/lib/utils/formatters';
+import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useMemo, useState, ViewTransition } from 'react';
-import { PatientPickerDialog } from './_components';
+import { useMemo, useState } from 'react';
+import { PatientPickerDialog, ProfileCard, ScheduleSection } from './_components';
 import styles from './page.module.scss';
-
-const trimSeconds = (time: string) => time.slice(0, 5);
 
 export default function CareTeamDetailPage() {
   const router = useRouter();
@@ -55,25 +47,8 @@ export default function CareTeamDetailPage() {
   const roleLabel = role === EmployeeRole.Nurse ? 'Nurse' : 'Doctor';
   const isDoctor = role === EmployeeRole.Doctor;
 
-  const {
-    today,
-    stripStart,
-    dates,
-    shiftStrip,
-    scheduleByDayIndex,
-    hasSchedule,
-    selectedDateKey,
-    setSelectedDateKey,
-    selectedDate,
-    selectedSchedule,
-    selectedTime,
-    setSelectedTime,
-    slots,
-    bookedSlots,
-    pastSlots,
-    monthLabel,
-    canBook,
-  } = useCareTeamSchedule(careTeam, role);
+  const schedule = useCareTeamSchedule(careTeam, role);
+  const { selectedDate, selectedTime, canBook } = schedule;
 
   const handleBookingClick = () => {
     if (!canBook) return;
@@ -129,7 +104,7 @@ export default function CareTeamDetailPage() {
           </div>
         )}
 
-        {role && isLoading && !isLoaded && <div className={styles.empty}>Loading…</div>}
+        {role && isLoading && !isLoaded && <div className={styles.empty}>Loadingâ€¦</div>}
 
         {role && isLoaded && !careTeam && (
           <div className={styles.empty}>
@@ -139,220 +114,13 @@ export default function CareTeamDetailPage() {
 
         {careTeam && (
           <>
-            {/* ─── Section 1: care-team information ───────────── */}
-            <section className={styles.profileCard} aria-label='Care team information'>
-              <div className={styles.profileGlow} aria-hidden />
-              <div className={styles.profilePhoto}>
-                <ViewTransition name={`care-team-avatar-${careTeam.careTeamId}`}>
-                  <Avatar
-                    photoUrl={careTeam.photoUrl}
-                    name={{ fullName: careTeam.displayName, fallback: '?' }}
-                    size={240}
-                    className={styles.profileAvatar}
-                    imageClassName={styles.profileAvatarImage}
-                    initialClassName={styles.profileAvatarInitial}
-                  />
-                </ViewTransition>
-              </div>
-
-              <div className={styles.profileBody}>
-                <span className={styles.eyebrow}>
-                  <Stethoscope size={12} />
-                  {roleLabel}
-                </span>
-                <ViewTransition name={`care-team-name-${careTeam.careTeamId}`}>
-                  <h1 className={styles.profileName}>{careTeam.displayName}</h1>
-                </ViewTransition>
-                {careTeam.jobTitle && <p className={styles.profileJob}>{careTeam.jobTitle}</p>}
-
-                <dl className={styles.profileStats}>
-                  {careTeam.employmentDuration && (
-                    <div className={styles.statItem}>
-                      <span className={styles.statIcon} aria-hidden>
-                        <CalendarClock size={16} />
-                      </span>
-                      <div className={styles.statBody}>
-                        <dt className={styles.statLabel}>Experience</dt>
-                        <dd className={styles.statValue}>{careTeam.employmentDuration}</dd>
-                      </div>
-                    </div>
-                  )}
-                  {typeof careTeam.age === 'number' && (
-                    <div className={styles.statItem}>
-                      <span className={styles.statIcon} aria-hidden>
-                        <UserRound size={16} />
-                      </span>
-                      <div className={styles.statBody}>
-                        <dt className={styles.statLabel}>Age</dt>
-                        <dd className={styles.statValue}>{careTeam.age} year(s)</dd>
-                      </div>
-                    </div>
-                  )}
-                  {typeof careTeam.patientCount === 'number' && (
-                    <div className={styles.statItem}>
-                      <span className={styles.statIcon} aria-hidden>
-                        <Users size={16} />
-                      </span>
-                      <div className={styles.statBody}>
-                        <dt className={styles.statLabel}>Patients</dt>
-                        <dd className={styles.statValue}>{careTeam.patientCount}</dd>
-                      </div>
-                    </div>
-                  )}
-                  {department && (
-                    <div className={styles.statItem}>
-                      <span className={styles.statIcon} aria-hidden>
-                        <BriefcaseMedical size={16} />
-                      </span>
-                      <div className={styles.statBody}>
-                        <dt className={styles.statLabel}>Department</dt>
-                        <dd className={styles.statValue}>
-                          <Link
-                            href={`/specialties/${department.typeCode}`}
-                            className={styles.statLink}
-                          >
-                            {department.displayName}
-                          </Link>
-                        </dd>
-                      </div>
-                    </div>
-                  )}
-                </dl>
-              </div>
-            </section>
-
-            {/* ─── Section 2: appointment picker ──────────────── */}
-            <section className={styles.scheduleCard} aria-labelledby='schedule-title'>
-              <header className={styles.scheduleHead}>
-                <h2 id='schedule-title' className={styles.sectionTitle}>
-                  Schedule of Availability
-                </h2>
-                <div className={styles.monthNav}>
-                  <button
-                    type='button'
-                    className={styles.monthNavBtn}
-                    onClick={() => shiftStrip(-7)}
-                    disabled={stripStart.getTime() <= today.getTime()}
-                    aria-label='Previous week'
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-                  <span className={styles.monthLabel}>{monthLabel}</span>
-                  <button
-                    type='button'
-                    className={styles.monthNavBtn}
-                    onClick={() => shiftStrip(7)}
-                    aria-label='Next week'
-                  >
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              </header>
-
-              {!hasSchedule ? (
-                <p className={styles.empty}>No schedule available.</p>
-              ) : (
-                <>
-                  <div className={styles.dateStrip} role='radiogroup' aria-label='Available dates'>
-                    {dates.map((d) => {
-                      const isAvailable = scheduleByDayIndex.has(d.getDay());
-                      const isSelected = selectedDateKey === d.toISOString();
-                      const isToday = d.getTime() === today.getTime();
-                      return (
-                        <button
-                          key={d.toISOString()}
-                          type='button'
-                          role='radio'
-                          aria-checked={isSelected}
-                          disabled={!isAvailable}
-                          onClick={() => setSelectedDateKey(d.toISOString())}
-                          className={[
-                            styles.datePill,
-                            isSelected && styles.datePillSelected,
-                            !isAvailable && styles.datePillDisabled,
-                          ]
-                            .filter(Boolean)
-                            .join(' ')}
-                        >
-                          <span className={styles.datePillDay}>
-                            {formatDate(d, weekdayShortFormat)}
-                          </span>
-                          <span className={styles.datePillNumber}>
-                            {formatDate(d, dayOfMonthFormat)}
-                          </span>
-                          {isToday && <span className={styles.todayDot} aria-hidden />}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {selectedSchedule ? (
-                    isDoctor ? (
-                      <>
-                        <div
-                          className={styles.slotsRow}
-                          role='radiogroup'
-                          aria-label='Available times'
-                        >
-                          {slots.length === 0 ? (
-                            <span className={styles.slotsEmpty}>
-                              Window: {trimSeconds(selectedSchedule.startTime)} –{' '}
-                              {trimSeconds(selectedSchedule.endTime)}
-                            </span>
-                          ) : (
-                            slots.map((t) => {
-                              const isSelected = selectedTime === t;
-                              const isBooked = bookedSlots.has(t);
-                              const isPast = pastSlots.has(t);
-                              const isDisabled = isBooked || isPast;
-                              return (
-                                <button
-                                  key={t}
-                                  type='button'
-                                  role='radio'
-                                  aria-checked={isSelected}
-                                  disabled={isDisabled}
-                                  aria-label={
-                                    isBooked ? `${t} (booked)` : isPast ? `${t} (unavailable)` : t
-                                  }
-                                  onClick={() => !isDisabled && setSelectedTime(t)}
-                                  className={[
-                                    styles.slotPill,
-                                    isSelected && !isDisabled && styles.slotPillSelected,
-                                    isDisabled && styles.slotPillDisabled,
-                                  ]
-                                    .filter(Boolean)
-                                    .join(' ')}
-                                >
-                                  {t}
-                                </button>
-                              );
-                            })
-                          )}
-                        </div>
-
-                        <button
-                          type='button'
-                          disabled={!canBook}
-                          aria-disabled={!canBook}
-                          onClick={handleBookingClick}
-                          className={`${styles.bookCta} ${!canBook ? styles.bookCtaDisabled : ''}`}
-                        >
-                          <CalendarPlus size={16} />
-                          Book Appointment
-                        </button>
-                      </>
-                    ) : null
-                  ) : (
-                    <p className={styles.slotsEmpty}>
-                      {selectedDate
-                        ? `${roleLabel} not available on ${formatDate(selectedDate, weekdayLongFormat)}.`
-                        : 'No available days in this week.'}
-                    </p>
-                  )}
-                </>
-              )}
-            </section>
+            <ProfileCard careTeam={careTeam} roleLabel={roleLabel} department={department} />
+            <ScheduleSection
+              schedule={schedule}
+              roleLabel={roleLabel}
+              isDoctor={isDoctor}
+              onBook={handleBookingClick}
+            />
           </>
         )}
       </main>

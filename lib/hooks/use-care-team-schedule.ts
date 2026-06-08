@@ -107,6 +107,8 @@ export interface UseCareTeamScheduleResult {
 
   monthLabel: string;
   canBook: boolean;
+  goToToday: () => void;
+  isOnTodayWeek: boolean;
 }
 
 export function useCareTeamSchedule(
@@ -278,6 +280,9 @@ export function useCareTeamSchedule(
     setStripStart(next);
   };
 
+  const goToToday = () => setStripStart(today);
+  const isOnTodayWeek = stripStart.getTime() === today.getTime();
+
   return {
     today,
     stripStart,
@@ -296,5 +301,7 @@ export function useCareTeamSchedule(
     pastSlots,
     monthLabel,
     canBook,
+    goToToday,
+    isOnTodayWeek,
   };
 }

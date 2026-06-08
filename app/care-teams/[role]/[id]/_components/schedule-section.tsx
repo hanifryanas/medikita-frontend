@@ -3,10 +3,10 @@
 import type { UseCareTeamScheduleResult } from '@/lib/hooks/use-care-team-schedule';
 import { joinClassNames } from '@/lib/utils/class-names';
 import {
-  dayOfMonthFormat,
-  formatDate,
-  weekdayLongFormat,
-  weekdayShortFormat,
+    dayOfMonthFormat,
+    formatDate,
+    weekdayLongFormat,
+    weekdayShortFormat,
 } from '@/lib/utils/formatters';
 import { CalendarPlus, ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from '../page.module.scss';
@@ -41,8 +41,11 @@ export const ScheduleSection = ({
     setSelectedTime,
     slots,
     bookedSlots,
+    pastSlots,
     monthLabel,
     canBook,
+    goToToday,
+    isOnTodayWeek,
   } = schedule;
 
   return (
@@ -52,6 +55,16 @@ export const ScheduleSection = ({
           Schedule of Availability
         </h2>
         <div className={styles.monthNav}>
+          {!isOnTodayWeek && (
+            <button
+              type='button'
+              className={styles.jumpToTodayBtn}
+              onClick={goToToday}
+              aria-label='Jump to current week'
+            >
+              Jump to today
+            </button>
+          )}
           <button
             type='button'
             className={styles.monthNavBtn}
@@ -122,19 +135,23 @@ export const ScheduleSection = ({
                   slots.map((t) => {
                     const isSelected = selectedTime === t;
                     const isBooked = bookedSlots.has(t);
+                    const isPast = pastSlots.has(t);
+                    const isDisabled = isBooked || isPast;
                     return (
                       <button
                         key={t}
                         type='button'
                         role='radio'
                         aria-checked={isSelected}
-                        disabled={isBooked}
-                        aria-label={isBooked ? `${t} (booked)` : t}
-                        onClick={() => !isBooked && setSelectedTime(t)}
+                        disabled={isDisabled}
+                        aria-label={
+                          isBooked ? `${t} (booked)` : isPast ? `${t} (unavailable)` : t
+                        }
+                        onClick={() => !isDisabled && setSelectedTime(t)}
                         className={joinClassNames(
                           styles.slotPill,
-                          isSelected && !isBooked && styles.slotPillSelected,
-                          isBooked && styles.slotPillDisabled
+                          isSelected && !isDisabled && styles.slotPillSelected,
+                          isDisabled && styles.slotPillDisabled
                         )}
                       >
                         {t}
