@@ -4,9 +4,7 @@ import { SubmitButton } from '@/app/components/common';
 import { DatePicker } from '@/app/components/common/pickers';
 import { ImageUploader } from '@/app/components/images';
 import { nextApi } from '@/lib/api/next';
-import { useStores } from '@/lib/stores';
 import type { SignupFormPayload, SignupPayload } from '@/lib/types/auth';
-import { AuthStatus } from '@/lib/types/auth';
 import { UserGenderType } from '@/lib/types/users';
 import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
 import { isSafeRedirectPath } from '@/lib/utils/checkers';
@@ -15,7 +13,7 @@ import { validateSignupForm } from '@/lib/validations/auth';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { AuthBrandingPanel, AuthMobileLogo, PasswordInput } from '../_components';
 import styles from '../auth.module.scss';
 
@@ -25,15 +23,7 @@ export default function SignupPage() {
   const nextParam = searchParams.get('next');
   const safeNext = isSafeRedirectPath(nextParam) ? nextParam : null;
   const signinHref = safeNext ? `/signin?next=${encodeURIComponent(safeNext)}` : '/signin';
-  const {
-    authStore: { status },
-  } = useStores();
 
-  useEffect(() => {
-    if (status === AuthStatus.Authenticated) {
-      router.replace(safeNext ?? '/');
-    }
-  }, [status, safeNext, router]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fields, setFields] = useState<SignupFormPayload>({
     identityNumber: '',

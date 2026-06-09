@@ -4,13 +4,12 @@ import { SubmitButton } from '@/app/components/common';
 import { nextApi } from '@/lib/api/next';
 import { useStores } from '@/lib/stores';
 import type { SigninPayload } from '@/lib/types/auth';
-import { AuthStatus } from '@/lib/types/auth';
 import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
 import { isSafeRedirectPath } from '@/lib/utils/checkers';
 import { validateSignin } from '@/lib/validations/auth';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { AuthBrandingPanel, AuthMobileLogo, PasswordInput } from '../_components';
 import styles from '../auth.module.scss';
 
@@ -21,14 +20,9 @@ export default function SigninPage() {
   const safeNext = isSafeRedirectPath(nextParam) ? nextParam : null;
   const redirectTarget = safeNext ?? '/';
   const {
-    authStore: { signin, status },
+    authStore: { signin },
   } = useStores();
 
-  useEffect(() => {
-    if (status === AuthStatus.Authenticated) {
-      router.replace(redirectTarget);
-    }
-  }, [status, redirectTarget, router]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fields, setFields] = useState<SigninPayload>({
     identifier: '',
