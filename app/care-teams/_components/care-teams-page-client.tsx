@@ -8,6 +8,7 @@ import { CareTeamsRoleFilter } from '@/lib/stores/care-teams-store';
 import type { CareTeam } from '@/lib/types/care-teams';
 import { Day } from '@/lib/types/common';
 import { EmployeeRole } from '@/lib/types/employees';
+import { formatDay } from '@/lib/utils/formatters';
 import { useMemo } from 'react';
 import pageStyles from '../page.module.scss';
 import { CareTeamCard } from './care-team-card';
@@ -26,25 +27,10 @@ const SEARCH_MODES = [
   { label: 'Days', value: 'days' as const },
 ];
 
-const DAY_OPTIONS: { value: Day; label: string }[] = [
-  { value: Day.Monday, label: 'Mon' },
-  { value: Day.Tuesday, label: 'Tue' },
-  { value: Day.Wednesday, label: 'Wed' },
-  { value: Day.Thursday, label: 'Thu' },
-  { value: Day.Friday, label: 'Fri' },
-  { value: Day.Saturday, label: 'Sat' },
-  { value: Day.Sunday, label: 'Sun' },
-];
-
-const DAY_LABEL: Record<Day, string> = {
-  [Day.Monday]: 'Mon',
-  [Day.Tuesday]: 'Tue',
-  [Day.Wednesday]: 'Wed',
-  [Day.Thursday]: 'Thu',
-  [Day.Friday]: 'Fri',
-  [Day.Saturday]: 'Sat',
-  [Day.Sunday]: 'Sun',
-};
+const DAY_OPTIONS: { value: Day; label: string }[] = Object.values(Day).map((value) => ({
+  value,
+  label: formatDay(value),
+}));
 
 interface CareTeamsPageClientProps {
   initialCareTeams: CareTeam[];
@@ -195,9 +181,9 @@ export const CareTeamsPageClient = ({ initialCareTeams }: CareTeamsPageClientPro
               key={`day-${day}`}
               label='Day:'
               onRemove={() => toggleDay(day)}
-              removeAriaLabel={`Remove ${DAY_LABEL[day]} filter`}
+              removeAriaLabel={`Remove ${formatDay(day)} filter`}
             >
-              {DAY_LABEL[day]}
+              {formatDay(day)}
             </Tag>
           ))}
 
