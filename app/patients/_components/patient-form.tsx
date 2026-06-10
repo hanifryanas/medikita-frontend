@@ -5,19 +5,10 @@ import { DatePicker } from '@/app/components/common/pickers';
 import type { CreatePatientFormPayload } from '@/lib/types/patients';
 import { UserGenderType, UserRelationship } from '@/lib/types/users';
 import { isValidationResultValid, type FormValidationResult } from '@/lib/types/validations';
-import { digitStringFormatter } from '@/lib/utils/formatters';
+import { digitStringFormatter, USER_RELATIONSHIP_OPTIONS } from '@/lib/utils/formatters';
 import { validateCreatePatientForm } from '@/lib/validations/patients';
 import { useState } from 'react';
 import styles from './patient-form.module.scss';
-
-const RELATIONSHIP_OPTIONS: { value: UserRelationship; label: string }[] = [
-  { value: UserRelationship.Self, label: 'Self' },
-  { value: UserRelationship.Spouse, label: 'Spouse' },
-  { value: UserRelationship.Child, label: 'Child' },
-  { value: UserRelationship.Parent, label: 'Parent' },
-  { value: UserRelationship.Sibling, label: 'Sibling' },
-  { value: UserRelationship.Other, label: 'Other' },
-];
 
 const emptyForm = (): CreatePatientFormPayload => ({
   relationship: UserRelationship.Child,
@@ -94,7 +85,7 @@ export const PatientForm = ({
           disabled={lockRelationshipToSelf}
           className={`${styles.input} ${errors.relationship ? styles.inputError : ''}`}
         >
-          {RELATIONSHIP_OPTIONS.map((opt) => (
+          {USER_RELATIONSHIP_OPTIONS.map((opt) => (
             <option
               key={opt.value}
               value={opt.value}

@@ -6,26 +6,18 @@ import { useAppointment, useAppointmentStore } from '@/lib/stores/appointment-st
 import { useCareTeamsStore } from '@/lib/stores/care-teams-store';
 import { AuthStatus } from '@/lib/types/auth';
 import { Status } from '@/lib/types/common';
-import { formatDate } from '@/lib/utils/formatters';
+import { formatDate, formatTimeSlot, STATUS_LABEL } from '@/lib/utils/formatters';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { CheckInPanel, PeopleSection, VisitDetailsSection } from './_components';
 import styles from './page.module.scss';
 
-const STATUS_LABEL: Record<Status, string> = {
-  [Status.Incompleted]: 'Upcoming',
-  [Status.Completed]: 'Completed',
-  [Status.Cancelled]: 'Cancelled',
-};
-
 const STATUS_CLASS: Record<Status, string> = {
   [Status.Incompleted]: styles.statusIncompleted,
   [Status.Completed]: styles.statusCompleted,
   [Status.Cancelled]: styles.statusCancelled,
 };
-
-const formatTimeSlot = (timeSlot: string) => timeSlot.slice(0, 5);
 
 export default function AppointmentDetailPage() {
   const authStatus = useRequireAuth();

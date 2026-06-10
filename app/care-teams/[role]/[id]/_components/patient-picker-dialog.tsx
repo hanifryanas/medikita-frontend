@@ -4,19 +4,11 @@ import { Avatar } from '@/app/components/common';
 import type { Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
 import { joinClassNames } from '@/lib/utils/class-names';
+import { USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
 import { X as CloseIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import styles from './patient-picker-dialog.module.scss';
-
-const RELATIONSHIP_LABELS: Record<UserRelationship, string> = {
-  [UserRelationship.Self]: 'Self',
-  [UserRelationship.Spouse]: 'Spouse',
-  [UserRelationship.Child]: 'Child',
-  [UserRelationship.Parent]: 'Parent',
-  [UserRelationship.Sibling]: 'Sibling',
-  [UserRelationship.Other]: 'Other',
-};
 
 interface PatientPickerDialogProps {
   open: boolean;
@@ -133,7 +125,9 @@ export const PatientPickerDialog = ({
                       <div className={styles.rowBody}>
                         <span className={styles.rowName}>{fullName}</span>
                         <span className={styles.rowMeta}>
-                          <span className={styles.rowTag}>{RELATIONSHIP_LABELS[relationship]}</span>
+                          <span className={styles.rowTag}>
+                            {USER_RELATIONSHIP_LABEL[relationship]}
+                          </span>
                           <span aria-hidden>•</span>
                           <span>MRN {p.medicalRecordNumber}</span>
                           <span aria-hidden>•</span>

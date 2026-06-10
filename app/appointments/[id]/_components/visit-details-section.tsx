@@ -1,8 +1,6 @@
 import type { Appointment } from '@/lib/types/appointment';
-import { formatDate } from '@/lib/utils/formatters';
+import { formatDate, formatTimeSlot } from '@/lib/utils/formatters';
 import styles from './visit-details-section.module.scss';
-
-const formatTimeSlot = (timeSlot: string) => timeSlot.slice(0, 5);
 
 interface VisitDetailsSectionProps {
   appointment: Appointment;

@@ -7,21 +7,13 @@ import { useStores } from '@/lib/stores';
 import { usePatient, usePatientStore } from '@/lib/stores/patient-store';
 import { AuthStatus } from '@/lib/types/auth';
 import { UserRelationship } from '@/lib/types/users';
+import { USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { PatientInsuranceSection } from '../_components';
 import { PatientAppointmentsSection, PatientProfileCard } from './_components';
 import styles from './page.module.scss';
-
-const RELATIONSHIP_LABELS: Record<UserRelationship, string> = {
-  [UserRelationship.Self]: 'Self',
-  [UserRelationship.Spouse]: 'Spouse',
-  [UserRelationship.Child]: 'Child',
-  [UserRelationship.Parent]: 'Parent',
-  [UserRelationship.Sibling]: 'Sibling',
-  [UserRelationship.Other]: 'Other',
-};
 
 export default function PatientDetailPage() {
   const authStatus = useRequireAuth();
@@ -84,7 +76,7 @@ export default function PatientDetailPage() {
               <span
                 className={`${styles.relationshipBadge} ${isSelf ? styles.relationshipSelf : ''}`}
               >
-                {RELATIONSHIP_LABELS[relationship]}
+                {USER_RELATIONSHIP_LABEL[relationship]}
               </span>
             </div>
             <p className={styles.subtitle}>

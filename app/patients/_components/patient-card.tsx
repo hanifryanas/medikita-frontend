@@ -3,19 +3,11 @@
 import { Avatar, CardMenu, type CardMenuItem } from '@/app/components/common';
 import type { Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
+import { USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import styles from './patient-card.module.scss';
-
-const RELATIONSHIP_LABELS: Record<UserRelationship, string> = {
-  [UserRelationship.Self]: 'Self',
-  [UserRelationship.Spouse]: 'Spouse',
-  [UserRelationship.Child]: 'Child',
-  [UserRelationship.Parent]: 'Parent',
-  [UserRelationship.Sibling]: 'Sibling',
-  [UserRelationship.Other]: 'Other',
-};
 
 interface PatientCardProps {
   patient: Patient;
@@ -114,7 +106,7 @@ export const PatientCard = ({ patient, reorderControls, menuItems, footer }: Pat
             </p>
           </div>
           <span className={`${styles.relationshipBadge} ${isSelf ? styles.relationshipSelf : ''}`}>
-            {RELATIONSHIP_LABELS[relationship]}
+            {USER_RELATIONSHIP_LABEL[relationship]}
           </span>
           {menuItems && menuItems.length > 0 && (
             <CardMenu items={menuItems} ariaLabel={`Actions for ${fullName}`} />

@@ -2,11 +2,10 @@
 
 import { useCareTeamsStore } from '@/lib/stores/care-teams-store';
 import type { Appointment } from '@/lib/types/appointment';
+import { formatTimeSlot } from '@/lib/utils/formatters';
 import { useRouter } from 'next/navigation';
 import { DateBlock } from './date-block';
 import { SummaryRow } from './summary-row';
-
-const formatTimeSlot = (timeSlot: string) => timeSlot.slice(0, 5);
 
 interface AppointmentRowProps {
   appointment: Appointment;

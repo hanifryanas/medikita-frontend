@@ -3,16 +3,8 @@
 import { Avatar } from '@/app/components/common';
 import type { Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
+import { USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
 import { SummaryRow } from './summary-row';
-
-const RELATIONSHIP_LABELS: Record<UserRelationship, string> = {
-  [UserRelationship.Self]: 'Self',
-  [UserRelationship.Spouse]: 'Spouse',
-  [UserRelationship.Child]: 'Child',
-  [UserRelationship.Parent]: 'Parent',
-  [UserRelationship.Sibling]: 'Sibling',
-  [UserRelationship.Other]: 'Other',
-};
 
 interface PatientRowProps {
   patient: Patient;
@@ -34,7 +26,7 @@ export const PatientRow = ({ patient }: PatientRowProps) => {
       title={fullName}
       metaItems={[`MRN ${patient.medicalRecordNumber}`, `${patient.age} yrs`]}
       badge={{
-        label: RELATIONSHIP_LABELS[relationship],
+        label: USER_RELATIONSHIP_LABEL[relationship],
         tone: isSelf ? 'accent' : 'neutral',
       }}
     />

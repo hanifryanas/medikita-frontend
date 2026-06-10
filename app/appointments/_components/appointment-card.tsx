@@ -3,23 +3,15 @@
 import { useCareTeamsStore } from '@/lib/stores/care-teams-store';
 import type { Appointment } from '@/lib/types/appointment';
 import { Status } from '@/lib/types/common';
-import { formatDate } from '@/lib/utils/formatters';
+import { formatDate, formatTimeSlot, STATUS_LABEL } from '@/lib/utils/formatters';
 import { useRouter } from 'next/navigation';
 import styles from './appointment-card.module.scss';
-
-const STATUS_LABEL: Record<Status, string> = {
-  [Status.Incompleted]: 'Upcoming',
-  [Status.Completed]: 'Completed',
-  [Status.Cancelled]: 'Cancelled',
-};
 
 const STATUS_CLASS: Record<Status, string> = {
   [Status.Incompleted]: styles.statusIncompleted,
   [Status.Completed]: styles.statusCompleted,
   [Status.Cancelled]: styles.statusCancelled,
 };
-
-const formatTimeSlot = (timeSlot: string) => timeSlot.slice(0, 5);
 
 interface AppointmentCardProps {
   appointment: Appointment;
