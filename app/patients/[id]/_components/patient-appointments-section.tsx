@@ -20,13 +20,22 @@ export const PatientAppointmentsSection = ({
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
+  const fetchKey = patientId && authStatus === AuthStatus.Authenticated ? patientId : null;
+  const [lastFetchKey, setLastFetchKey] = useState<string | null>(null);
+
+  if (lastFetchKey !== fetchKey) {
+    setLastFetchKey(fetchKey);
+    if (fetchKey) {
+      setIsLoading(true);
+      setLoadError(null);
+    }
+  }
+
   useEffect(() => {
-    if (!patientId || authStatus !== AuthStatus.Authenticated) return;
+    if (!fetchKey) return;
     let cancelled = false;
-    setIsLoading(true);
-    setLoadError(null);
     nextApi.appointments
-      .getPatientAppointments(patientId)
+      .getPatientAppointments(fetchKey)
       .then((rows) => {
         if (cancelled) return;
         setAppointments(rows);
@@ -42,7 +51,7 @@ export const PatientAppointmentsSection = ({
     return () => {
       cancelled = true;
     };
-  }, [patientId, authStatus]);
+  }, [fetchKey]);
 
   const sortedAppointments = useMemo(
     () =>

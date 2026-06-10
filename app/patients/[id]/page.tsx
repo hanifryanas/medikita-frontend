@@ -7,7 +7,7 @@ import { useStores } from '@/lib/stores';
 import { usePatient, usePatientStore } from '@/lib/stores/patient-store';
 import { AuthStatus } from '@/lib/types/auth';
 import { UserRelationship } from '@/lib/types/users';
-import { USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
+import { formatFullName, USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -56,7 +56,7 @@ export default function PatientDetailPage() {
     );
   }
 
-  const fullName = `${patient.firstName} ${patient.lastName}`.trim();
+  const fullName = formatFullName(patient);
   const relationship = patient.relationship ?? UserRelationship.Other;
   const isSelf = relationship === UserRelationship.Self;
 

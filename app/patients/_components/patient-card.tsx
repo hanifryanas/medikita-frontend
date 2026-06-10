@@ -3,7 +3,7 @@
 import { Avatar, CardMenu, type CardMenuItem } from '@/app/components/common';
 import type { Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
-import { USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
+import { formatFullName, USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
@@ -18,19 +18,12 @@ interface PatientCardProps {
     onMoveDown: () => void;
   };
   menuItems?: CardMenuItem[];
-  /**
-   * Optional footer slot rendered below the patient details. Used by the
-   * patients page to mount `<PatientInsuranceSection />`; kept as a slot so
-   * `PatientCard` stays reusable in non-authenticated previews (e.g. the
-   * link-existing-patient lookup result) where insurance editing must not
-   * be exposed.
-   */
   footer?: ReactNode;
 }
 
 export const PatientCard = ({ patient, reorderControls, menuItems, footer }: PatientCardProps) => {
   const router = useRouter();
-  const fullName = `${patient.firstName} ${patient.lastName}`.trim();
+  const fullName = formatFullName(patient);
   const relationship = patient.relationship ?? UserRelationship.Other;
   const isSelf = relationship === UserRelationship.Self;
   const isClickable = !reorderControls;

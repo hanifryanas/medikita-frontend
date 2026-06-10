@@ -2,6 +2,7 @@
 
 import { useAppointments } from '@/lib/stores/appointment-store';
 import { Status } from '@/lib/types/common';
+import { formatFullName } from '@/lib/utils/formatters';
 import { differenceInMinutes, secondsToMilliseconds } from 'date-fns';
 import { ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -39,7 +40,7 @@ export const CheckInBadge = () => {
 
   const isMulti = eligible.length > 1;
   const target = eligible[0];
-  const patientName = `${target.patient.firstName} ${target.patient.lastName}`.trim();
+  const patientName = formatFullName(target.patient);
 
   const handleClick = () => {
     if (isMulti) {

@@ -3,7 +3,7 @@
 import { useCareTeamsStore } from '@/lib/stores/care-teams-store';
 import type { Appointment } from '@/lib/types/appointment';
 import { Status } from '@/lib/types/common';
-import { formatDate, formatTimeSlot, STATUS_LABEL } from '@/lib/utils/formatters';
+import { formatDate, formatFullName, formatTimeSlot, STATUS_LABEL } from '@/lib/utils/formatters';
 import { useRouter } from 'next/navigation';
 import styles from './appointment-card.module.scss';
 
@@ -22,7 +22,7 @@ export const AppointmentCard = ({ appointment }: AppointmentCardProps) => {
   const careTeam = useCareTeamsStore((s) => s.careTeamMap.get(appointment.doctor.doctorId));
 
   const start = new Date(`${appointment.date}T${appointment.timeSlot}`);
-  const patientName = `${appointment.patient.firstName} ${appointment.patient.lastName}`.trim();
+  const patientName = formatFullName(appointment.patient);
   const doctorName = careTeam?.displayName ?? appointment.doctor.displayName ?? 'Doctor';
   const doctorSubtitle = careTeam?.jobTitle;
 

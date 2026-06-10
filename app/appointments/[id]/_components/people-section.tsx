@@ -5,6 +5,7 @@ import type { Appointment } from '@/lib/types/appointment';
 import type { CareTeam } from '@/lib/types/care-teams';
 import { buildCareTeamLink } from '@/lib/types/care-teams';
 import { EmployeeRole } from '@/lib/types/employees';
+import { formatFullName } from '@/lib/utils/formatters';
 import { useRouter } from 'next/navigation';
 import type { KeyboardEvent, ReactNode } from 'react';
 import styles from './people-section.module.scss';
@@ -53,7 +54,7 @@ interface PeopleSectionProps {
 }
 
 export const PeopleSection = ({ appointment, doctorCareTeam }: PeopleSectionProps) => {
-  const patientName = `${appointment.patient.firstName} ${appointment.patient.lastName}`.trim();
+  const patientName = formatFullName(appointment.patient);
   const doctorName = doctorCareTeam?.displayName ?? appointment.doctor.displayName ?? 'Doctor';
   const doctorSubtitle = doctorCareTeam?.jobTitle;
 

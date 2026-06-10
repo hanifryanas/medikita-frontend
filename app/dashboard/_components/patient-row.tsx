@@ -3,7 +3,7 @@
 import { Avatar } from '@/app/components/common';
 import type { Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
-import { USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
+import { formatFullName, USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
 import { SummaryRow } from './summary-row';
 
 interface PatientRowProps {
@@ -13,7 +13,7 @@ interface PatientRowProps {
 export const PatientRow = ({ patient }: PatientRowProps) => {
   const relationship = patient.relationship ?? UserRelationship.Other;
   const isSelf = relationship === UserRelationship.Self;
-  const fullName = `${patient.firstName} ${patient.lastName}`.trim();
+  const fullName = formatFullName(patient);
 
   return (
     <SummaryRow

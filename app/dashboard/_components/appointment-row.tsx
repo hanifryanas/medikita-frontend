@@ -2,7 +2,7 @@
 
 import { useCareTeamsStore } from '@/lib/stores/care-teams-store';
 import type { Appointment } from '@/lib/types/appointment';
-import { formatTimeSlot } from '@/lib/utils/formatters';
+import { formatFullName, formatTimeSlot } from '@/lib/utils/formatters';
 import { useRouter } from 'next/navigation';
 import { DateBlock } from './date-block';
 import { SummaryRow } from './summary-row';
@@ -16,7 +16,7 @@ export const AppointmentRow = ({ appointment }: AppointmentRowProps) => {
   const careTeam = useCareTeamsStore((s) => s.careTeamMap.get(appointment.doctor.doctorId));
   const start = new Date(`${appointment.date}T${appointment.timeSlot}`);
   const doctorName = careTeam?.displayName ?? appointment.doctor.displayName ?? 'Doctor';
-  const patientName = `${appointment.patient.firstName} ${appointment.patient.lastName}`.trim();
+  const patientName = formatFullName(appointment.patient);
 
   return (
     <SummaryRow

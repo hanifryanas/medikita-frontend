@@ -3,15 +3,14 @@
 import type { UseCareTeamScheduleResult } from '@/lib/hooks/use-care-team-schedule';
 import { joinClassNames } from '@/lib/utils/class-names';
 import {
-    dayOfMonthFormat,
-    formatDate,
-    weekdayLongFormat,
-    weekdayShortFormat,
+  dayOfMonthFormat,
+  formatDate,
+  formatTimeSlot,
+  weekdayLongFormat,
+  weekdayShortFormat,
 } from '@/lib/utils/formatters';
 import { CalendarPlus, ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './schedule-section.module.scss';
-
-const trimSeconds = (time: string) => time.slice(0, 5);
 
 interface ScheduleSectionProps {
   schedule: UseCareTeamScheduleResult;
@@ -128,8 +127,8 @@ export const ScheduleSection = ({
               <div className={styles.slotsRow} role='radiogroup' aria-label='Available times'>
                 {slots.length === 0 ? (
                   <span className={styles.slotsEmpty}>
-                    Window: {trimSeconds(selectedSchedule.startTime)} –{' '}
-                    {trimSeconds(selectedSchedule.endTime)}
+                    Window: {formatTimeSlot(selectedSchedule.startTime)} –{' '}
+                    {formatTimeSlot(selectedSchedule.endTime)}
                   </span>
                 ) : (
                   slots.map((t) => {
@@ -144,9 +143,7 @@ export const ScheduleSection = ({
                         role='radio'
                         aria-checked={isSelected}
                         disabled={isDisabled}
-                        aria-label={
-                          isBooked ? `${t} (booked)` : isPast ? `${t} (unavailable)` : t
-                        }
+                        aria-label={isBooked ? `${t} (booked)` : isPast ? `${t} (unavailable)` : t}
                         onClick={() => !isDisabled && setSelectedTime(t)}
                         className={joinClassNames(
                           styles.slotPill,

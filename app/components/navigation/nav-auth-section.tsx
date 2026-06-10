@@ -5,6 +5,7 @@ import { nextApi } from '@/lib/api/next';
 import { getAccountRoleLabel } from '@/lib/navigation';
 import { stores, useStores } from '@/lib/stores';
 import { AuthStatus } from '@/lib/types/auth';
+import { formatFullName } from '@/lib/utils/formatters';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -77,7 +78,7 @@ export const NavAuthSection = () => {
     );
   }
 
-  const fullName = `${user.firstName} ${user.lastName}`.trim();
+  const fullName = formatFullName(user);
   const roleLabel = getAccountRoleLabel(user);
   const isInApp = APP_PATH_PREFIXES.some((p) => pathname.startsWith(p));
 

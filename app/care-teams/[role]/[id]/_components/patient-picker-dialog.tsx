@@ -4,7 +4,7 @@ import { Avatar } from '@/app/components/common';
 import type { Patient } from '@/lib/types/patients';
 import { UserRelationship } from '@/lib/types/users';
 import { joinClassNames } from '@/lib/utils/class-names';
-import { USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
+import { formatFullName, USER_RELATIONSHIP_LABEL } from '@/lib/utils/formatters';
 import { X as CloseIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -106,7 +106,7 @@ export const PatientPickerDialog = ({
           ) : (
             <ul className={styles.list} role='radiogroup' aria-label='Your patients'>
               {patients.map((p) => {
-                const fullName = `${p.firstName} ${p.lastName}`.trim();
+                const fullName = formatFullName(p);
                 const isSelected = selectedId === p.patientId;
                 const relationship = p.relationship ?? UserRelationship.Other;
                 return (
